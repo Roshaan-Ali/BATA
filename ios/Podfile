@@ -12,6 +12,8 @@ target 'BATA' do
     :hermes_enabled => false
   )
 
+  pod 'RNCClipboard', :path => '../node_modules/@react-native-community/clipboard'
+
   target 'BATATests' do
     inherit! :complete
     # Pods for testing

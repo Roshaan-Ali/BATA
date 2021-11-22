@@ -33,7 +33,7 @@ const SignUp = ({navigation}) => {
     if (lastname === '' || p_language === '' || firstname === '') {
       alert('All fields required');
     } else {
-      navigation.navigate('Home', {
+      navigation.navigate('Otp', {
         firstname,
         lastname,
         address,

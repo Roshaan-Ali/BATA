@@ -19,7 +19,7 @@ function MainStackNavigator() {
         screenOptions={{
           headerShown: false,
         }}
-        initialRouteName="Splash"
+        initialRouteName="Otp"
         >
         <Stack.Screen name="LogIn" component={LogIn} />
 
