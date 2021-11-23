@@ -23,12 +23,14 @@ function Home(props) {
   let name = 'James';
 
   const _onPressOption = (item, index) => {
-    console.log('On Option Press');
+    navigation.navigate(item?.routeName);
   };
 
   const _onPaymentCardPress = () => {
     console.log('Payment Card Selected');
   };
+
+  // console.log(navigation.getState())
   return (
     <View style={styles.container}>
       {/* Header  */}
@@ -153,10 +155,12 @@ const options = [
     _id: 1,
     image: require('../assets/Images/translate.png'),
     text: 'translator',
+    routeName: 'Translator',
   },
   {
-    _id: 1,
+    _id: 2,
     image: require('../assets/Images/package.png'),
     text: 'packages',
+    routeName: 'Packages',
   },
 ];

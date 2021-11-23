@@ -15,16 +15,16 @@ const Header = ({navigation, showBackBtn, title}) => {
         <TouchableOpacity
           activeOpacity={0.7}
           style={styles.backBtnView}
-          onPress={() => navigation.toggleDrawer()}>
+          onPress={() => navigation.goBack}>
           <FontAwesome name="long-arrow-left" style={styles.backIconStyle} />
-          <Text style={styles.titleStyle}>{'Back'}</Text>
+          <Text style={styles.backTextStyle}>{'Back'}</Text>
         </TouchableOpacity>
       ) : (
         <TouchableOpacity
           activeOpacity={0.7}
           style={styles.backBtnView}
           onPress={() => navigation.toggleDrawer()}>
-          <Feather name="menu" style={styles.backIconStyle} />
+          <Feather name="menu" style={styles.menuIconStyle} />
           <Text style={styles.titleStyle}>{title}</Text>
         </TouchableOpacity>
       )}
@@ -46,9 +46,14 @@ const styles = StyleSheet.create({
     paddingVertical: height * 0.025,
     alignItems:'center'
   },
-  backIconStyle: {
+  menuIconStyle: {
     color: colors.themePurple1,
     fontSize: width * 0.075,
+    paddingRight: width * 0.025,
+  },
+  backIconStyle: {
+    color: colors.themePurple1,
+    fontSize: width * 0.06,
     paddingRight: width * 0.025,
   },
   backBtnView: {
@@ -58,6 +63,13 @@ const styles = StyleSheet.create({
   titleStyle: {
     color: 'black',
     fontSize: width * 0.065,
+    width: width * 0.7,
+    color: colors.themePurple1,
+    fontWeight: '600',
+  },
+  backTextStyle: {
+    color: 'black',
+    fontSize: width * 0.05,
     width: width * 0.7,
     color: colors.themePurple1,
     fontWeight: '600',
