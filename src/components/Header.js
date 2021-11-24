@@ -9,13 +9,14 @@ import colors from '../assets/colors';
 const {width, height} = Dimensions.get('window');
 
 const Header = ({navigation, showBackBtn, title}) => {
+  console.log(navigation);
   return (
     <View style={styles.container}>
       {showBackBtn ? (
         <TouchableOpacity
           activeOpacity={0.7}
           style={styles.backBtnView}
-          onPress={() => navigation.goBack}>
+          onPress={() => navigation.goBack()}>
           <FontAwesome name="long-arrow-left" style={styles.backIconStyle} />
           <Text style={styles.backTextStyle}>{'Back'}</Text>
         </TouchableOpacity>
@@ -29,10 +30,12 @@ const Header = ({navigation, showBackBtn, title}) => {
         </TouchableOpacity>
       )}
 
-      <Image
-        source={require('../assets/Images/user.png')}
-        style={styles.userImage}
-      />
+      {showBackBtn === false && (
+        <Image
+          source={require('../assets/Images/user.png')}
+          style={styles.userImage}
+        />
+      )}
     </View>
   );
 };
@@ -44,7 +47,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingHorizontal: width * 0.05,
     paddingVertical: height * 0.025,
-    alignItems:'center'
+    alignItems: 'center',
   },
   menuIconStyle: {
     color: colors.themePurple1,

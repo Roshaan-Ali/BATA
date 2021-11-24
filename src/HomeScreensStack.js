@@ -6,18 +6,25 @@ import Packages from './screens/Packages';
 import Translator from './screens/Translator';
 
 const HomeStack = createNativeStackNavigator();
-const HomeScreensStack = () => {
+const HomeScreensStack = props => {
   return (
     <HomeStack.Navigator
       screenOptions={{headerShown: false}}
       initialRouteName="Home">
-      <HomeStack.Screen name="Home" component={Home} />
-      <HomeStack.Screen name="Packages" component={Packages} />
-      <HomeStack.Screen name="Translator" component={Translator} />
+      <HomeStack.Screen name="Home" component={Home} {...props.navigation} />
+      <HomeStack.Screen
+        name="Packages"
+        component={Packages}
+        {...props.navigation}
+      />
+      <HomeStack.Screen
+        name="Translator"
+        component={Translator}
+        {...props.navigation}
+      />
     </HomeStack.Navigator>
   );
 };
 
 export default HomeScreensStack;
 
-const styles = StyleSheet.create({});

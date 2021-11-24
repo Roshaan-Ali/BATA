@@ -25,7 +25,9 @@ const CustomButton = ({onPress, label, style, key, currentScreenName}) => {
       onPress={onPress}
       style={[
         styles.btnContainer,
-        label?.routeName == currentScreenName && {backgroundColor: '#F2E9F2'},
+        label?.routeName == currentScreenName && {
+          backgroundColor: colors.themeLightPurple,
+        },
       ]}>
       <IconComp
         name={label.iconName}
@@ -76,17 +78,21 @@ const CustomDrawer = ({navigation, routes}) => {
                   label={route}
                   key={index}
                   onPress={() => {
-                    // navigation.navigate(route.routeName);
-                    const resetAction = CommonActions.reset({
-                      index: 1,
-                      routes: [
-                        {
-                          name: route.routeName,
-                          // params: {YOUR_OPTIONAL_DATA}
-                        },
-                      ],
-                    });
-                    navigation.dispatch(resetAction);
+                    // console.log(route.routeName, currentScreenName);
+                    if (currentScreenName === route.routeName) {
+                      const resetAction = CommonActions.reset({
+                        index: 1,
+                        routes: [
+                          {
+                            name: route.routeName,
+                            // params: {YOUR_OPTIONAL_DATA}
+                          },
+                        ],
+                      });
+                      navigation.dispatch(resetAction);
+                    } else {
+                      navigation.navigate(route.routeName);
+                    }
                   }}
                   currentScreenName={currentScreenName}
                   style={[styles.button]}

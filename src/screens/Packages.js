@@ -80,6 +80,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: height * 0.06,
+    paddingBottom:100,
   },
 });
 

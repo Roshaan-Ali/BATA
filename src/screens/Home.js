@@ -79,6 +79,12 @@ function Home(props) {
             style={styles.cardImage}
           />
         </TouchableOpacity>
+
+        {/* Map  */}
+        <Image
+          source={require('../assets/Images/map.png')}
+          style={styles.map}
+        />
       </ScrollView>
     </View>
   );
@@ -88,6 +94,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
+  },
+  map: {
+    marginTop: height * 0.02,
+    width: width * 0.8,
+    height: height * 0.36,
+    alignSelf:'center'
   },
   img_wave: {
     marginTop: height * 0.15,
