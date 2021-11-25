@@ -9,7 +9,7 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 import { NavigationContainer } from '@react-navigation/native';
 
 export default function Main({userLogin}) {
-  const [token, onChangeToken] = useState("sss");
+  const [token, onChangeToken] = useState(null);
   const [loading, setLoading] = useState(false);
 
   if (loading) {
