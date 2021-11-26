@@ -21,22 +21,35 @@ const height = Dimensions.get('window').height;
 const SignUp = ({navigation}) => {
   const [firstname, setFirstname] = useState('');
   const [lastname, setLastname] = useState('');
+  const [email, setEmail] = useState('');
   const [p_language, setP_language] = useState([
     {label: 'Language1', value: '1'},
     {label: 'Language2', value: '2'},
     {label: 'Language3', value: '3'},
   ]);
-  const [address, setAddress] = useState('');
+  const [person, setPerson] = useState([
+    {label: 'Enterprise', value: '1'},
+    {label: 'Interpenure', value: '2'},
+    {label: 'Indivisual', value: '3'},
+  ]);
+  const [password, setPassword] = useState('');
   const [selectedPrimaryLang, setSelectedPrimaryLang] = useState({});
+  const [selectedPerson, setSelectedPerson] = useState({});
 
   const _onPressSignUp = () => {
-    if (lastname === '' || p_language === '' || firstname === '') {
+    if (
+      lastname === '' ||
+      p_language === '' ||
+      firstname === '' ||
+      email === ''
+    ) {
       alert('All fields required');
     } else {
       navigation.navigate('Otp', {
         firstname,
         lastname,
-        address,
+        password,
+        email,
       });
     }
   };
@@ -44,11 +57,12 @@ const SignUp = ({navigation}) => {
     navigation.navigate('LogIn');
   };
 
+
+
   return (
-    <ScrollView showsVerticalScrollIndicator={false}>
+    <ScrollView showsVerticalScrollIndicator={false} >
       <ImageBackground source={background_img} style={styles.image}>
         <Heading title="Sign Up Now" passedStyle={styles.heading} />
-        {/* <View style={styles.inputBoxes}> */}
         <Inputbox
           value={firstname}
           setTextValue={setFirstname}
@@ -64,15 +78,26 @@ const SignUp = ({navigation}) => {
           names={'person'}
         />
         <Inputbox
-          value={address}
-          setTextValue={setAddress}
-          placeholderTilte="Address"
+          value={email}
+          setTextValue={setEmail}
+          placeholderTilte="Email"
+          names={'email'}
+        />
+        <Inputbox
+          value={password}
+          setTextValue={setPassword}
+          placeholderTilte="Password"
           isSecure={true}
         />
         <DropdownComp
           data={p_language}
           selectedValue={selectedPrimaryLang}
           setSelectedValue={setSelectedPrimaryLang}
+        />
+        <DropdownComp
+          data={person}
+          selectedValue={selectedPerson}
+          setSelectedValue={setSelectedPerson}
         />
         <Button title="Next >" onBtnPress={() => _onPressSignUp()} />
         <View
@@ -82,15 +107,10 @@ const SignUp = ({navigation}) => {
             justifyContent: 'center',
           }}>
           <Text style={{color: 'white'}}>Already have an Account?</Text>
-          <TouchableOpacity onPress={() => console.log("pressed")}>
-            <Text style={{color: 'white'}} > Login</Text>
+          <TouchableOpacity onPress={() => _onPresslogin()}>
+            <Text style={{color: 'white'}}> Login</Text>
           </TouchableOpacity>
         </View>
-        {/* <Button
-          title="Sign up as an Enterprise"
-          onBtnPress={() => _onPressSignUp()}
-          isBgColor={false}
-        /> */}
       </ImageBackground>
     </ScrollView>
   );
@@ -100,7 +120,6 @@ const styles = StyleSheet.create({
   image: {
     justifyContent: 'center',
     height: height,
-
     alignItems: 'center',
   },
   inputBoxes: {
@@ -112,7 +131,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: width * 0.11,
     fontWeight: 'bold',
-    marginTop: height * 0.06,
+    marginTop: height * 0.01,
   },
 });
 

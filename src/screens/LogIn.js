@@ -24,6 +24,7 @@ const height = Dimensions.get('window').height;
 const LogIn = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isShowPassword, setIsShowPassword] = useState(false);
 
   const _onPressLogIn = () => {
     if (email === '' || password === '') {
@@ -40,60 +41,47 @@ const LogIn = ({navigation}) => {
     navigation.navigate('ForgotPassword');
   };
 
+  const _onPressShowPassword = () => {
+    setIsShowPassword(!isShowPassword);
+  };
+
   return (
-    // <View style={{flex: 1}}>
-    //   <ImageBackground
-    //     source={background_img}
-    //     resizeMode="cover"
-    //     style={styles.image}>
-    //     <Text>Inside</Text>
-    //   </ImageBackground>
-    // </View>
     <View
       style={{
-        // backgroundColor: '#ED228F',
-        // backgroundColor: 'red',
         flex: 1,
-        // justifyContent: 'center',
       }}>
-      <ScrollView style={{backgroundColor:'blue'}} showsVerticalScrollIndicator={false}>
-        <ImageBackground
-          source={background_img}
-          // resizeMode="cover"
-          style={styles.image}
-          // style={{flex:1}}
-          >
-          <Image
-          resizeMode="contain"
-          source={logo} style={styles.logo} />
+      <ScrollView
+        style={{backgroundColor: 'blue'}}
+        showsVerticalScrollIndicator={false}>
+        <ImageBackground source={background_img} style={styles.image}>
+          <Image resizeMode="contain" source={logo} style={styles.logo} />
 
-          {/* <View style={styles.inputBoxes}> */}
-            <Inputbox
-              value={email}
-              setTextValue={setEmail}
-              placeholderTilte="User Name"
-              isShowIcon={true}
-              names={'person'}
-            />
+          <Inputbox
+            value={email}
+            setTextValue={setEmail}
+            placeholderTilte="User Name"
+            isShowIcon={true}
+            names={'person'}
+          />
 
-            <Inputbox
-              value={password}
-              setTextValue={setPassword}
-              placeholderTilte="Password"
-              isSecure={true}
-              isShowIcon={true}
-              names={'lock'}
-            />
-          {/* </View> */}
+          <Inputbox
+            value={password}
+            setTextValue={setPassword}
+            placeholderTilte="Password"
+            isSecure={!isShowPassword}
+            isPassword={true}
+            isShowIcon={true}
+            names={'lock'}
+            onPressIcon={_onPressShowPassword}
+          />
           <Button title="Login" onBtnPress={() => _onPressLogIn()} />
           <View
             style={{
               flexDirection: 'row',
-              // marginBottom: 10,
               justifyContent: 'center',
             }}>
             <Text style={{color: 'white'}}>Forgot Password?</Text>
-            <TouchableOpacity onPress={() => console.log("pressed")}>
+            <TouchableOpacity onPress={() => console.log('pressed')}>
               <Text style={{color: 'white'}}> Click Here</Text>
             </TouchableOpacity>
           </View>
@@ -108,11 +96,11 @@ const LogIn = ({navigation}) => {
             <View style={styles.horizontalLine} />
           </View>
           {/* <View style={{position: 'relative'}}> */}
-            <Button
-              title="Sign Up Now"
-              onBtnPress={() => _onPressSignUp()}
-              isBgColor={false}
-            />
+          <Button
+            title="Sign Up Now"
+            onBtnPress={() => _onPressSignUp()}
+            isBgColor={false}
+          />
           {/* </View> */}
         </ImageBackground>
       </ScrollView>

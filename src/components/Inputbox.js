@@ -7,6 +7,7 @@ import {
   Dimensions,
   TextInput,
   View,
+  TouchableWithoutFeedback,
 } from 'react-native';
 
 import IconComp from './IconComp';
@@ -21,11 +22,12 @@ const Inputbox = ({
   isSecure,
   keyboardType,
   isShowIcon,
-  names
+  names,
+  onPressIcon,
+  isPassword
 }) => {
   return (
     <View style={{position: 'relative'}}>
-        
       <TextInput
         style={styles.input}
         onChangeText={setTextValue}
@@ -36,17 +38,30 @@ const Inputbox = ({
         keyboardType={keyboardType || 'default'}
       />
 
-       {isShowIcon && <IconComp
-        name={names}
-        type={'MaterialIcons'}
-        iconStyle={{
-          position: 'absolute',
-          left: width * 0.75,
-          top: height * 0.046,
-          
-        }}
-        
-      />}
+      {isShowIcon && isPassword ? (
+        <TouchableOpacity
+          style={{
+            position: 'absolute',
+            left: width * 0.75,
+            top: height * 0.046,
+          }}
+          onPress={() => onPressIcon()}>
+          <IconComp
+            name={names}
+            type={'MaterialIcons'}
+          />
+        </TouchableOpacity>
+      ) : (
+        <IconComp
+          name={names}
+          type={'MaterialIcons'}
+          iconStyle={{
+            position: 'absolute',
+            left: width * 0.75,
+            top: height * 0.046,
+          }}
+        />
+      )}
     </View>
   );
 };
@@ -62,7 +77,7 @@ const styles = StyleSheet.create({
     margin: height * 0.025,
     // height: height * 0.09,
     paddingLeft: width * 0.05,
-    fontSize:width*0.045
+    fontSize: width * 0.045,
   },
 });
 
