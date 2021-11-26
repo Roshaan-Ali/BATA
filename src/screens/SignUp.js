@@ -33,6 +33,7 @@ const SignUp = ({navigation}) => {
     {label: 'Indivisual', value: '3'},
   ]);
   const [password, setPassword] = useState('');
+  const [isShowPassword, setIsShowPassword] = useState(false);
   const [selectedPrimaryLang, setSelectedPrimaryLang] = useState({});
   const [selectedPerson, setSelectedPerson] = useState({});
 
@@ -57,10 +58,12 @@ const SignUp = ({navigation}) => {
     navigation.navigate('LogIn');
   };
 
-
+  const _onPressShowPassword = () => {
+    setIsShowPassword(!isShowPassword);
+  };
 
   return (
-    <ScrollView showsVerticalScrollIndicator={false} >
+    <ScrollView showsVerticalScrollIndicator={false}>
       <ImageBackground source={background_img} style={styles.image}>
         <Heading title="Sign Up Now" passedStyle={styles.heading} />
         <Inputbox
@@ -87,7 +90,11 @@ const SignUp = ({navigation}) => {
           value={password}
           setTextValue={setPassword}
           placeholderTilte="Password"
-          isSecure={true}
+          isSecure={!isShowPassword}
+          isPassword={true}
+          isShowIcon={true}
+          names={'lock'}
+          onPressIcon={_onPressShowPassword}
         />
         <DropdownComp
           data={p_language}
