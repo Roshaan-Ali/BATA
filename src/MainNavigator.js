@@ -5,12 +5,18 @@ import AuthRootStackScreen from './AuthRootStackScreen';
 import TextSample from './components/TextSample';
 import LottieView from 'lottie-react-native';
 import MainAppScreens from './MainAppScreens';
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { NavigationContainer } from '@react-navigation/native';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from 'react-native-responsive-screen';
+import {NavigationContainer} from '@react-navigation/native';
+import {connect} from 'react-redux';
+// import * as actions from './store/actions/actions';
 
-export default function Main({userLogin}) {
+function Main({userLogin, UserReducer}) {
   const [token, onChangeToken] = useState(null);
   const [loading, setLoading] = useState(false);
+  console.log(UserReducer, '-----------------------------------test-');
 
   if (loading) {
     return (
@@ -38,7 +44,8 @@ export default function Main({userLogin}) {
   } else {
     return (
       <NavigationContainer>
-        {token != null || userLogin?.token != null ? (
+        {UserReducer.isUserLogin === true ? (
+          // token != null || userLogin?.token != null ?
           <MainAppScreens />
         ) : (
           <AuthRootStackScreen />
@@ -66,3 +73,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+const mapStateToProps = ({UserReducer}) => {
+  return {UserReducer};
+};
+
+export default connect(mapStateToProps, null)(Main);

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState,useEffect} from 'react';
 import {
   StyleSheet,
   View,
@@ -13,27 +13,23 @@ import Button from '../components/Button';
 import Inputbox from '../components/Inputbox';
 import logo from '../assets/Logo.png';
 import background_img from '../assets/background_img.png';
+import {connect} from 'react-redux';
 // import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 // import Icon from 'react-native-vector-icons/MaterialIcons';
 // import Icon from 'react-native-vector-icons/MaterialIcons';
 import IconComp from '../components/IconComp';
+import * as actions from '../store/actions/actions'
+import HomeScreenStack from '../HomeScreensStack'
+
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
-const LogIn = ({navigation}) => {
-  const [email, setEmail] = useState('');
+const LogIn = ({navigation,user_login,get_data,UserReducer}) => {
+  
+  const [user, setUser] = useState('');
   const [password, setPassword] = useState('');
   const [isShowPassword, setIsShowPassword] = useState(false);
-
-  const _onPressLogIn = () => {
-    if (email === '' || password === '') {
-      alert('Invalid Login');
-    } else {
-      navigation.navigate('Home');
-      console.log(email);
-    }
-  };
   const _onPressSignUp = () => {
     navigation.navigate('SignUp');
   };
@@ -43,6 +39,22 @@ const LogIn = ({navigation}) => {
 
   const _onPressShowPassword = () => {
     setIsShowPassword(!isShowPassword);
+  };
+
+useEffect(() => {
+    console.log(UserReducer.userData,"data")
+}, [UserReducer])
+
+  const _logIn = () => {
+    // user_login(user);    
+    // console.log({UserReducer})
+
+
+    // if (user == 'admin' && password == 'admin') {
+    //   user_login();
+    // } else {
+    //   console.log('Failed');
+    // }
   };
 
   return (
@@ -57,8 +69,8 @@ const LogIn = ({navigation}) => {
           <Image resizeMode="contain" source={logo} style={styles.logo} />
 
           <Inputbox
-            value={email}
-            setTextValue={setEmail}
+            value={user}
+            setTextValue={setUser}
             placeholderTilte="User Name"
             isShowIcon={true}
             names={'person'}
@@ -74,14 +86,14 @@ const LogIn = ({navigation}) => {
             names={'lock'}
             onPressIcon={_onPressShowPassword}
           />
-          <Button title="Login" onBtnPress={() => _onPressLogIn()} />
+          <Button title="Login" onBtnPress={user_login} />
           <View
             style={{
               flexDirection: 'row',
               justifyContent: 'center',
             }}>
             <Text style={{color: 'white'}}>Forgot Password?</Text>
-            <TouchableOpacity onPress={() => console.log('pressed')}>
+            <TouchableOpacity onPress={() => console.log({UserReducer},"0000000000000")}>
               <Text style={{color: 'white'}}> Click Here</Text>
             </TouchableOpacity>
           </View>
@@ -101,6 +113,15 @@ const LogIn = ({navigation}) => {
             onBtnPress={() => _onPressSignUp()}
             isBgColor={false}
           />
+
+          {/* <Button
+            title="Counter"
+            onBtnPress={() => (dispatch(changeCount()))}
+            isBgColor={false}
+          /> */}
+          {/* <Text>
+          {reducerData}
+          </Text> */}
           {/* </View> */}
         </ImageBackground>
       </ScrollView>
@@ -156,4 +177,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LogIn;
+const mapStateToProps=({UserReducer}) =>{
+  return {UserReducer};
+}
+export default connect(mapStateToProps,actions)(LogIn);

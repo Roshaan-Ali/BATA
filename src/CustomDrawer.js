@@ -14,14 +14,17 @@ import {CommonActions} from '@react-navigation/native';
 import Svg, {Polygon} from 'react-native-svg';
 import IconComp from './components/IconComp';
 import colors from './assets/colors';
+import * as actions from './store/actions/actions';
+import {connect} from 'react-redux';
+
 
 const {width, height} = Dimensions.get('window');
 
-const CustomButton = ({onPress, label, style, key, currentScreenName}) => {
+const CustomButton = ({onPress, label, style, currentScreenName}) => {
   //   const thisRoute = useRoute();
   return (
     <TouchableOpacity
-      key={key}
+      // key={key}
       onPress={onPress}
       style={[
         styles.btnContainer,
@@ -48,7 +51,7 @@ const CustomButton = ({onPress, label, style, key, currentScreenName}) => {
   );
 };
 
-const CustomDrawer = ({navigation, routes}) => {
+const CustomDrawer = ({navigation, routes, user_logout}) => {
   const isDrawerOpen = useDrawerStatus() === 'open';
   const history = navigation.getState().history;
   const currentScreenName = isDrawerOpen
@@ -108,7 +111,7 @@ const CustomDrawer = ({navigation, routes}) => {
                   label={link}
                   key={index}
                   onPress={() => {
-                    console.log('sign out');
+                    user_logout();
                   }}
                   currentScreenName={currentScreenName}
                   style={[styles.buttonSmall]}
@@ -122,7 +125,7 @@ const CustomDrawer = ({navigation, routes}) => {
   );
 };
 
-export default CustomDrawer;
+export default connect(null, actions) (CustomDrawer);
 
 const styles = StyleSheet.create({
   menuContainer: {
