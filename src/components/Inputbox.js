@@ -24,12 +24,15 @@ const Inputbox = ({
   isShowIcon,
   names,
   onPressIcon,
-  isPassword
+  isPassword,
 }) => {
   return (
     <View style={{position: 'relative'}}>
       <TextInput
-        style={styles.input}
+        style={[
+          styles.input,
+          isShowIcon && isPassword && {paddingLeft: width * 0.02},
+        ]}
         onChangeText={setTextValue}
         value={value}
         placeholder={placeholderTilte}
@@ -44,11 +47,15 @@ const Inputbox = ({
             position: 'absolute',
             left: width * 0.75,
             top: height * 0.046,
+            paddingLeft:10,
           }}
           onPress={() => onPressIcon()}>
           <IconComp
             name={names}
             type={'MaterialIcons'}
+            // iconStyle={{
+            //   marginLeft: isShowIcon && isPassword && width * 0.05,
+            // }}
           />
         </TouchableOpacity>
       ) : (
@@ -56,8 +63,10 @@ const Inputbox = ({
           name={names}
           type={'MaterialIcons'}
           iconStyle={{
+            paddingLeft: isShowIcon && isPassword && width * 0.02,
             position: 'absolute',
             left: width * 0.75,
+            paddingLeft:10,
             top: height * 0.046,
           }}
         />
@@ -70,12 +79,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
+    fontFamily: 'Poppins-Regular',
     borderColor: '#E3E3E3',
     borderRadius: 15,
     color: '#E3E3E3',
     width: width * 0.8,
     margin: height * 0.025,
     // height: height * 0.09,
+    paddingRight: width * 0.07,
     paddingLeft: width * 0.05,
     fontSize: width * 0.045,
   },

@@ -1,12 +1,5 @@
 import React from 'react';
-import {useState} from 'react';
-import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  Dimensions,
-  TextInput,
-} from 'react-native';
+import {Dimensions} from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Foundation from 'react-native-vector-icons/Foundation';
@@ -18,6 +11,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import Octicons from 'react-native-vector-icons/Octicons';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -39,11 +33,15 @@ const IconComp = ({name, type, iconStyle}) => {
         />
       );
 
-    case 'Foundation':
+    case 'Octicons':
       return (
-        <Foundation name={name} size={20} color={'#fff'} style={iconStyle} />
+        <Octicons name={name} size={20} color={'#fff'} style={iconStyle} />
       );
 
+      case 'Foundation':
+        return (
+          <Foundation name={name} size={20} color={'#fff'} style={iconStyle} />
+        );
     case 'Ionicons':
       return (
         <Ionicons name={name} size={20} color={'#fff'} style={iconStyle} />

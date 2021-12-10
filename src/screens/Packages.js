@@ -31,13 +31,14 @@ const Packages = ({navigation}) => {
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Our Packages  */}
         <View style={styles.rowView}>
-          <Heading title="Our" passedStyle={styles.ourLabel} />
-          <Heading title="Packages" passedStyle={styles.packageLabel} />
+          <Heading title="Our" passedStyle={styles.ourLabel} fontType="light"/>
+          <Heading title="Packages" passedStyle={styles.packageLabel} fontType="semi-bold"/>
         </View>
 
         {/* Packages Rendering  */}
         <FlatList
           data={dummyPackages}
+          nestedScrollEnabled={true}
           keyExtractor={item => item._id.toString()}
           contentContainerStyle={styles.flatListStyle}
           renderItem={({item, index}) => (
@@ -64,7 +65,7 @@ const styles = StyleSheet.create({
     marginTop: height * 0.03,
     flexDirection: 'row',
     alignItems: 'center',
-    marginHorizontal: width * 0.05,
+    marginHorizontal: width * 0.08,
   },
   ourLabel: {
     fontSize: width * 0.09,
@@ -74,7 +75,6 @@ const styles = StyleSheet.create({
   packageLabel: {
     fontSize: width * 0.09,
     color: colors.themePurple1,
-    fontWeight: '800',
   },
   flatListStyle: {
     alignItems: 'center',

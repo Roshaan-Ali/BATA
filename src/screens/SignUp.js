@@ -14,6 +14,7 @@ import Inputbox from '../components/Inputbox';
 import background_img from '../assets/background_img.png';
 import Heading from '../components/Heading';
 import DropdownComp from '../components/DropdownComp';
+import colors from '../assets/colors';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -63,63 +64,99 @@ const SignUp = ({navigation}) => {
   };
 
   return (
-    <ScrollView showsVerticalScrollIndicator={false}>
-      <ImageBackground source={background_img} style={styles.image}>
-        <Heading title="Sign Up Now" passedStyle={styles.heading} />
-        <Inputbox
-          value={firstname}
-          setTextValue={setFirstname}
-          placeholderTilte="First Name"
-          isShowIcon={true}
-          names={'person'}
-        />
-        <Inputbox
-          value={lastname}
-          setTextValue={setLastname}
-          placeholderTilte="Last Name"
-          isShowIcon={true}
-          names={'person'}
-        />
-        <Inputbox
-          value={email}
-          setTextValue={setEmail}
-          placeholderTilte="Email"
-          names={'email'}
-        />
-        <Inputbox
-          value={password}
-          setTextValue={setPassword}
-          placeholderTilte="Password"
-          isSecure={!isShowPassword}
-          isPassword={true}
-          isShowIcon={true}
-          names={'lock'}
-          onPressIcon={_onPressShowPassword}
-        />
-        <DropdownComp
-          data={p_language}
-          selectedValue={selectedPrimaryLang}
-          setSelectedValue={setSelectedPrimaryLang}
-        />
-        <DropdownComp
-          data={person}
-          selectedValue={selectedPerson}
-          setSelectedValue={setSelectedPerson}
-        />
-        <Button title="Next >" onBtnPress={() => _onPressSignUp()} />
+    <ImageBackground source={background_img} style={styles.image}>
+      <ScrollView showsVerticalScrollIndicator={false} style="">
         <View
           style={{
-            flexDirection: 'row',
-            marginBottom: 10,
+            paddingVertical: height * 0.1,
+            paddingBottom:200,
             justifyContent: 'center',
+            alignItems: 'center',
           }}>
-          <Text style={{color: 'white'}}>Already have an Account?</Text>
-          <TouchableOpacity onPress={() => _onPresslogin()}>
-            <Text style={{color: 'white'}}> Login</Text>
-          </TouchableOpacity>
+          <Heading
+            title="Sign Up Now"
+            passedStyle={styles.heading}
+            fontType="bold"
+          />
+          <Inputbox
+            value={firstname}
+            setTextValue={setFirstname}
+            placeholderTilte="First Name"
+            isShowIcon={true}
+            names={'person'}
+          />
+          <Inputbox
+            value={lastname}
+            setTextValue={setLastname}
+            placeholderTilte="Last Name"
+            isShowIcon={true}
+            names={'person'}
+          />
+          <Inputbox
+            value={email}
+            setTextValue={setEmail}
+            placeholderTilte="Email"
+            names={'email'}
+          />
+          <Inputbox
+            value={password}
+            setTextValue={setPassword}
+            placeholderTilte="Password"
+            isSecure={!isShowPassword}
+            isPassword={true}
+            isShowIcon={true}
+            names={'lock'}
+            onPressIcon={_onPressShowPassword}
+          />
+          <DropdownComp
+            data={p_language}
+            selectedValue={selectedPrimaryLang}
+            setSelectedValue={setSelectedPrimaryLang}
+          />
+          <DropdownComp
+            data={person}
+            selectedValue={selectedPerson}
+            setSelectedValue={setSelectedPerson}
+          />
+          <Button
+            title="Next >"
+            onBtnPress={() => _onPressSignUp()}
+            btnStyle={{
+              borderRadius: width * 0.08,
+              backgroundColor: 'white',
+              paddingVertical: height * 0.015,
+            }}
+            btnTextStyle={{
+              color: colors.themePurple1,
+              fontFamily: 'Poppins-SemiBold',
+            }}
+            isBgColor={false}
+          />
+          <View
+            style={{
+              flexDirection: 'row',
+              marginBottom: 10,
+              justifyContent: 'center',
+            }}>
+            <Heading
+              passedStyle={{color: 'white', fontSize: width * 0.035}}
+              title="Already have an Account?"
+            />
+            <TouchableOpacity onPress={() => _onPresslogin()}>
+              <Heading
+                passedStyle={{
+                  color: 'white',
+                  fontSize: width * 0.035,
+                  textDecorationLine: 'underline',
+                  marginLeft: width * 0.02,
+                }}
+                title="Login"
+              />
+            </TouchableOpacity>
+          </View>
         </View>
-      </ImageBackground>
-    </ScrollView>
+      </ScrollView>
+    </ImageBackground>
   );
 };
 
@@ -127,6 +164,7 @@ const styles = StyleSheet.create({
   image: {
     justifyContent: 'center',
     height: height,
+
     alignItems: 'center',
   },
   inputBoxes: {
@@ -137,7 +175,6 @@ const styles = StyleSheet.create({
   heading: {
     color: 'white',
     fontSize: width * 0.11,
-    fontWeight: 'bold',
     marginTop: height * 0.01,
   },
 });

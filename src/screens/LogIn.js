@@ -1,4 +1,4 @@
-import React, {useState,useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   StyleSheet,
   View,
@@ -14,22 +14,18 @@ import Inputbox from '../components/Inputbox';
 import logo from '../assets/Logo.png';
 import background_img from '../assets/background_img.png';
 import {connect} from 'react-redux';
-// import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-// import Icon from 'react-native-vector-icons/MaterialIcons';
-// import Icon from 'react-native-vector-icons/MaterialIcons';
-import IconComp from '../components/IconComp';
-import * as actions from '../store/actions/actions'
-import HomeScreenStack from '../HomeScreensStack'
-
+import * as actions from '../store/actions/actions';
+import Heading from '../components/Heading';
+import colors from '../assets/colors';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
-const LogIn = ({navigation,user_login,get_data,UserReducer}) => {
-  
+const LogIn = ({navigation, user_login, UserReducer}) => {
   const [user, setUser] = useState('');
   const [password, setPassword] = useState('');
   const [isShowPassword, setIsShowPassword] = useState(false);
+
   const _onPressSignUp = () => {
     navigation.navigate('SignUp');
   };
@@ -41,22 +37,9 @@ const LogIn = ({navigation,user_login,get_data,UserReducer}) => {
     setIsShowPassword(!isShowPassword);
   };
 
-useEffect(() => {
-    console.log(UserReducer.userData,"data")
-}, [UserReducer])
-
-  const _logIn = () => {
-    // user_login(user);    
-    // console.log({UserReducer})
-
-
-    // if (user == 'admin' && password == 'admin') {
-    //   user_login();
-    // } else {
-    //   console.log('Failed');
-    // }
-  };
-
+  useEffect(() => {
+    console.log({UserReducer});
+  }, [UserReducer]);
   return (
     <View
       style={{
@@ -86,24 +69,53 @@ useEffect(() => {
             names={'lock'}
             onPressIcon={_onPressShowPassword}
           />
-          <Button title="Login" onBtnPress={user_login} />
+          <Button
+            title="Login"
+            btnStyle={{
+              borderRadius: width * 0.08,
+              backgroundColor: 'white',
+              paddingVertical: height * 0.015,
+            }}
+            btnTextStyle={{
+              color: colors.themePurple1,
+              fontFamily: 'Poppins-SemiBold',
+            }}
+            isBgColor={false}
+            onBtnPress={() => user_login(user, password)}
+          />
           <View
             style={{
               flexDirection: 'row',
               justifyContent: 'center',
+              alignItems: 'center',
             }}>
-            <Text style={{color: 'white'}}>Forgot Password?</Text>
-            <TouchableOpacity onPress={() => console.log({UserReducer},"0000000000000")}>
-              <Text style={{color: 'white'}}> Click Here</Text>
+            <Heading
+              passedStyle={{color: 'white', fontSize: width * 0.04}}
+              fontType="semi-bold"
+              title="Forgot Password?"
+            />
+            <TouchableOpacity onPress={() => console.log('forget')}>
+              <Heading
+                passedStyle={{
+                  paddingLeft: width * 0.01,
+                  color: 'white',
+                  fontSize: width * 0.035,
+                  textDecorationLine: 'underline',
+                }}
+                fontType="semi-bold"
+                title="Click Here"
+              />
             </TouchableOpacity>
           </View>
 
           <View style={styles.horizontalLinePosition}>
             <View style={styles.horizontalLine} />
             <View>
-              <Text style={{width: 30, textAlign: 'center', color: 'white'}}>
-                Or
-              </Text>
+              <Heading
+              fontType="semi-bold"
+                passedStyle={{width: 30, textAlign: 'center', color: 'white', fontSize:width * 0.04,}}
+                title="Or"
+              />
             </View>
             <View style={styles.horizontalLine} />
           </View>
@@ -111,6 +123,18 @@ useEffect(() => {
           <Button
             title="Sign Up Now"
             onBtnPress={() => _onPressSignUp()}
+            btnStyle={{
+              borderRadius: width * 0.08,
+              borderWidth: 1,
+              borderColor: 'white',
+              backgroundColor: 'transparent',
+              paddingVertical: height * 0.013,
+            }}
+            btnTextStyle={{
+              color: 'white',
+              fontFamily: 'Poppins-SemiBold',
+            }}
+            isBgColor={false}
             isBgColor={false}
           />
 
@@ -177,7 +201,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps=({UserReducer}) =>{
+const mapStateToProps = ({UserReducer}) => {
   return {UserReducer};
-}
-export default connect(mapStateToProps,actions)(LogIn);
+};
+export default connect(mapStateToProps, actions)(LogIn);

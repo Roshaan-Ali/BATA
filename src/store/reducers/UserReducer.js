@@ -2,19 +2,27 @@ import {USER_LOGIN, USER_LOGOUT, GET_DATA} from '../actions/actionType';
 
 const initialData = {
   isUserLogin: false,
-  userName: '',
-  userData: [],
+  userData: null,
+  accessToken: '',
 };
 
 export function UserReducer(state = initialData, action) {
+  console.log(action.payload);
   switch (action.type) {
     case USER_LOGIN:
-      return {...state, ...action.payload};
+      return {
+        ...state,
+        ...action.payload,
+      };
     case USER_LOGOUT:
-      return {...action.payload};
+      return {
+        ...action.payload,
+      };
     case GET_DATA:
-      console.log(action.payload,'------------------------>>>>>>>>>>>')
-      return {...state,...action.payload}
+      return {
+        ...state,
+        ...action.payload,
+      };
     default:
       return state;
   }

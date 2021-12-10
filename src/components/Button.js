@@ -13,6 +13,7 @@ const Button = ({
 }) => {
   return (
     <TouchableOpacity
+      activeOpacity={0.8}
       style={[
         styles.btn,
 
@@ -44,7 +45,7 @@ const Button = ({
 const styles = StyleSheet.create({
   text: {
     fontSize: width * 0.05,
-    fontWeight: 'bold',
+    // fontWeight: 'bold',
   },
   btn: {
     width: width * 0.8,

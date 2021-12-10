@@ -2,6 +2,7 @@ import React from 'react';
 import {StyleSheet, Text, View, Dimensions, Image} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import colors from '../assets/colors';
+import Heading from './Heading';
 
 const {width, height} = Dimensions.get('window');
 
@@ -14,7 +15,7 @@ const HomeOptions = ({item, index, onPress}) => {
       <View style={styles.imageContainer}>
         <Image source={item?.image} style={styles.imageStyle} />
       </View>
-      <Text style={styles.textStyle}>{item?.text}</Text>
+      <Heading passedStyle={styles.textStyle} title={item?.text} fontType="regular"/>
     </TouchableOpacity>
   );
 };

@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import Heading from '../components/Heading';
 import Button from '../components/Button';
+import * as actions from '../store/actions/actions';
 import background_img from '../assets/background_img.png';
-import OTPInputView from '@twotalltotems/react-native-otp-input'
+import OTPInputView from '@twotalltotems/react-native-otp-input';
 import {
   StyleSheet,
   View,
@@ -14,27 +15,30 @@ import {
   ScrollView,
 } from 'react-native';
 import colors from '../assets/colors';
+import { connect } from 'react-redux';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
-const Otp = ({ navigation }) => {
-  const OTP = "0000"
+const Otp = ({navigation,user_login}) => {
+  const OTP = '0000';
   const _onPressSignUp = () => {
     // if (cardnumber === '') {
     //   alert('All fields required');
     // } else {
-    navigation.navigate('Home');
     // }
   };
 
-  const _onConfirmOtp = (code) => {
+  const _onConfirmOtp = code => {
     if (code == OTP) {
-      console.log(`Code is ${code}, you are good to go!`)
+      console.log(`Code is ${code}, you are good to go!`);
+      user_login({username: 'test@test.com', password: 'admin'}).then(() => {
+        console.log('work');
+      });
     } else {
-      alert("Invalid OTP!")
+      alert('Invalid OTP!');
     }
-  }
+  };
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
@@ -43,7 +47,7 @@ const Otp = ({ navigation }) => {
 
         <View style={styles.inputBoxes}>
           <OTPInputView
-            style={{ width: '80%', height: 200 }}
+            style={{width: '80%', height: 200}}
             pinCount={4}
             // code={otpCode} //You can supply this prop or not. The component will be used as a controlled / uncontrolled component respectively.
             // onCodeChanged={code => {
@@ -52,7 +56,7 @@ const Otp = ({ navigation }) => {
             autoFocusOnLoad
             codeInputFieldStyle={styles.underlineStyleBase}
             codeInputHighlightStyle={styles.underlineStyleHighLighted}
-            onCodeFilled={(code) => {
+            onCodeFilled={code => {
               _onConfirmOtp(code);
             }}
           />
@@ -89,7 +93,7 @@ const styles = StyleSheet.create({
   },
   inputBoxes: {
     marginTop: height * 0.02,
-    marginHorizontal: width * 0.05
+    marginHorizontal: width * 0.05,
   },
   heading: {
     color: 'white',
@@ -97,7 +101,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 
-  // OTP Styles 
+  // OTP Styles
   underlineStyleBase: {
     width: width * 0.15,
     height: height * 0.08,
@@ -105,12 +109,15 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderWidth: 0,
     borderRadius: width * 0.02,
-    color:colors?.themePurple1
+    color: colors?.themePurple1,
   },
 
   underlineStyleHighLighted: {
-    borderColor: "#03DAC6",
+    borderColor: '#03DAC6',
   },
 });
 
-export default Otp;
+const mapStateToProps = ({UserReducer}) => {
+  return {UserReducer};
+};
+export default connect(mapStateToProps, actions)(Otp);

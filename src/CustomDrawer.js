@@ -16,7 +16,7 @@ import IconComp from './components/IconComp';
 import colors from './assets/colors';
 import * as actions from './store/actions/actions';
 import {connect} from 'react-redux';
-
+import Heading from './components/Heading';
 
 const {width, height} = Dimensions.get('window');
 
@@ -40,13 +40,13 @@ const CustomButton = ({onPress, label, style, currentScreenName}) => {
           label?.routeName == currentScreenName && {color: colors.themePurple1},
         ]}
       />
-      <Text
-        style={[
+      <Heading
+        passedStyle={[
           styles.btnText,
           label?.routeName == currentScreenName && {color: colors.themePurple1},
-        ]}>
-        {label.routeName}
-      </Text>
+        ]}
+        title={label.routeName}
+      />
     </TouchableOpacity>
   );
 };
@@ -125,7 +125,7 @@ const CustomDrawer = ({navigation, routes, user_logout}) => {
   );
 };
 
-export default connect(null, actions) (CustomDrawer);
+export default connect(null, actions)(CustomDrawer);
 
 const styles = StyleSheet.create({
   menuContainer: {

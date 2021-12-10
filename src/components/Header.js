@@ -5,10 +5,11 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 
 import colors from '../assets/colors';
+import Heading from './Heading';
 
 const {width, height} = Dimensions.get('window');
 
-const Header = ({navigation, showBackBtn, title}) => {
+const Header = ({navigation, showBackBtn = false, title}) => {
   console.log(navigation);
   return (
     <View style={styles.container}>
@@ -18,7 +19,11 @@ const Header = ({navigation, showBackBtn, title}) => {
           style={styles.backBtnView}
           onPress={() => navigation.goBack()}>
           <FontAwesome name="long-arrow-left" style={styles.backIconStyle} />
-          <Text style={styles.backTextStyle}>{'Back'}</Text>
+          <Heading
+            passedStyle={styles.backTextStyle}
+            title={'Back'}
+            fontType="medium"
+          />
         </TouchableOpacity>
       ) : (
         <TouchableOpacity
@@ -26,15 +31,24 @@ const Header = ({navigation, showBackBtn, title}) => {
           style={styles.backBtnView}
           onPress={() => navigation.toggleDrawer()}>
           <Feather name="menu" style={styles.menuIconStyle} />
-          <Text style={styles.titleStyle}>{title}</Text>
+          <Heading
+            passedStyle={styles.titleStyle}
+            title={title}
+            fontType="medium"
+          />
         </TouchableOpacity>
       )}
 
       {showBackBtn === false && (
-        <Image
-          source={require('../assets/Images/user.png')}
-          style={styles.userImage}
-        />
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={() => navigation.navigate('Profile')}>
+          <Image
+            resizeMode="contain"
+            source={require('../assets/Images/user.png')}
+            style={styles.userImage}
+          />
+        </TouchableOpacity>
       )}
     </View>
   );
@@ -53,6 +67,7 @@ const styles = StyleSheet.create({
     color: colors.themePurple1,
     fontSize: width * 0.075,
     paddingRight: width * 0.025,
+    marginTop: height * -0.008,
   },
   backIconStyle: {
     color: colors.themePurple1,
@@ -71,7 +86,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   backTextStyle: {
-    color: 'black',
     fontSize: width * 0.05,
     width: width * 0.7,
     color: colors.themePurple1,

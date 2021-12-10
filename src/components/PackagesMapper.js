@@ -15,6 +15,7 @@ const PackagesMapper = ({item, index, onPress}) => {
   return (
     <View style={styles.container}>
       <FlatList
+        nestedScrollEnabled={true}
         data={item.package.features}
         keyExtractor={item => item?._id.toString()}
         ListHeaderComponentStyle={styles.flatListHeaderStyle}
@@ -23,7 +24,11 @@ const PackagesMapper = ({item, index, onPress}) => {
           <PackageFeaturesMapper item={item} index={index} />
         )}
         ListHeaderComponent={() => (
-          <Heading title={item.package.name} passedStyle={styles.packageName} />
+          <Heading
+            title={item.package.name}
+            passedStyle={styles.packageName}
+            fontType="semi-bold"
+          />
         )}
         ListFooterComponent={() => (
           <Button
@@ -62,7 +67,6 @@ const styles = StyleSheet.create({
   packageName: {
     color: 'white',
     fontSize: width * 0.09,
-    fontWeight: '700',
     textTransform: 'capitalize',
   },
   flatListHeaderStyle: {
@@ -75,10 +79,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     margin: 0,
     width: width * 0.65,
-    paddingVertical: height * 0.025,
+    paddingVertical: height * 0.02,
     borderRadius: width * 0.08,
   },
   btnTextStyle: {
     color: 'black',
+    fontFamily: 'Poppins-SemiBold',
   },
 });

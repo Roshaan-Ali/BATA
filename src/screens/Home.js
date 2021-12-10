@@ -13,6 +13,7 @@ import colors from '../assets/colors';
 import HomeOptions from '../components/HomeOptions';
 import Header from '../components/Header';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import MapView from 'react-native-maps';
 // import BoxComp from '../components/BoxComp';
 
 const width = Dimensions.get('window').width;
@@ -39,9 +40,17 @@ function Home(props) {
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Greeting Container  */}
         <View style={styles.greetingContainer}>
-          <View style={{flexDirection: 'column', alignItems: 'center'}}>
-            <Heading title="Welcome," passedStyle={styles.heading} />
-            <Heading title={name} passedStyle={styles.heading_username} />
+          <View style={{flexDirection: 'column', marginLeft: width * 0.05}}>
+            <Heading
+              title="Welcome,"
+              passedStyle={styles.heading}
+              fontType="light"
+            />
+            <Heading
+              title={name}
+              passedStyle={styles.heading_username}
+              fontType="bold"
+            />
           </View>
           <Image
             source={require('../assets/Images/handeshake.png')}
@@ -70,8 +79,16 @@ function Home(props) {
           onPress={() => _onPaymentCardPress()}
           style={styles.paymentOptionsContainer}>
           <View style={styles.cardTextView}>
-            <Heading title="Card" passedStyle={styles.cardPaymenLabelText} />
-            <Heading title="Payment" passedStyle={styles.cardPaymenLabelText} />
+            <Heading
+              title="Card"
+              passedStyle={styles.cardPaymenLabelText}
+              fontType="medium"
+            />
+            <Heading
+              title="Payment"
+              passedStyle={styles.cardPaymenLabelText}
+              fontType="medium"
+            />
           </View>
 
           <Image
@@ -81,10 +98,22 @@ function Home(props) {
         </TouchableOpacity>
 
         {/* Map  */}
-        <Image
-          source={require('../assets/Images/map.png')}
-          style={styles.map}
-        />
+        <View style={styles.map}>
+          <MapView
+            style={{width: width * 0.8, height: height * 0.36}}
+            showsMyLocationButton={true}
+            zoomEnabled={true}
+            scrollEnabled={true}
+            initialRegion={{
+              latitude: 37.78825,
+              longitude: -122.4324,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
+            }}
+            onRegionChangeComplete={e => {
+              console.log(e);
+            }}></MapView>
+        </View>
       </ScrollView>
     </View>
   );
@@ -96,10 +125,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   map: {
-    marginTop: height * 0.02,
+    marginVertical: height * 0.04,
     width: width * 0.8,
     height: height * 0.36,
-    alignSelf:'center'
+    alignSelf: 'center',
+    borderRadius: width * 0.05,
+    overflow: 'hidden',
   },
   img_wave: {
     marginTop: height * 0.15,
@@ -107,13 +138,12 @@ const styles = StyleSheet.create({
   },
   heading: {
     color: 'black',
-    marginLeft: width * 0.12,
+    // marginLeft: width * 0.12,
     fontSize: width * 0.11,
   },
   heading_username: {
     color: colors.themePurple1,
     fontSize: width * 0.11,
-    fontWeight: '800',
     marginTop: height * -0.03,
   },
   greetingContainer: {
@@ -151,7 +181,6 @@ const styles = StyleSheet.create({
   },
   cardPaymenLabelText: {
     color: 'black',
-    fontWeight: '600',
     fontSize: width * 0.045,
   },
   cardImage: {

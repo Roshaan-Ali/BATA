@@ -1,6 +1,14 @@
 apply plugin: "com.android.application"
 project.ext.vectoricons = [
-    iconFontNames: [ 'MaterialIcons.ttf', 'EvilIcons.ttf', 'Ionicons.ttf', 'FontAwesome5.ttf', 'Feather.ttf',  'MaterialCommunityIcons.ttf', 'FontAwesome.ttf','SimpleLineIcons.ttf', 'Fontisto.ttf', 'Foundation.ttf', 'AntDesign.ttf', "Entypo.ttf" ]
+    iconFontNames: [ 
+        'MaterialIcons.ttf', 
+        'EvilIcons.ttf', 
+        'Ionicons.ttf', 
+        'FontAwesome5.ttf', 
+        'Feather.ttf',  
+        'MaterialCommunityIcons.ttf', 
+        'FontAwesome.ttf','SimpleLineIcons.ttf', 
+        'Fontisto.ttf', 'Foundation.ttf', 'AntDesign.ttf', "Entypo.ttf" ]
 ]
 
 apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
@@ -209,11 +217,16 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
-
+    implementation(project(':react-native-maps')){
+        exclude group: 'com.google.android.gms', module: 'play-services-base'
+        exclude group: 'com.google.android.gms', module: 'play-services-maps'
+    }
+    implementation 'com.google.android.gms:play-services-base:17.2.1'
+    implementation 'com.google.android.gms:play-services-maps:17.0.0'
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
     implementation project(':react-native-svg')
-    compile project(':react-native-vector-icons')
-
+    implementation project(':react-native-vector-icons')
+    implementation project(':react-native-splash-screen')
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
         exclude group:'com.facebook.fbjni'
     }
@@ -235,7 +248,7 @@ dependencies {
         implementation jscFlavor
     }
 
-        compile project(':react-native-splash-screen')
+
 }
 
 // Run this once to be able to run the application with BUCK
