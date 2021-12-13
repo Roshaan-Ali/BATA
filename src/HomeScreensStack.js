@@ -1,14 +1,15 @@
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import Booking from './screens/Booking';
 import Home from './screens/Home';
-import LanguageSelection from './screens/LanguageSelection';
+import Booking from './screens/Booking';
+import Profile from './screens/Profile';
 import Packages from './screens/Packages';
 import Translators from './screens/Translators';
 import Interpreter from './screens/Interpreter';
 import SearchingScreen from './screens/SearchingScreen';
+import LanguageSelection from './screens/LanguageSelection';
 import ConfirmTranslatorModal from './components/ConfirmTranslatorModal';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 const HomeStack = createNativeStackNavigator();
 const HomeScreensStack = props => {
@@ -52,11 +53,11 @@ const HomeScreensStack = props => {
         component={ConfirmTranslatorModal}
         {...props.navigation}
       />
-       {/* <HomeStack.Screen
+      <HomeStack.Screen
         name="Profile"
         component={Profile}
         {...props.navigation}
-      /> */}
+      />
     </HomeStack.Navigator>
   );
 };

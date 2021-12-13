@@ -31,19 +31,19 @@ const LanguageSelection = ({navigation}) => {
     useState(false);
 
   const languages = [
-    {_id: 4, label: 'Chinese (ES)', value: 'Langugae 4'},
+    {_id: 1, label: 'Chinese (ES)', value: 'Langugae 1'},
     {_id: 2, label: 'Porteguese (ES)', value: 'Langugae 2'},
     {_id: 3, label: 'Russian (ES)', value: 'Langugae 3'},
-    {_id: 5, label: 'Romanian (ES)', value: 'Langugae 5'},
-    {_id: 1, label: 'Spanish (ES)', value: 'Langugae 1'},
+    {_id: 4, label: 'Romanian (ES)', value: 'Langugae 5'},
+    {_id: 5, label: 'Spanish (ES)', value: 'Langugae 4'},
   ];
 
   const occasions = [
-    {_id: 1, label: 'Occasions 1', value: 'Occasions 1'},
-    {_id: 2, label: 'Occasions 2', value: 'Occasions 2'},
-    {_id: 3, label: 'Occasions 3', value: 'Occasions 3'},
-    {_id: 4, label: 'Occasions 4', value: 'Occasions 4'},
-    {_id: 5, label: 'Occasions 5', value: 'Occasions 5'},
+    {_id: 1, label: 'Christmas Party', value: 'Occasions 1'},
+    {_id: 2, label: 'Halloween Day', value: 'Occasions 2'},
+    {_id: 3, label: 'Thanksgiving', value: 'Occasions 3'},
+    {_id: 4, label: 'Black Friday', value: 'Occasions 4'},
+    {_id: 5, label: 'Independence Day', value: 'Occasions 5'},
   ];
 
   const _onLanguageSelectionPress = item => {

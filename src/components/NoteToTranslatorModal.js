@@ -7,6 +7,7 @@ import {
   View,
   TouchableOpacity,
   TextInput,
+  StatusBar,
 } from 'react-native';
 import colors from '../assets/colors';
 import Heading from './Heading';
@@ -23,48 +24,55 @@ const NoteToTranslatorModal = ({
 }) => {
   const [text, setText] = useState(value);
   return (
-    <Modal
-      isVisible={isModalVisible}
-      // statusBarTranslucent
-      swipeDirection={'up'}
-      onSwipeMove={p => setIsModalVisible(false)}>
-      <View style={styles.container}>
-        <Heading passedStyle={[styles.label]} title="Note To Translator" fontType="semi-bold"/>
-
-        {/* Special Message  */}
-        <TextInput
-          value={text}
-          onChangeText={val => setText(val)}
-          numberOfLines={8}
-          multiline={true}
-          placeholder={'Special Message'}
-          style={styles.inputField}
-        />
-        {/* Buttons Container  */}
-        <View style={styles.flexRow}>
-          <Button
-            title="DONE"
-            onBtnPress={() => {
-              setValue(text);
-              setIsModalVisible(false);
-            }}
-            isBgColor={false}
-            btnStyle={styles.btnStyle}
-            btnTextStyle={styles.btnTextStyle}
+    <View>
+      <StatusBar translucent={false} backgroundColor="black" />
+      <Modal
+        isVisible={isModalVisible}
+        // statusBarTranslucent
+        swipeDirection={'up'}
+        onSwipeMove={p => setIsModalVisible(false)}>
+        <View style={styles.container}>
+          <Heading
+            passedStyle={[styles.label]}
+            title="Note To Translator"
+            fontType="semi-bold"
           />
 
-          <Button
-            title="CANCEL"
-            onBtnPress={() => {
-              setIsModalVisible(false);
-            }}
-            isBgColor={false}
-            btnStyle={styles.cancelBtnStyle}
-            btnTextStyle={styles.cancelBtnTextStyle}
+          {/* Special Message  */}
+          <TextInput
+            value={text}
+            onChangeText={val => setText(val)}
+            numberOfLines={8}
+            multiline={true}
+            placeholder={'Special Message'}
+            style={styles.inputField}
           />
+          {/* Buttons Container  */}
+          <View style={styles.flexRow}>
+            <Button
+              title="DONE"
+              onBtnPress={() => {
+                setValue(text);
+                setIsModalVisible(false);
+              }}
+              isBgColor={false}
+              btnStyle={styles.btnStyle}
+              btnTextStyle={styles.btnTextStyle}
+            />
+
+            <Button
+              title="CANCEL"
+              onBtnPress={() => {
+                setIsModalVisible(false);
+              }}
+              isBgColor={false}
+              btnStyle={styles.cancelBtnStyle}
+              btnTextStyle={styles.cancelBtnTextStyle}
+            />
+          </View>
         </View>
-      </View>
-    </Modal>
+      </Modal>
+    </View>
   );
 };
 
@@ -105,10 +113,12 @@ const styles = StyleSheet.create({
   },
   btnTextStyle: {
     color: 'white',
-    fontSize: width * 0.04,fontFamily: 'Poppins-SemiBold',
+    fontSize: width * 0.04,
+    fontFamily: 'Poppins-SemiBold',
   },
   cancelBtnTextStyle: {
-    color: colors.themePurple1,fontFamily: 'Poppins-SemiBold',
+    color: colors.themePurple1,
+    fontFamily: 'Poppins-SemiBold',
     fontSize: width * 0.04,
   },
   flexRow: {
@@ -129,6 +139,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: width * 0.04,
     paddingVertical: height * 0.025,
     textAlignVertical: 'top',
-    fontFamily:'Poppins-Regular'
+    fontFamily: 'Poppins-Regular',
   },
 });

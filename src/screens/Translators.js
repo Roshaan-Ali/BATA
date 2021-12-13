@@ -57,10 +57,10 @@ const Translator = ({navigation}) => {
   return (
     <View style={styles.container}>
       <StatusBar translucent backgroundColor="transparent" />
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps={false}>
         {/* Map View  */}
         <View
-          style={{height: height * 0.3, width: width, backgroundColor: 'red'}}>
+          style={{height: height * 0.3, width: width, }}>
           <MapView
             // ref={mapRef}
             style={{height: height * 0.3, width: width}}
@@ -171,6 +171,10 @@ const Translator = ({navigation}) => {
                   title={moment(startDate).format('DD-MMM-YYYY')}
                   passedStyle={styles.additionalInfoText}
                 />
+                <Heading
+                  title={moment(startDate).format('hh:mm A')}
+                  passedStyle={styles.additionalInfoText}
+                />
               </TouchableOpacity>
               <IconComp
                 type="Ionicons"
@@ -189,6 +193,10 @@ const Translator = ({navigation}) => {
                 }}>
                 <Heading
                   title={moment(endDate).format('DD-MMM-YYYY')}
+                  passedStyle={styles.additionalInfoText}
+                />
+                 <Heading
+                  title={moment(endDate).format('hh:mm A')}
                   passedStyle={styles.additionalInfoText}
                 />
               </TouchableOpacity>
@@ -223,8 +231,9 @@ const Translator = ({navigation}) => {
       {/* Start Date Picker  */}
       <DatePicker
         modal
-        mode="date"
+        // mode="date"
         open={showStartDatePicker}
+        minimumDate={startDate}
         date={startDate}
         onConfirm={date => {
           setShowStartDatePicker(false);
@@ -237,8 +246,8 @@ const Translator = ({navigation}) => {
       {/* End Date Picker  */}
       <DatePicker
         modal
-        mode="date"
-        minimumDate={startDate}
+        // mode="date"
+        minimumDate={endDate}
         open={showEndDatePicker}
         date={endDate}
         onConfirm={date => {
