@@ -10,7 +10,6 @@ import Heading from './Heading';
 const {width, height} = Dimensions.get('window');
 
 const Header = ({navigation, showBackBtn = false, title}) => {
-  console.log(navigation);
   return (
     <View style={styles.container}>
       {showBackBtn ? (
@@ -92,7 +91,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   userImage: {
-    width: width * 0.075,
-    height: height * 0.045,
+    width: width * 0.08,
+    height: height * 0.044,
   },
 });

@@ -1,4 +1,9 @@
-import {USER_LOGIN, USER_LOGOUT, GET_DATA} from '../actions/actionType';
+import {
+  USER_LOGIN,
+  USER_LOGOUT,
+  GET_DATA,
+  UPDATE_USER_DATA,
+} from '../actions/actionType';
 
 const initialData = {
   isUserLogin: false,
@@ -19,6 +24,11 @@ export function UserReducer(state = initialData, action) {
         ...action.payload,
       };
     case GET_DATA:
+      return {
+        ...state,
+        ...action.payload,
+      };
+    case UPDATE_USER_DATA:
       return {
         ...state,
         ...action.payload,

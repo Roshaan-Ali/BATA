@@ -1,35 +1,33 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
   StyleSheet,
   Dimensions,
   View,
-  Text,
   TouchableOpacity,
   Image,
   ScrollView,
 } from 'react-native';
 import Header from '../components/Header';
-
 import Heading from '../components/Heading';
 import IconComp from '../components/IconComp';
 import colors from '../assets/colors';
 import Button from '../components/Button';
+import * as actions from '../store/actions/actions';
 import Inputbox from '../components/Inputbox';
-// import ImagePicker from 'react-native-image-crop-picker';
-// test
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
-// import DisplayNameChangeModal from '../components/DisplayNameChangeModal';
+import {launchImageLibrary} from 'react-native-image-picker';
+import DisplayNameChangeModal from '../components/DisplayNameChangeModal';
+import {connect} from 'react-redux';
 
 const {width, height} = Dimensions.get('window');
 
-const Profile = props => {
+const Profile = ({navigation, UserReducer, UpdateName}) => {
   // image state
   const [image, setImage] = useState(null);
   // display name state
-  const [displayName, setDisplayName] = useState('Michael Reimer');
+  const [displayName, setDisplayName] = useState(UserReducer.username);
   // modal state
   const [isModalVisible, setIsModalVisible] = useState(false);
-
+  console.log(UserReducer.username);
   var matches = displayName?.match(/\b(\w)/g);
   var acronym = matches?.join('');
 
@@ -78,10 +76,14 @@ const Profile = props => {
     });
   };
 
+  // Save Button Function
+  const _onPressSave = () => {
+    UpdateName(displayName);
+  };
   return (
     <View style={styles.container}>
       {/* Header  */}
-      <Header title="Menu" navigation={props.navigation} />
+      <Header title="Menu" navigation={navigation} />
 
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Page Heading */}
@@ -114,7 +116,7 @@ const Profile = props => {
             <IconComp
               name="camera-alt"
               type={'MaterialIcons'}
-              passedStyle={styles.icon}
+              iconStyle={styles.icon}
             />
           </TouchableOpacity>
         </View>
@@ -132,11 +134,11 @@ const Profile = props => {
             <IconComp
               name="pencil"
               type="MaterialCommunityIcons"
-              passedStyle={styles.pencilIcon}
+              iconStyle={styles.pencilIcon}
             />
           </TouchableOpacity>
         </View>
-        <Inputbox
+        {/* <Inputbox
           passedStyle={styles.border_line}
           placeholderTilte="Change Password"
           placeholderTextColor="rgba(0,0,0,0.7)"
@@ -145,30 +147,33 @@ const Profile = props => {
           passedStyle={styles.border_line}
           placeholderTilte="Confirm Password"
           placeholderTextColor="rgba(0,0,0,0.7)"
-        />
+        /> */}
         {/* Save Button  */}
         <View style={styles.btnContainer}>
           <Button
             title="SAVE"
             btnStyle={styles.btnStyle}
-            onBtnPress={() => pressed()}
+            onBtnPress={() => _onPressSave()}
             btnTextStyle={styles.btnTextColor}
             isBgColor={false}
           />
         </View>
       </ScrollView>
-      {/* {isModalVisible && (
+      {isModalVisible && (
         <DisplayNameChangeModal
           value={displayName}
           setValue={setDisplayName}
           isModalVisible={isModalVisible}
           setIsModalVisible={setIsModalVisible}
         />
-      )} */}
+      )}
     </View>
   );
 };
 
+const mapStateToProps = UserReducer => {
+  return {UserReducer};
+};
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -238,6 +243,7 @@ const styles = StyleSheet.create({
   usernameStyle: {
     fontSize: height * 0.031,
     marginRight: width * 0.01,
+    color: colors.themePurple1,
   },
   icon: {
     backgroundColor: colors.themePurple1,
@@ -267,7 +273,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: colors.themePurple1,
+    marginHorizontal: width * 0.1,
     marginVertical: height * 0.03,
   },
 });
-export default Profile;
+
+export default connect(mapStateToProps, actions)(Profile);

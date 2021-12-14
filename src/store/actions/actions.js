@@ -43,3 +43,18 @@ export const get_data = () => async dispatch => {
     console.log('Network Error: ' + error);
   }
 };
+
+export const UpdateName = name => async dispatch => {
+  try {
+    dispatch({
+      type: types.UPDATE_USER_DATA,
+      payload: {
+        userData: {
+          username: name,
+        },
+      },
+    });
+  } catch (error) {
+    console.log('Failed to update data.');
+  }
+};

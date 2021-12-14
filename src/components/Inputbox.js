@@ -25,12 +25,14 @@ const Inputbox = ({
   names,
   onPressIcon,
   isPassword,
+  passedStyle,
 }) => {
   return (
     <View style={{position: 'relative'}}>
       <TextInput
         style={[
           styles.input,
+          passedStyle && passedStyle,
           isShowIcon && isPassword && {paddingLeft: width * 0.02},
         ]}
         onChangeText={setTextValue}
@@ -47,7 +49,7 @@ const Inputbox = ({
             position: 'absolute',
             left: width * 0.75,
             top: height * 0.046,
-            paddingLeft:10,
+            paddingLeft: 10,
           }}
           onPress={() => onPressIcon()}>
           <IconComp
@@ -66,7 +68,7 @@ const Inputbox = ({
             paddingLeft: isShowIcon && isPassword && width * 0.02,
             position: 'absolute',
             left: width * 0.75,
-            paddingLeft:10,
+            paddingLeft: 10,
             top: height * 0.046,
           }}
         />

@@ -45,9 +45,7 @@ const LogIn = ({navigation, user_login, UserReducer}) => {
       style={{
         flex: 1,
       }}>
-      <ScrollView
-        style={{backgroundColor: 'blue'}}
-        showsVerticalScrollIndicator={false}>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <ImageBackground source={background_img} style={styles.image}>
           <Image resizeMode="contain" source={logo} style={styles.logo} />
 
@@ -112,8 +110,13 @@ const LogIn = ({navigation, user_login, UserReducer}) => {
             <View style={styles.horizontalLine} />
             <View>
               <Heading
-              fontType="semi-bold"
-                passedStyle={{width: 30, textAlign: 'center', color: 'white', fontSize:width * 0.04,}}
+                fontType="semi-bold"
+                passedStyle={{
+                  width: 30,
+                  textAlign: 'center',
+                  color: 'white',
+                  fontSize: width * 0.04,
+                }}
                 title="Or"
               />
             </View>
