@@ -7,12 +7,13 @@ import {
 
 const initialData = {
   isUserLogin: false,
-  userData: null,
+  userData: {
+    username: 'Christopher Nolan',
+  },
   accessToken: '',
 };
 
 export function UserReducer(state = initialData, action) {
-  console.log(action.payload);
   switch (action.type) {
     case USER_LOGIN:
       return {

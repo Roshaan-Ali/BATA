@@ -1,14 +1,13 @@
-import {createDrawerNavigator} from '@react-navigation/drawer';
 import React, {useEffect, useState} from 'react';
-import {View, StyleSheet, StatusBar, Text, Animated, Alert} from 'react-native';
-import Home from './screens/Home';
 import Payment from './screens/Payment';
 import Settings from './screens/Settings';
-import Subscription from './screens/Subscription';
-import PushNotifications from './screens/PushNotifications';
 import CustomDrawer from './CustomDrawer';
+import Subscription from './screens/Subscription';
 import HomeScreensStack from './HomeScreensStack';
-
+import messaging from '@react-native-firebase/messaging';
+import {useNavigation} from '@react-navigation/native';
+import PushNotifications from './screens/PushNotifications';
+import {createDrawerNavigator} from '@react-navigation/drawer';
 const Drawer = createDrawerNavigator();
 
 const MainAppScreens = ({navigation}) => {
@@ -48,6 +47,21 @@ const MainAppScreens = ({navigation}) => {
       routeName: 'settings',
     },
   ];
+
+  const requestUserPermission = async () => {
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+    if (enabled) {
+      console.log('Authorization status:', authStatus);
+    }
+  };
+
+  useEffect(() => {
+    requestUserPermission();
+  }, []);
   if (loading) {
     return null;
   } else {

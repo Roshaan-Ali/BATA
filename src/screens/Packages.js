@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -21,35 +21,39 @@ const _onPackagePress = ({item, index}) => {
 };
 
 const Packages = ({navigation}) => {
-  const history = navigation.getState();
-  
-  console.log({history})
+  const [packages, setPackages] = useState(dummyPackages);
   return (
     <View style={styles.container}>
       {/* Header  */}
       <Header title="Menu" navigation={navigation} />
-      <ScrollView showsVerticalScrollIndicator={false}>
-        {/* Our Packages  */}
-        <View style={styles.rowView}>
-          <Heading title="Our" passedStyle={styles.ourLabel} fontType="light"/>
-          <Heading title="Packages" passedStyle={styles.packageLabel} fontType="semi-bold"/>
-        </View>
 
-        {/* Packages Rendering  */}
-        <FlatList
-          data={dummyPackages}
-          nestedScrollEnabled={true}
-          keyExtractor={item => item._id.toString()}
-          contentContainerStyle={styles.flatListStyle}
-          renderItem={({item, index}) => (
-            <PackagesMapper
-              item={item}
-              index={index}
-              onPress={_onPackagePress}
-            />
-          )}
-        />
-      </ScrollView>
+      {/* Packages Rendering  */}
+      <FlatList
+        data={packages}
+        nestedScrollEnabled={true}
+        keyExtractor={item => item._id.toString()}
+        contentContainerStyle={styles.flatListStyle}
+        renderItem={({item, index}) => (
+          <PackagesMapper item={item} index={index} onPress={_onPackagePress} />
+        )}
+        ListHeaderComponentStyle={styles.flatListHeaderStyles}
+        ListHeaderComponent={() => {
+          return (
+            <View style={styles.rowView}>
+              <Heading
+                title="Our"
+                passedStyle={styles.ourLabel}
+                fontType="light"
+              />
+              <Heading
+                title="Packages"
+                passedStyle={styles.packageLabel}
+                fontType="semi-bold"
+              />
+            </View>
+          );
+        }}
+      />
     </View>
   );
 };
@@ -62,10 +66,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   rowView: {
-    marginTop: height * 0.03,
     flexDirection: 'row',
     alignItems: 'center',
-    marginHorizontal: width * 0.08,
   },
   ourLabel: {
     fontSize: width * 0.09,
@@ -79,8 +81,12 @@ const styles = StyleSheet.create({
   flatListStyle: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: height * 0.06,
-    paddingBottom:100,
+    paddingBottom: 100,
+  },
+  flatListHeaderStyles: {
+    justifyContent: 'flex-start',
+    width: width * 0.85,
+    marginVertical: height * 0.02,
   },
 });
 

@@ -20,16 +20,20 @@ import {connect} from 'react-redux';
 
 const {width, height} = Dimensions.get('window');
 
-const Profile = ({navigation, UserReducer, UpdateName}) => {
+const Profile = ({navigation, UserReducer, updateUserData}) => {
   // image state
-  const [image, setImage] = useState(null);
+  const [userImage, setUserImage] = useState(null);
+  const [image, setImage] = useState(UserReducer?.userData?.photo);
+
   // display name state
-  const [displayName, setDisplayName] = useState(UserReducer.username);
+  const [displayName, setDisplayName] = useState(
+    UserReducer?.userData?.username,
+  );
   // modal state
   const [isModalVisible, setIsModalVisible] = useState(false);
-  console.log(UserReducer.username);
-  var matches = displayName?.match(/\b(\w)/g);
-  var acronym = matches?.join('');
+  console.log('Profile Username: ', UserReducer?.userData?.username);
+  // var matches = displayName?.match(/\b(\w)/g);
+  // var acronym = matches?.join('');
 
   // Change Display Name
   const _onPressEditName = () => {
@@ -38,7 +42,6 @@ const Profile = ({navigation, UserReducer, UpdateName}) => {
 
   // Upload Photo
   const uploadPhoto = async () => {
-    console.log('Upload photo');
     var options = {
       title: 'Select Image',
       allowsEditing: true,
@@ -54,7 +57,6 @@ const Profile = ({navigation, UserReducer, UpdateName}) => {
     };
 
     launchImageLibrary(options, response => {
-      console.log('Response = ', response);
       // var ArraySingleImage = []
       if (response.didCancel) {
         console.log('User cancelled image picker');
@@ -64,21 +66,20 @@ const Profile = ({navigation, UserReducer, UpdateName}) => {
         console.log('User tapped custom button: ', response.customButton);
         // SelectMultipleImage()
       } else {
-        // const source = {
-        // for showing image
-        //   uri: 'data:image/jpeg;base64,' + response.data
-        // };
-        setImage(response);
-        // console.log(source)
-        // ArraySingleImage.push(source)
-        console.log(response.assets);
+        setUserImage(response);
       }
     });
   };
 
   // Save Button Function
   const _onPressSave = () => {
-    UpdateName(displayName);
+    let userData = {
+      username: displayName,
+      photo: userImage
+        ? `data:${userImage.assets[0].type};base64,${userImage.assets[0].base64}`
+        : image,
+    };
+    updateUserData(userData);
   };
   return (
     <View style={styles.container}>
@@ -90,15 +91,17 @@ const Profile = ({navigation, UserReducer, UpdateName}) => {
         <Heading
           title="Profile Settings"
           passedStyle={styles.heading}
-          fontType="bold"
+          fontType="semi-bold"
         />
 
         {/* Image Container  */}
         <View style={styles.boxContainer}>
-          {image ? (
+          {image || userImage ? (
             <Image
               source={{
-                uri: `data:${image.assets[0].type};base64,${image.assets[0].base64}`,
+                uri: userImage
+                  ? `data:${userImage.assets[0].type};base64,${userImage.assets[0].base64}`
+                  : image,
               }}
               style={[StyleSheet.absoluteFill, {borderRadius: 100}]}
               // style={styles.imageStyle}
@@ -106,8 +109,8 @@ const Profile = ({navigation, UserReducer, UpdateName}) => {
           ) : (
             <Heading
               passedStyle={styles.usernameWordsStyle}
-              title={acronym}
-              fontType="bold"
+              title={displayName?.match(/\b(\w)/g).join('')}
+              fontType="extra-bold"
             />
           )}
           <TouchableOpacity
@@ -124,7 +127,11 @@ const Profile = ({navigation, UserReducer, UpdateName}) => {
         {/* Username Container  & Password */}
         <View style={styles.usernameViewStyle}>
           <Heading
-            title={displayName}
+            title={
+              displayName.length > 23
+                ? `${displayName.substring(0, 23)}...`
+                : displayName
+            }
             passedStyle={styles.usernameStyle}
             fontType="medium"
           />
@@ -171,7 +178,7 @@ const Profile = ({navigation, UserReducer, UpdateName}) => {
   );
 };
 
-const mapStateToProps = UserReducer => {
+const mapStateToProps = ({UserReducer}) => {
   return {UserReducer};
 };
 const styles = StyleSheet.create({
@@ -186,7 +193,9 @@ const styles = StyleSheet.create({
   },
   usernameWordsStyle: {
     fontSize: width * 0.12,
+    marginBottom:-20,
     color: colors.themePurple1,
+    // backgroundColor:'red'
   },
   btnStyle: {
     borderRadius: width * 0.02,
@@ -194,6 +203,7 @@ const styles = StyleSheet.create({
   },
   btnTextColor: {
     color: 'white',
+    fontFamily: 'Poppins-SemiBold',
     fontSize: width * 0.045,
   },
   btnContainer: {
@@ -221,7 +231,7 @@ const styles = StyleSheet.create({
   },
   boxContainer: {
     borderRadius: width * 0.8,
-    height: width * 0.5,
+    height: width * 0.48,
     width: width * 0.48,
     alignItems: 'center',
     marginHorizontal: width * 0.22,
@@ -253,8 +263,8 @@ const styles = StyleSheet.create({
   },
   iconTouchable: {
     position: 'absolute',
-    top: height * 0.2,
-    right: width * 0.01,
+    top: height * 0.19,
+    right: width * 0.025,
     backgroundColor: 'blue',
     borderRadius: width,
   },
@@ -273,6 +283,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'center',
+    // justifyContent: 'space-between',
     borderBottomWidth: 1,
     borderBottomColor: colors.themePurple1,
     marginHorizontal: width * 0.1,

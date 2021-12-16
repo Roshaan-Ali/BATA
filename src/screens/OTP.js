@@ -15,12 +15,12 @@ import {
   ScrollView,
 } from 'react-native';
 import colors from '../assets/colors';
-import { connect } from 'react-redux';
+import {connect} from 'react-redux';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
-const Otp = ({navigation,user_login}) => {
+const Otp = ({navigation, user_login}) => {
   const OTP = '0000';
   const _onPressSignUp = () => {
     // if (cardnumber === '') {
@@ -32,7 +32,10 @@ const Otp = ({navigation,user_login}) => {
   const _onConfirmOtp = code => {
     if (code == OTP) {
       console.log(`Code is ${code}, you are good to go!`);
-      user_login({username: 'test@test.com', password: 'admin'}).then(() => {
+      user_login({
+        username: 'Christopher Nolan',
+        accessToken: 'Uasd389rGKefoij3FWF3mvnisd65fgH54ysaCff3',
+      }).then(() => {
         console.log('work');
       });
     } else {

@@ -1,17 +1,6 @@
 apply plugin: "com.android.application"
-project.ext.vectoricons = [
-    iconFontNames: [ 
-        'MaterialIcons.ttf', 
-        'EvilIcons.ttf', 
-        'Ionicons.ttf', 
-        'FontAwesome5.ttf', 
-        'Feather.ttf',  
-        'MaterialCommunityIcons.ttf', 
-        'FontAwesome.ttf','SimpleLineIcons.ttf', 
-        'Fontisto.ttf', 'Foundation.ttf', 'AntDesign.ttf', "Entypo.ttf" ]
-]
+apply plugin: 'com.google.gms.google-services'
 
-apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
 
 
 import com.android.build.OutputFile
@@ -94,9 +83,19 @@ import com.android.build.OutputFile
 project.ext.react = [
     enableHermes: false,  // clean and rebuild if changing
 ]
-
+project.ext.vectoricons = [
+        iconFontNames: [
+                'MaterialIcons.ttf',
+                'EvilIcons.ttf',
+                'Ionicons.ttf',
+                'FontAwesome5.ttf',
+                'Feather.ttf',
+                'MaterialCommunityIcons.ttf',
+                'FontAwesome.ttf','SimpleLineIcons.ttf',
+                'Fontisto.ttf', 'Foundation.ttf', 'AntDesign.ttf', "Entypo.ttf" ]
+]
 apply from: "../../node_modules/react-native/react.gradle"
-
+apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
 /**
  * Set this to true to create two separate APKs instead of one:
  *   - An APK that only works on ARM devices
@@ -229,6 +228,9 @@ dependencies {
     implementation project(':react-native-svg')
     implementation project(':react-native-vector-icons')
     implementation project(':react-native-splash-screen')
+    implementation platform('com.google.firebase:firebase-bom:29.0.2')
+    implementation project(':react-native-push-notification')
+    implementation 'com.google.firebase:firebase-analytics'
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
         exclude group:'com.facebook.fbjni'
     }

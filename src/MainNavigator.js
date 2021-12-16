@@ -16,7 +16,6 @@ import {connect} from 'react-redux';
 function Main({userLogin, UserReducer}) {
   const [token, onChangeToken] = useState(null);
   const [loading, setLoading] = useState(false);
-  console.log(UserReducer, '-----------------------------------test-');
 
   if (loading) {
     return (

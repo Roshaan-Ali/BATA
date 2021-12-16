@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   StyleSheet,
   View,
@@ -14,52 +14,97 @@ import HomeOptions from '../components/HomeOptions';
 import Header from '../components/Header';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import MapView from 'react-native-maps';
+import {MotiView} from 'moti';
+import * as actions from '../store/actions/actions';
+import {connect} from 'react-redux';
 // import BoxComp from '../components/BoxComp';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
-function Home(props) {
-  const {navigation} = props;
-  let name = 'James';
+function Home({navigation, UserReducer}) {
+  const [username, setUsername] = useState(
+    UserReducer?.userData?.username?.split(' ')[0],
+  );
 
-  const _onPressOption = (item, index) => {
-    navigation.navigate(item?.routeName);
-  };
+  // const _onPressOption = (item, index) => {
+  //   navigation.navigate(item?.routeName);
+  // };
 
+  console.log(UserReducer?.userData?.username)
   const _onPaymentCardPress = () => {
     console.log('Payment Card Selected');
   };
 
-  // console.log(navigation.getState())
+
   return (
     <View style={styles.container}>
       {/* Header  */}
       <Header title="Menu" navigation={navigation} />
 
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        nestedScrollEnabled={true}>
         {/* Greeting Container  */}
         <View style={styles.greetingContainer}>
           <View style={{flexDirection: 'column', marginLeft: width * 0.05}}>
-            <Heading
-              title="Welcome,"
-              passedStyle={styles.heading}
-              fontType="light"
-            />
-            <Heading
-              title={name}
-              passedStyle={styles.heading_username}
-              fontType="bold"
-            />
+            <MotiView
+              from={{
+                opacity: 0.5,
+                scale: 0.9,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+              }}
+              transition={{
+                type: 'timing',
+                loop: true,
+                duration: 1000,
+              }}>
+              <Heading
+                title="Welcome,"
+                passedStyle={styles.heading}
+                fontType="light"
+              />
+              <Heading
+                title={username}
+                // title={username.length > 8 ? `${username.substring(0,8)}...` : username}
+                passedStyle={[
+                  styles.heading_username,
+                  username.length > 8 && {fontSize: width * 0.08},
+                ]}
+                fontType="bold"
+              />
+            </MotiView>
           </View>
+          {/* Wave Image  */}
+          {/* <MotiView
+            from={{
+              opacity: 1,
+              scale: 1,
+              rotate: '0 deg',
+            }}
+            animate={{
+              opacity: 1,
+              scale: 1,
+              rotate: '1 deg',
+            }}
+            transition={{
+              type: 'timing',
+              loop: true,
+              duration: 1000,
+            }}> */}
           <Image
             source={require('../assets/Images/handeshake.png')}
             style={styles.imageStyle}
           />
+          {/* </MotiView> */}
         </View>
 
-        {/* Home Option  */}
-        <FlatList
+        {/* Home Options  */}
+        {/* <FlatList
+          nestedScrollEnabled={true}
           data={options}
           contentContainerStyle={styles.flatListStyle}
           vertical
@@ -71,7 +116,46 @@ function Home(props) {
               <HomeOptions item={item} index={index} onPress={_onPressOption} />
             );
           }}
-        />
+        /> */}
+
+        {/* Home Options  */}
+        <View style={styles.optionsWrapper}>
+          {/* Translators  */}
+          <TouchableOpacity
+            style={styles.optionContainer}
+            activeOpacity={0.7}
+            onPress={() => navigation.navigate("Translator")}>
+            <View style={styles.optionImageContainer}>
+              <Image
+                source={require('../assets/Images/translate.png')}
+                style={styles.optionImageStyle}
+              />
+            </View>
+            <Heading
+              passedStyle={styles.textStyle}
+              title={'Translators'}
+              fontType="regular"
+            />
+          </TouchableOpacity>
+
+          {/* Packages  */}
+          <TouchableOpacity
+            style={styles.optionContainer}
+            activeOpacity={0.7}
+            onPress={() => navigation.navigate("Packages")}>
+            <View style={styles.optionImageContainer}>
+              <Image
+                source={require('../assets/Images/package.png')}
+                style={styles.optionImageStyle}
+              />
+            </View>
+            <Heading
+              passedStyle={styles.textStyle}
+              title={'Packages'}
+              fontType="regular"
+            />
+          </TouchableOpacity>
+        </View>
 
         {/* Payment Options  */}
         <TouchableOpacity
@@ -120,6 +204,37 @@ function Home(props) {
 }
 
 const styles = StyleSheet.create({
+  optionsWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: height * 0.025,
+  },
+  textStyle: {
+    fontSize: width * 0.04,
+    color: 'black',
+    textTransform: 'capitalize',
+  },
+  optionImageContainer: {
+    paddingVertical: height * 0.032,
+    paddingHorizontal: width * 0.12,
+    marginBottom: height * 0.018,
+    backgroundColor: colors?.themePurple1,
+    borderRadius: width * 0.045,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  optionImageStyle: {
+    width: width * 0.1,
+    height: height * 0.05,
+  },
+  optionContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    // backgroundColor: 'red',
+    marginHorizontal: width * 0.02,
+    width: width * 0.42,
+  },
   container: {
     flex: 1,
     backgroundColor: 'white',
@@ -189,7 +304,10 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Home;
+const mapStateToProps = ({UserReducer}) => {
+  return {UserReducer};
+};
+export default connect(mapStateToProps, actions)(Home);
 
 const options = [
   {

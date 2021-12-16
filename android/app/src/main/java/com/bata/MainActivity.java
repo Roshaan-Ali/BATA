@@ -17,10 +17,16 @@ public class MainActivity extends ReactActivity {
   protected String getMainComponentName() {
     return "BATA";
   }
+
   @Override
-protected void onCreate(Bundle savedInstanceState) {
-  SplashScreen.show(this);
-  super.onCreate(savedInstanceState);
-}
+  protected void onCreate(Bundle savedInstanceState) {
+    SplashScreen.show(this);
+    super.onCreate(savedInstanceState);
+  }
+
+//  @Override
+//  public void onNewIntent(Intent intent) {
+//    super.onNewIntent(intent);
+//  }
 }
 

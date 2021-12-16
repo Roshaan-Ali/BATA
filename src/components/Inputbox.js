@@ -33,7 +33,8 @@ const Inputbox = ({
         style={[
           styles.input,
           passedStyle && passedStyle,
-          isShowIcon && isPassword && {paddingLeft: width * 0.02},
+          {paddingLeft: width * 0.05},
+          isShowIcon && isPassword ,
         ]}
         onChangeText={setTextValue}
         value={value}

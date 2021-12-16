@@ -3,9 +3,11 @@ import MainNavigator from './src/MainNavigator';
 import SplashScreen from 'react-native-splash-screen';
 import {Provider} from 'react-redux';
 import {persistor, store} from './src/store/index';
-import { PersistGate } from 'redux-persist/integration/react';
+import {PersistGate} from 'redux-persist/integration/react';
+
 
 export default function App() {
+  
   useEffect(() => {
     SplashScreen.hide();
   }, []);

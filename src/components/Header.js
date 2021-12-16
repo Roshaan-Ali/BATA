@@ -6,10 +6,12 @@ import Feather from 'react-native-vector-icons/Feather';
 
 import colors from '../assets/colors';
 import Heading from './Heading';
+import {connect} from 'react-redux';
 
 const {width, height} = Dimensions.get('window');
 
-const Header = ({navigation, showBackBtn = false, title}) => {
+const Header = ({navigation, showBackBtn = false, title, UserReducer}) => {
+  const userImage = UserReducer?.userData?.photo;
   return (
     <View style={styles.container}>
       {showBackBtn ? (
@@ -42,18 +44,31 @@ const Header = ({navigation, showBackBtn = false, title}) => {
         <TouchableOpacity
           activeOpacity={0.8}
           onPress={() => navigation.navigate('Profile')}>
-          <Image
-            resizeMode="contain"
-            source={require('../assets/Images/user.png')}
-            style={styles.userImage}
-          />
+          {userImage ? (
+            <Image
+              // resizeMode="contain"
+              source={{
+                uri: userImage,
+              }}
+              style={styles.userImage}
+            />
+          ) : (
+            <Image
+              // resizeMode="contain"
+              source={require('../assets/Images/user.png')}
+              style={styles.userImage}
+            />
+          )}
         </TouchableOpacity>
       )}
     </View>
   );
 };
 
-export default Header;
+const mapStateToProps = ({UserReducer}) => {
+  return {UserReducer};
+};
+export default connect(mapStateToProps, null)(Header);
 
 const styles = StyleSheet.create({
   container: {
@@ -92,6 +107,7 @@ const styles = StyleSheet.create({
   },
   userImage: {
     width: width * 0.08,
-    height: height * 0.044,
+    height: width * 0.08,
+    borderRadius: width * 0.07,
   },
 });

@@ -31,11 +31,11 @@ const Translator = ({navigation}) => {
   const [showEndDatePicker, setShowEndDatePicker] = useState(false);
 
   const languages = [
-    {_id: 1, label: 'Langugae 1', value: 'Langugae 1'},
-    {_id: 2, label: 'Langugae 2', value: 'Langugae 2'},
-    {_id: 3, label: 'Langugae 3', value: 'Langugae 3'},
-    {_id: 4, label: 'Langugae 4', value: 'Langugae 4'},
-    {_id: 5, label: 'Langugae 5', value: 'Langugae 5'},
+    {_id: 1, label: 'Information 1'},
+    {_id: 2, label: 'Information 2'},
+    {_id: 3, label: 'Information 3'},
+    {_id: 4, label: 'Information 4'},
+    {_id: 5, label: 'Information 5'},
   ];
 
   //   Submit Button Handler
@@ -57,10 +57,11 @@ const Translator = ({navigation}) => {
   return (
     <View style={styles.container}>
       <StatusBar translucent backgroundColor="transparent" />
-      <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps={false}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps={false}>
         {/* Map View  */}
-        <View
-          style={{height: height * 0.3, width: width, }}>
+        <View style={{height: height * 0.3, width: width}}>
           <MapView
             // ref={mapRef}
             style={{height: height * 0.3, width: width}}
@@ -103,15 +104,15 @@ const Translator = ({navigation}) => {
                 iconStyle={styles.iconStyle}
               />
             )}
-            renderRightButton={() => (
-              <TouchableOpacity onPress={() => _onMicPress()}>
-                <IconComp
-                  name="mic"
-                  type="Ionicons"
-                  iconStyle={styles.myLocationIconStyle}
-                />
-              </TouchableOpacity>
-            )}
+            // renderRightButton={() => (
+            //   <TouchableOpacity onPress={() => _onMicPress()}>
+            //     <IconComp
+            //       name="mic"
+            //       type="Ionicons"
+            //       iconStyle={styles.myLocationIconStyle}
+            //     />
+            //   </TouchableOpacity>
+            // )}
             styles={{
               textInputContainer: {
                 width: width * 0.9,
@@ -195,7 +196,7 @@ const Translator = ({navigation}) => {
                   title={moment(endDate).format('DD-MMM-YYYY')}
                   passedStyle={styles.additionalInfoText}
                 />
-                 <Heading
+                <Heading
                   title={moment(endDate).format('hh:mm A')}
                   passedStyle={styles.additionalInfoText}
                 />

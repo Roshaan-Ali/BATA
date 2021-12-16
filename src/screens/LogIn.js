@@ -37,9 +37,7 @@ const LogIn = ({navigation, user_login, UserReducer}) => {
     setIsShowPassword(!isShowPassword);
   };
 
-  useEffect(() => {
-    console.log({UserReducer});
-  }, [UserReducer]);
+  
   return (
     <View
       style={{

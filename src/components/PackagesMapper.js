@@ -16,7 +16,7 @@ const PackagesMapper = ({item, index, onPress}) => {
     <View style={styles.container}>
       <FlatList
         nestedScrollEnabled={true}
-        data={item.package.features}
+        data={item?.package?.features}
         keyExtractor={item => item?._id.toString()}
         ListHeaderComponentStyle={styles.flatListHeaderStyle}
         ListFooterComponentStyle={styles.flatListFooterStyle}

@@ -1,16 +1,16 @@
 import * as types from './actionType';
 import axios from 'axios';
 
-export const user_login = (username, password) => async dispatch => {
+export const user_login = data => async dispatch => {
   try {
     dispatch({
       type: types.USER_LOGIN,
       payload: {
         isUserLogin: true,
         userData: {
-          username,
-          password,
+          username: data.username,
         },
+        accessToken: data.accessToken,
       },
     });
   } catch (error) {
@@ -44,14 +44,12 @@ export const get_data = () => async dispatch => {
   }
 };
 
-export const UpdateName = name => async dispatch => {
+export const updateUserData = userData => async dispatch => {
   try {
     dispatch({
       type: types.UPDATE_USER_DATA,
       payload: {
-        userData: {
-          username: name,
-        },
+        userData: userData,
       },
     });
   } catch (error) {
