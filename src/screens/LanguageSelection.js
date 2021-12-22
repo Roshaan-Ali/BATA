@@ -31,11 +31,12 @@ const LanguageSelection = ({navigation}) => {
     useState(false);
 
   const languages = [
-    {_id: 1, label: 'Chinese (ES)', value: 'Langugae 1'},
-    {_id: 2, label: 'Porteguese (ES)', value: 'Langugae 2'},
-    {_id: 3, label: 'Russian (ES)', value: 'Langugae 3'},
-    {_id: 4, label: 'Romanian (ES)', value: 'Langugae 5'},
-    {_id: 5, label: 'Spanish (ES)', value: 'Langugae 4'},
+    {_id: 1, label: 'Burmese'},
+    {_id: 2, label: 'Chin'},
+    {_id: 3, label: 'Kachin'},
+    {_id: 4, label: 'Karen '},
+    {_id: 5, label: 'Mon'},
+    {_id: 6, label: 'Rohingya'},
   ];
 
   const occasions = [
@@ -144,7 +145,11 @@ const LanguageSelection = ({navigation}) => {
           onPress={() => navigation.navigate('ConfirmModal', dummyTranslator)}
           // onPress={() => setShowConfirmModal(true)}
         >
-          <Heading title="$800.00 approx." passedStyle={styles.approxLabel} fontType="bold"/>
+          <Heading
+            title="$800.00 approx."
+            passedStyle={styles.approxLabel}
+            fontType="bold"
+          />
           <Heading title="Total time 4 Hours" passedStyle={styles.totalHours} />
         </TouchableOpacity>
 

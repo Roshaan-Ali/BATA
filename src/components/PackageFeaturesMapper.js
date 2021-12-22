@@ -23,18 +23,19 @@ export default PackageFeaturesMapper;
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    alignItems: 'center',
+    // alignItems: 'center',
     paddingVertical:height* 0.01,
   },
   featureStyle: {
     color: 'white',
-    fontSize: width * 0.054,
+    fontSize: width * 0.05,
     textTransform:'capitalize',
     fontWeight: '600',
     paddingLeft: width * 0.025,
   },
   iconStyle: {
     fontSize: width * 0.05,
+    marginTop:height * 0.008,
     color: colors.themeYellow,
   },
 });

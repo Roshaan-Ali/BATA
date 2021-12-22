@@ -4,6 +4,7 @@ import LogIn from './screens/LogIn';
 import SignUp from './screens/SignUp';
 import Otp from './screens/OTP';
 import Splash from './screens/Splash';
+import SignupPackage from './screens/SignupPackage';
 
 const AuthStack = createNativeStackNavigator();
 
@@ -20,6 +21,8 @@ const AuthRootStackScreen = () => {
       <AuthStack.Screen name="Otp" component={Otp} />
 
       <AuthStack.Screen name="Splash" component={Splash} />
+
+      <AuthStack.Screen name="SignupPackage" component={SignupPackage} />
     </AuthStack.Navigator>
   );
 };

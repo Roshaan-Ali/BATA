@@ -1,10 +1,11 @@
 import React from 'react';
 import {View, Text} from 'react-native';
+import Header from '../components/Header';
 
-const PushNotifications = () => {
+const PushNotifications = ({navigation}) => {
   return (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <Text>No Push Notifications</Text>
+    <View style={{flex: 1, alignItems: 'center'}}>
+      <Header title="back" showBackBtn={true} navigation={navigation} />
     </View>
   );
 };

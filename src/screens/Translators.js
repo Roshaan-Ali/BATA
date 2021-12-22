@@ -61,7 +61,7 @@ const Translator = ({navigation}) => {
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps={false}>
         {/* Map View  */}
-        <View style={{height: height * 0.3, width: width}}>
+        <View style={styles.mapView}>
           <MapView
             // ref={mapRef}
             style={{height: height * 0.3, width: width}}
@@ -80,12 +80,7 @@ const Translator = ({navigation}) => {
         </View>
 
         {/* Filters View  */}
-        <View
-          style={{
-            justifyContent: 'center',
-            alignItems: 'center',
-            paddingTop: height * 0.02,
-          }}>
+        <View style={styles.filterView}>
           {/* Location Search  */}
           <GooglePlacesAutocomplete
             placeholder="Translation Address"
@@ -94,7 +89,7 @@ const Translator = ({navigation}) => {
               console.log(data, details);
             }}
             query={{
-              key: 'YOUR API KEY',
+              key: 'AIzaSyDGCEsILkoCpmz1Gn63Kf754Jmb2YmOMJo',
               language: 'en',
             }}
             renderLeftButton={() => (
@@ -294,10 +289,19 @@ const styles = StyleSheet.create({
     paddingVertical: height * 0.025,
     textAlignVertical: 'top',
   },
+  mapView: {
+    height: height * 0.3,
+    width: width,
+  },
   map: {
     width: '120%',
     marginLeft: -30,
     height: '100%',
+  },
+  filterView: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: height * 0.02,
   },
   btnStyle: {
     marginTop: height * 0.03,

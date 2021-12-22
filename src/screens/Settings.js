@@ -1,11 +1,12 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
+import Header from '../components/Header';
 
-const Settings = () => {
+const Settings = ({navigation}) => {
   return (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <Text>Setings</Text>
-    </View>
+    <View style={{flex: 1, alignItems: 'center'}}>
+    <Header title="back" showBackBtn={true} navigation={navigation} />
+  </View>
   );
 };
 

@@ -22,7 +22,7 @@ const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
 const LogIn = ({navigation, user_login, UserReducer}) => {
-  const [user, setUser] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isShowPassword, setIsShowPassword] = useState(false);
 
@@ -37,136 +37,135 @@ const LogIn = ({navigation, user_login, UserReducer}) => {
     setIsShowPassword(!isShowPassword);
   };
 
-  
   return (
-    <View
-      style={{
-        flex: 1,
-      }}>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <ImageBackground source={background_img} style={styles.image}>
-          <Image resizeMode="contain" source={logo} style={styles.logo} />
+    <View style={styles.container}>
+      <ImageBackground source={background_img} style={styles.image}>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <View style={styles.centerView}>
+            <Image resizeMode="contain" source={logo} style={styles.logo} />
 
-          <Inputbox
-            value={user}
-            setTextValue={setUser}
-            placeholderTilte="User Name"
-            isShowIcon={true}
-            names={'person'}
-          />
-
-          <Inputbox
-            value={password}
-            setTextValue={setPassword}
-            placeholderTilte="Password"
-            isSecure={!isShowPassword}
-            isPassword={true}
-            isShowIcon={true}
-            names={'lock'}
-            onPressIcon={_onPressShowPassword}
-          />
-          <Button
-            title="Login"
-            btnStyle={{
-              borderRadius: width * 0.08,
-              backgroundColor: 'white',
-              paddingVertical: height * 0.015,
-            }}
-            btnTextStyle={{
-              color: colors.themePurple1,
-              fontFamily: 'Poppins-SemiBold',
-            }}
-            isBgColor={false}
-            onBtnPress={() => user_login(user, password)}
-          />
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            <Heading
-              passedStyle={{color: 'white', fontSize: width * 0.04}}
-              fontType="semi-bold"
-              title="Forgot Password?"
+            <Inputbox
+              value={email}
+              setTextValue={setEmail}
+              placeholderTilte="E-mail"
+              isShowIcon={true}
+              names={'person'}
             />
-            <TouchableOpacity onPress={() => console.log('forget')}>
-              <Heading
-                passedStyle={{
-                  paddingLeft: width * 0.01,
-                  color: 'white',
-                  fontSize: width * 0.035,
-                  textDecorationLine: 'underline',
-                }}
-                fontType="semi-bold"
-                title="Click Here"
-              />
-            </TouchableOpacity>
-          </View>
 
-          <View style={styles.horizontalLinePosition}>
-            <View style={styles.horizontalLine} />
-            <View>
+            <Inputbox
+              value={password}
+              setTextValue={setPassword}
+              placeholderTilte="Password"
+              isSecure={!isShowPassword}
+              isPassword={true}
+              isShowIcon={true}
+              names={'lock'}
+              onPressIcon={_onPressShowPassword}
+            />
+            <Button
+              title="Login"
+              btnStyle={styles.loginBtnStyle}
+              btnTextStyle={styles.loginBtnTextStyle}
+              isBgColor={false}
+              onBtnPress={() => user_login({email, password})}
+            />
+            <View style={styles.forgotPassView}>
               <Heading
+                passedStyle={styles.forgotPassTExt}
                 fontType="semi-bold"
-                passedStyle={{
-                  width: 30,
-                  textAlign: 'center',
-                  color: 'white',
-                  fontSize: width * 0.04,
-                }}
-                title="Or"
+                title="Forgot Password?"
               />
+              <TouchableOpacity onPress={() => console.log('forget')}>
+                <Heading
+                  passedStyle={styles.clickHere}
+                  fontType="semi-bold"
+                  title="Click Here"
+                />
+              </TouchableOpacity>
             </View>
-            <View style={styles.horizontalLine} />
-          </View>
-          {/* <View style={{position: 'relative'}}> */}
-          <Button
-            title="Sign Up Now"
-            onBtnPress={() => _onPressSignUp()}
-            btnStyle={{
-              borderRadius: width * 0.08,
-              borderWidth: 1,
-              borderColor: 'white',
-              backgroundColor: 'transparent',
-              paddingVertical: height * 0.013,
-            }}
-            btnTextStyle={{
-              color: 'white',
-              fontFamily: 'Poppins-SemiBold',
-            }}
-            isBgColor={false}
-            isBgColor={false}
-          />
 
-          {/* <Button
-            title="Counter"
-            onBtnPress={() => (dispatch(changeCount()))}
-            isBgColor={false}
-          /> */}
-          {/* <Text>
-          {reducerData}
-          </Text> */}
-          {/* </View> */}
-        </ImageBackground>
-      </ScrollView>
+            <View style={styles.horizontalLinePosition}>
+              <View style={styles.horizontalLine} />
+              <View>
+                <Heading
+                  fontType="semi-bold"
+                  passedStyle={styles.orView}
+                  title="Or"
+                />
+              </View>
+              <View style={styles.horizontalLine} />
+            </View>
+            <Button
+              title="Sign Up Now"
+              onBtnPress={() => _onPressSignUp()}
+              btnStyle={{
+                borderRadius: width * 0.08,
+                borderWidth: 1,
+                borderColor: 'white',
+                backgroundColor: 'transparent',
+                paddingVertical: height * 0.013,
+              }}
+              btnTextStyle={{
+                color: 'white',
+                fontFamily: 'Poppins-SemiBold',
+              }}
+              isBgColor={false}
+              isBgColor={false}
+            />
+          </View>
+        </ScrollView>
+      </ImageBackground>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  centerView: {
+    alignItems: 'center',
+  },
+  forgotPassView: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loginBtnTextStyle: {
+    color: colors.themePurple1,
+    fontFamily: 'Poppins-SemiBold',
+  },
+  loginBtnStyle: {
+    borderRadius: width * 0.08,
+    backgroundColor: 'white',
+    paddingVertical: height * 0.015,
+  },
+  clickHere: {
+    paddingLeft: width * 0.01,
+    color: 'white',
+    fontSize: width * 0.035,
+    textDecorationLine: 'underline',
+  },
+  forgotPassTExt: {
+    color: 'white',
+    fontSize: width * 0.04,
+  },
   horizontalLine: {
     flex: 1,
     height: 1,
     backgroundColor: 'white',
-    // alignItems: 'center',
-    // justifyContent: 'center',
   },
   horizontalLinePosition: {
     flexDirection: 'row',
     alignItems: 'center',
     width: width * 0.5,
     marginVertical: height * 0.02,
+  },
+  orView: {
+    width: 30,
+    textAlign: 'center',
+    color: 'white',
+    fontSize: width * 0.04,
   },
   // inputView: {
   //   flexDirection: 'row',
@@ -179,24 +178,16 @@ const styles = StyleSheet.create({
   // },
   logo: {
     width: width * 0.4,
-    // height: height * 0.22,
     marginTop: height * 0.1,
   },
 
   image: {
-    // flex: 1,
-    // justifyContent: 'center',
-    // width: width,
     height: height,
-    // alignSelf: 'center',
     alignItems: 'center',
+    justifyContent: 'center',
   },
-  // scrollview: {
-  //   height: height,
-  // },
+
   inputBoxes: {
-    // marginTop: height * 0.02,
-    // height: height * 0.2,
     backgroundColor: 'yellow',
     justifyContent: 'space-around',
   },

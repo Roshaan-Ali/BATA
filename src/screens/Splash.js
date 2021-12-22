@@ -23,14 +23,18 @@ const Splash = ({navigation}) => {
   return (
     <ImageBackground source={background_img} style={styles.image}>
       <Image resizeMode="contain" source={logo} style={styles.logo} />
-      <View style={{marginVertical: height * 0.44}}>
+      <View
+        style={{
+          position: 'absolute',
+          bottom: height * 0.05,
+        }}>
         <Button
           title="Get Started >"
           onBtnPress={() => _onPressSignUp()}
           isBgColor={false}
           btnTextStyle={{color: 'white', fontFamily: 'Poppins-SemiBold'}}
           btnStyle={{
-            borderRadius: width * 0.07,
+            borderRadius: width * 0.09,
             borderWidth: 2,
             borderColor: 'white',
           }}

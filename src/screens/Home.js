@@ -31,11 +31,10 @@ function Home({navigation, UserReducer}) {
   //   navigation.navigate(item?.routeName);
   // };
 
-  console.log(UserReducer?.userData?.username)
+  console.log(UserReducer?.userData);
   const _onPaymentCardPress = () => {
     console.log('Payment Card Selected');
   };
-
 
   return (
     <View style={styles.container}>
@@ -72,7 +71,7 @@ function Home({navigation, UserReducer}) {
                 // title={username.length > 8 ? `${username.substring(0,8)}...` : username}
                 passedStyle={[
                   styles.heading_username,
-                  username.length > 8 && {fontSize: width * 0.08},
+                  username?.length > 7 && {fontSize: width * 0.08},
                 ]}
                 fontType="bold"
               />
@@ -124,7 +123,7 @@ function Home({navigation, UserReducer}) {
           <TouchableOpacity
             style={styles.optionContainer}
             activeOpacity={0.7}
-            onPress={() => navigation.navigate("Translator")}>
+            onPress={() => navigation.navigate('Translator')}>
             <View style={styles.optionImageContainer}>
               <Image
                 source={require('../assets/Images/translate.png')}
@@ -142,7 +141,7 @@ function Home({navigation, UserReducer}) {
           <TouchableOpacity
             style={styles.optionContainer}
             activeOpacity={0.7}
-            onPress={() => navigation.navigate("Packages")}>
+            onPress={() => navigation.navigate('Packages')}>
             <View style={styles.optionImageContainer}>
               <Image
                 source={require('../assets/Images/package.png')}
@@ -155,10 +154,12 @@ function Home({navigation, UserReducer}) {
               fontType="regular"
             />
           </TouchableOpacity>
+
+          
         </View>
 
         {/* Payment Options  */}
-        <TouchableOpacity
+        {/* <TouchableOpacity
           activeOpacity={0.7}
           onPress={() => _onPaymentCardPress()}
           style={styles.paymentOptionsContainer}>
@@ -179,7 +180,7 @@ function Home({navigation, UserReducer}) {
             source={require('../assets/Images/mastercard.png')}
             style={styles.cardImage}
           />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         {/* Map  */}
         <View style={styles.map}>
@@ -209,11 +210,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginVertical: height * 0.025,
+    // backgroundColor: 'red',
+    width: width * 0.9,
+    alignSelf: 'center',
+    flexWrap: 'wrap',
   },
   textStyle: {
     fontSize: width * 0.04,
     color: 'black',
     textTransform: 'capitalize',
+  },
+  myRatings: {
+    fontSize: width * 0.04,
+    color: 'white',
+    marginTop: height * 0.01,
   },
   optionImageContainer: {
     paddingVertical: height * 0.032,
@@ -224,16 +234,29 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  ratingsContainer: {
+    paddingVertical: height * 0.008,
+    paddingHorizontal: width * 0.1,
+    marginBottom: height * 0.018,
+    backgroundColor: colors?.themePurple1,
+    borderRadius: width * 0.045,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   optionImageStyle: {
+    width: width * 0.1,
+    height: height * 0.05,
+  },
+  reviewImageStyle: {
     width: width * 0.1,
     height: height * 0.05,
   },
   optionContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    // backgroundColor: 'red',
     marginHorizontal: width * 0.02,
-    width: width * 0.42,
+    width: width * 0.4,
+    // backgroundColor:'yellow'
   },
   container: {
     flex: 1,

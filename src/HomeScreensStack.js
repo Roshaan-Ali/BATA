@@ -12,6 +12,7 @@ import ConfirmTranslatorModal from './components/ConfirmTranslatorModal';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import messaging from '@react-native-firebase/messaging';
 import PushNotification, {Importance} from 'react-native-push-notification'
+import Reviews from './screens/Reviews';
 const HomeStack = createNativeStackNavigator();
 const HomeScreensStack = props => {
   useEffect(() => {
@@ -93,6 +94,11 @@ const HomeScreensStack = props => {
       <HomeStack.Screen
         name="Searching"
         component={SearchingScreen}
+        {...props.navigation}
+      />
+      <HomeStack.Screen
+        name="Reviews"
+        component={Reviews}
         {...props.navigation}
       />
       <HomeStack.Screen

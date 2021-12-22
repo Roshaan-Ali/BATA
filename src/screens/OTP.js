@@ -20,23 +20,17 @@ import {connect} from 'react-redux';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
-const Otp = ({navigation, user_login}) => {
+const Otp = ({navigation, user_signup, route}) => {
   const OTP = '0000';
-  const _onPressSignUp = () => {
-    // if (cardnumber === '') {
-    //   alert('All fields required');
-    // } else {
-    // }
-  };
+  console.log(route.params);
 
   const _onConfirmOtp = code => {
     if (code == OTP) {
       console.log(`Code is ${code}, you are good to go!`);
-      user_login({
-        username: 'Christopher Nolan',
-        accessToken: 'Uasd389rGKefoij3FWF3mvnisd65fgH54ysaCff3',
+      user_signup({
+        ...route.params,
       }).then(() => {
-        console.log('work');
+        console.log('Otp Done');
       });
     } else {
       alert('Invalid OTP!');
