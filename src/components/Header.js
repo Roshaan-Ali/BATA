@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
     color: colors.themePurple1,
     fontSize: width * 0.075,
     paddingRight: width * 0.025,
-    marginTop: height * -0.008,
+    // marginTop: height * -0.008,
   },
   backIconStyle: {
     color: colors.themePurple1,
@@ -91,6 +91,7 @@ const styles = StyleSheet.create({
   backBtnView: {
     flexDirection: 'row',
     alignItems: 'center',
+    // backgroundColor:'red',
   },
   titleStyle: {
     color: 'black',

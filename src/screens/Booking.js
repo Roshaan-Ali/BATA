@@ -17,6 +17,8 @@ import Button from '../components/Button';
 import CustomDropdownModal from '../components/CustomDropdownModal';
 import Heading from '../components/Heading';
 import IconComp from '../components/IconComp';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import AppStatusBar from '../components/AppStatusBar';
 const {width, height} = Dimensions.get('window');
 
 const Booking = ({navigation}) => {
@@ -48,7 +50,9 @@ const Booking = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      <StatusBar translucent backgroundColor="transparent" />
+      <SafeAreaView style={{ flex: 1}}>
+      <AppStatusBar backgroundColor={colors.themePurple1} barStyle="light-content" />
+      {/* <StatusBar translucent backgroundColor="transparent" /> */}
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Event View  */}
         <TouchableOpacity
@@ -215,6 +219,7 @@ const Booking = ({navigation}) => {
           setIsModalVisible={setShowLanguageDropdown}
         />
       )}
+    </SafeAreaView>
     </View>
   );
 };

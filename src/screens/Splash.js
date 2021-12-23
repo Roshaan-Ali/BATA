@@ -13,6 +13,8 @@ import {
   ImageBackground,
   ScrollView,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import AppStatusBar from '../components/AppStatusBar';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -21,6 +23,7 @@ const Splash = ({navigation}) => {
     navigation.navigate('LogIn');
   };
   return (
+    
     <ImageBackground source={background_img} style={styles.image}>
       <Image resizeMode="contain" source={logo} style={styles.logo} />
       <View

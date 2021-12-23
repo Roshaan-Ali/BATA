@@ -11,6 +11,8 @@ import colors from '../assets/colors';
 import Header from '../components/Header';
 import Heading from '../components/Heading';
 import PackagesMapper from '../components/PackagesMapper';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import AppStatusBar from '../components/AppStatusBar';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -24,6 +26,8 @@ const Packages = ({navigation}) => {
   const [packages, setPackages] = useState(dummyPackages);
   return (
     <View style={styles.container}>
+      <SafeAreaView style={{ flex: 1}}>
+      <AppStatusBar backgroundColor={colors.themePurple1} barStyle="light-content" />
       {/* Header  */}
       <Header title="Menu" navigation={navigation} />
 
@@ -54,6 +58,7 @@ const Packages = ({navigation}) => {
           );
         }}
       />
+      </SafeAreaView>
     </View>
   );
 };

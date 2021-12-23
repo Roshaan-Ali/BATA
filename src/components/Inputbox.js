@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
     color: '#E3E3E3',
     width: width * 0.8,
     margin: height * 0.025,
-    // height: height * 0.09,
+    height: 50,
     paddingRight: width * 0.07,
     paddingLeft: width * 0.05,
     fontSize: width * 0.045,

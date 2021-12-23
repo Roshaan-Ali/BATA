@@ -8,6 +8,7 @@ import {
   Dimensions,
   ImageBackground,
   ScrollView,
+  StatusBar
 } from 'react-native';
 import Button from '../components/Button';
 import Inputbox from '../components/Inputbox';
@@ -17,7 +18,8 @@ import {connect} from 'react-redux';
 import * as actions from '../store/actions/actions';
 import Heading from '../components/Heading';
 import colors from '../assets/colors';
-
+import { SafeAreaView } from 'react-native-safe-area-context';
+import AppStatusBar from '../components/AppStatusBar';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
@@ -39,6 +41,8 @@ const LogIn = ({navigation, user_login, UserReducer}) => {
 
   return (
     <View style={styles.container}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#EF2692'}}>
+      <AppStatusBar backgroundColor={colors.themePurple1} barStyle="light-content" />
       <ImageBackground source={background_img} style={styles.image}>
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={styles.centerView}>
@@ -115,6 +119,7 @@ const LogIn = ({navigation, user_login, UserReducer}) => {
           </View>
         </ScrollView>
       </ImageBackground>
+      </SafeAreaView>
     </View>
   );
 };

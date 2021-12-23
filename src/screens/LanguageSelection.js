@@ -17,6 +17,8 @@ import NoteToTranslatorModal from '../components/NoteToTranslatorModal';
 import Button from '../components/Button';
 import ConfirmTranslatorModal from '../components/ConfirmTranslatorModal';
 import Modal from 'react-native-modal';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import AppStatusBar from '../components/AppStatusBar';
 
 const {width, height} = Dimensions.get('window');
 
@@ -62,7 +64,9 @@ const LanguageSelection = ({navigation}) => {
   };
   return (
     <View style={styles.container}>
-      <StatusBar translucent backgroundColor="transparent" />
+      <SafeAreaView style={{ flex: 1}}>
+      <AppStatusBar backgroundColor={colors.themePurple1} barStyle="light-content" />
+      {/* <StatusBar translucent backgroundColor="transparent" /> */}
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Langugae Dropdown  */}
         <TouchableOpacity
@@ -204,6 +208,7 @@ const LanguageSelection = ({navigation}) => {
           setIsModalVisible={setShowConfirmModal}
         />
       )}
+      </SafeAreaView>
     </View>
   );
 };

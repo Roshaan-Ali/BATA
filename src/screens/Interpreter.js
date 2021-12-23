@@ -15,6 +15,8 @@ import {Rating, AirbnbRating} from 'react-native-ratings';
 import IconComp from '../components/IconComp';
 import colors from '../assets/colors';
 import moment from 'moment';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import AppStatusBar from '../components/AppStatusBar';
 
 const {width, height} = Dimensions.get('window');
 
@@ -34,7 +36,9 @@ const Interpreter = ({navigation}) => {
   };
   return (
     <View style={styles.container}>
-      <StatusBar translucent backgroundColor="transparent" />
+      <SafeAreaView style={{ flex: 1}}>
+      <AppStatusBar backgroundColor={colors.themePurple1} barStyle="light-content" />
+      {/* <StatusBar translucent backgroundColor="transparent" /> */}
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Interpreter View  */}
         <View style={styles.interpreterView}>
@@ -109,6 +113,7 @@ const Interpreter = ({navigation}) => {
           ))}
         </View>
       </ScrollView>
+      </SafeAreaView>
     </View>
   );
 };
