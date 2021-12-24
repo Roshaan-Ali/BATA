@@ -14,7 +14,9 @@ import colors from '../assets/colors';
 import Button from '../components/Button';
 import Header from '../components/Header';
 import IconComp from '../components/IconComp';
-
+import { SafeAreaView } from 'react-native-safe-area-context';
+import AppStatusBar from '../components/AppStatusBar';
+import colors from '../assets/colors';
 const {width, height} = Dimensions.get('window');
 
 const Translator = ({navigation}) => {
@@ -40,6 +42,8 @@ const Translator = ({navigation}) => {
   };
   return (
     <View style={styles.container}>
+      <SafeAreaView style={{ flex: 1}}>
+      <AppStatusBar backgroundColor={colors.themePurple1} barStyle="light-content" />
       {/* Header  */}
       <Header showBackBtn={true} navigation={navigation} />
       <ScrollView
@@ -137,6 +141,7 @@ const Translator = ({navigation}) => {
           isBgColor={false}
         />
       </ScrollView>
+      </SafeAreaView>
     </View>
   );
 };

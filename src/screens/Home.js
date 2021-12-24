@@ -17,6 +17,8 @@ import MapView from 'react-native-maps';
 import {MotiView} from 'moti';
 import * as actions from '../store/actions/actions';
 import {connect} from 'react-redux';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import AppStatusBar from '../components/AppStatusBar';
 // import BoxComp from '../components/BoxComp';
 
 const width = Dimensions.get('window').width;
@@ -38,6 +40,8 @@ function Home({navigation, UserReducer}) {
 
   return (
     <View style={styles.container}>
+    <SafeAreaView style={{ flex: 1}}>
+    <AppStatusBar backgroundColor={colors.themePurple1} barStyle="light-content" />
       {/* Header  */}
       <Header title="Menu" navigation={navigation} />
 
@@ -48,6 +52,7 @@ function Home({navigation, UserReducer}) {
         <View style={styles.greetingContainer}>
           <View style={{flexDirection: 'column', marginLeft: width * 0.05}}>
             <MotiView
+              // style={{backgroundColor:'red'}}
               from={{
                 opacity: 0.5,
                 scale: 0.9,
@@ -200,6 +205,7 @@ function Home({navigation, UserReducer}) {
             }}></MapView>
         </View>
       </ScrollView>
+      </SafeAreaView>
     </View>
   );
 }
@@ -282,7 +288,7 @@ const styles = StyleSheet.create({
   heading_username: {
     color: colors.themePurple1,
     fontSize: width * 0.11,
-    marginTop: height * -0.03,
+    // marginTop: height * -0.03,
   },
   greetingContainer: {
     flexDirection: 'row',

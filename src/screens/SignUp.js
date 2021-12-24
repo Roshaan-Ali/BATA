@@ -17,6 +17,8 @@ import CustomDropdownModal from '../components/CustomDropdownModal';
 import colors from '../assets/colors';
 import IconComp from '../components/IconComp';
 import AlertModal from '../components/AlertModal';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import AppStatusBar from '../components/AppStatusBar';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -86,6 +88,8 @@ const SignUp = ({navigation}) => {
   };
 
   return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#EF2692'}}>
+    <AppStatusBar backgroundColor={colors.themePurple1} barStyle="light-content" />
     <ImageBackground source={background_img} style={styles.image}>
       <ScrollView showsVerticalScrollIndicator={false} style="">
         <View style={styles.formStyle}>
@@ -240,12 +244,13 @@ const SignUp = ({navigation}) => {
         />
       )}
     </ImageBackground>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   formStyle: {
-    paddingVertical: height * 0.1,
+    // paddingVertical: height * 0.1,
     paddingBottom: 200,
     justifyContent: 'center',
     alignItems: 'center',
@@ -253,7 +258,7 @@ const styles = StyleSheet.create({
   downIcon: {
     position: 'absolute',
     right: width * 0.045,
-    top: height * 0.027,
+    // top: height * 0.027,
     color: 'white',
     fontSize: width * 0.03,
     paddingLeft: width * 0.02,
@@ -268,7 +273,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'flex-start',
     paddingLeft: width * 0.045,
-    height: height * 0.08,
+    height: 50
   },
   languageText: {
     fontSize: width * 0.045,

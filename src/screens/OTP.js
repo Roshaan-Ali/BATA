@@ -16,6 +16,8 @@ import {
 } from 'react-native';
 import colors from '../assets/colors';
 import {connect} from 'react-redux';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import AppStatusBar from '../components/AppStatusBar';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -38,6 +40,8 @@ const Otp = ({navigation, user_signup, route}) => {
   };
 
   return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#EF2692'}}>
+    <AppStatusBar backgroundColor={colors.themePurple1} barStyle="light-content" />
     <ScrollView showsVerticalScrollIndicator={false}>
       <ImageBackground source={background_img} style={styles.image}>
         <Heading title="Enter OTP Code" passedStyle={styles.heading} />
@@ -61,6 +65,7 @@ const Otp = ({navigation, user_signup, route}) => {
         {/* <Button title="Confirm" onBtnPress={() => _onPressSignUp()} /> */}
       </ImageBackground>
     </ScrollView>
+    </SafeAreaView>
   );
 };
 

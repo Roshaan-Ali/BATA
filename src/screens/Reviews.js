@@ -5,12 +5,17 @@ import ReviewsMapper from '../components/ReviewsMapper';
 import {color} from 'react-native-reanimated';
 import colors from '../assets/colors';
 import Header from '../components/Header';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import AppStatusBar from '../components/AppStatusBar';
+
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
 const Reviews = ({navigation}) => {
   return (
     <View style={styles.container}>
+      <SafeAreaView style={{ flex: 1}}>
+      <AppStatusBar backgroundColor={colors.themePurple1} barStyle="light-content" />
       <Header title="Back" navigation={navigation} showBackBtn={true}/>
       <Heading
         passedStyle={styles.reviewHeading}
@@ -28,6 +33,7 @@ const Reviews = ({navigation}) => {
           return <ReviewsMapper item={item} index={index} />;
         }}
       />
+      </SafeAreaView>
     </View>
   );
 };

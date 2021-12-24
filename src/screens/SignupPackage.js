@@ -5,6 +5,8 @@ import {
   Dimensions,
   ImageBackground,
   ScrollView,
+  StatusBar,
+  Platform
 } from 'react-native';
 import colors from '../assets/colors';
 import Heading from '../components/Heading';
@@ -13,7 +15,7 @@ import IconComp from '../components/IconComp';
 import Button from '../components/Button';
 import StripeModal from '../components/StripeModal';
 import {StripeProvider} from '@stripe/stripe-react-native';
-
+import { SafeAreaView } from 'react-native-safe-area-context';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
@@ -36,6 +38,8 @@ const SignupPackage = ({navigation, route}) => {
     'pk_test_51JVChuLcwRj59Ifbt31dML7GTICUq0WRuxkSvFr9cbrNEzJgLHt8GuDRpCldBdJ8uS8O4OFuXRbcfqEKNnTYHK5u007FIvTgKu';
 
   return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#EF2692'}}>
+    <AppStatusBar backgroundColor={colors.themePurple1} barStyle="light-content" />
     <StripeProvider publishableKey={PUB_KEY_STRIPE}>
       <View style={styles.container}>
         <ImageBackground source={background_img} style={styles.image}>
@@ -103,6 +107,7 @@ const SignupPackage = ({navigation, route}) => {
         </ImageBackground>
       </View>
     </StripeProvider>
+    </SafeAreaView>
   );
 };
 

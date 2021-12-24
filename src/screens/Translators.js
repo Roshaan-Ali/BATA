@@ -18,6 +18,9 @@ import Heading from '../components/Heading';
 import IconComp from '../components/IconComp';
 import DatePicker from 'react-native-date-picker';
 import MapView from 'react-native-maps';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import AppStatusBar from '../components/AppStatusBar';
+
 const {width, height} = Dimensions.get('window');
 
 const Translator = ({navigation}) => {
@@ -56,7 +59,9 @@ const Translator = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      <StatusBar translucent backgroundColor="transparent" />
+      <SafeAreaView style={{ flex: 1}}>
+      <AppStatusBar backgroundColor={colors.themePurple1}  barStyle='dark-content' />
+      {/* <StatusBar showHideTransition='fade' animated={true} translucent backgroundColor="transparent" /> */}
       <ScrollView
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps={false}>
@@ -254,6 +259,7 @@ const Translator = ({navigation}) => {
           setShowEndDatePicker(false);
         }}
       />
+      </SafeAreaView>
     </View>
   );
 };

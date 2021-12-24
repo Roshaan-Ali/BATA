@@ -14,6 +14,8 @@ import colors from '../assets/colors';
 import Heading from '../components/Heading';
 import PROFILE_IMAGE from '../assets/Images/profile-image.jpeg';
 import IconComp from '../components/IconComp';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import AppStatusBar from '../components/AppStatusBar';
 
 const {width, height} = Dimensions.get('window');
 
@@ -22,7 +24,9 @@ const SearchingScreen = () => {
   const [status, setStatus] = useState('arrived');
   return (
     <View style={styles.container}>
-      <StatusBar translucent backgroundColor="transparent" />
+      <SafeAreaView style={{ flex: 1}}>
+      <AppStatusBar backgroundColor={colors.themePurple1} barStyle="light-content" />
+      {/* <StatusBar translucent backgroundColor="transparent" /> */}
       <MapView
         // ref={mapRef}
         style={{height: height, width: width}}
@@ -181,6 +185,7 @@ const SearchingScreen = () => {
           </>
         )}
       </View>
+      </SafeAreaView>
     </View>
   );
 };

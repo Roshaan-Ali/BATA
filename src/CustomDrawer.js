@@ -70,6 +70,7 @@ const CustomDrawer = ({navigation, routes, user_logout}) => {
     <View style={{flex: 1}}>
       <Image
         source={require('./assets/Images/Logo.png')}
+        resizeMode='contain'
         style={styles.appLogo}
       />
       <View style={styles.menuContainer}>

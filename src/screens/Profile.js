@@ -5,7 +5,7 @@ import {
   View,
   TouchableOpacity,
   Image,
-  ScrollView,
+  ScrollView,PixelRatio
 } from 'react-native';
 import Header from '../components/Header';
 import Heading from '../components/Heading';
@@ -17,6 +17,8 @@ import {launchImageLibrary} from 'react-native-image-picker';
 import DisplayNameChangeModal from '../components/DisplayNameChangeModal';
 import {connect} from 'react-redux';
 import AlertModal from '../components/AlertModal';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import AppStatusBar from '../components/AppStatusBar';
 
 const {width, height} = Dimensions.get('window');
 
@@ -82,6 +84,8 @@ const Profile = ({navigation, UserReducer, updateUserData}) => {
   };
   return (
     <View style={styles.container}>
+      <SafeAreaView style={{ flex: 1}}>
+      <AppStatusBar backgroundColor={colors.themePurple1} barStyle="light-content" />
       {/* Header  */}
       <Header title="Back" showBackBtn={true} navigation={navigation} />
 
@@ -181,6 +185,7 @@ const Profile = ({navigation, UserReducer, updateUserData}) => {
           setIsModalVisible={setShowAlert}
         />
       )}
+      </SafeAreaView>
     </View>
   );
 };
@@ -273,7 +278,8 @@ const styles = StyleSheet.create({
     top: height * 0.19,
     right: width * 0.025,
     backgroundColor: 'blue',
-    borderRadius: width,
+
+    // borderRadius: 30 / 0.2,
   },
   border_line: {
     borderBottomWidth: 1,
