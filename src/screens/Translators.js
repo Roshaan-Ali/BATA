@@ -89,7 +89,7 @@ const Translator = ({navigation}) => {
               console.log(data, details);
             }}
             query={{
-              key: 'AIzaSyDGCEsILkoCpmz1Gn63Kf754Jmb2YmOMJo',
+              key: 'AIzaSyBTsC4XcbDQgH_tBwHdKAUUXyVtdOTL4l0',
               language: 'en',
             }}
             renderLeftButton={() => (
