@@ -5,6 +5,7 @@ import android.content.Context;
 import com.airbnb.android.react.maps.MapsPackage;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import com.reactnativecommunity.geolocation.GeolocationPackage;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -17,6 +18,7 @@ import com.facebook.react.bridge.JSIModulePackage; // <- add
 import com.swmansion.reanimated.ReanimatedJSIModulePackage; // <- add
 //import io.invertase.firebase.app.ReactNativeFirebaseAppPackage;
 import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
+import com.reactnativecommunity.geolocation.GeolocationPackage;
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -36,6 +38,7 @@ public class MainApplication extends Application implements ReactApplication {
       new SplashScreenReactPackage();
       new VectorIconsPackage();
       new MapsPackage();
+      new GeolocationPackage();
       return packages;
     }
     @Override

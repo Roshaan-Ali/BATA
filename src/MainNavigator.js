@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {View, Text, StyleSheet, StatusBar} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, Text, StyleSheet, StatusBar, PermissionsAndroid} from 'react-native';
 import colors from './assets/colors';
 import AuthRootStackScreen from './AuthRootStackScreen';
 import TextSample from './components/TextSample';
@@ -17,6 +17,27 @@ function Main({userLogin, UserReducer}) {
   const [token, onChangeToken] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    async function requestLocationPermission() {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+          {
+            title: 'Location Permission',
+            message: 'This App needs access to your location. ',
+          },
+        );
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          console.log('You can use locations ');
+        } else {
+          console.log('Location permission denied');
+        }
+      } catch (err) {
+        console.warn(err);
+      }
+    }
+    requestLocationPermission();
+  }, []);
   if (loading) {
     return (
       <View style={styles.lottieContainer}>
@@ -43,7 +64,7 @@ function Main({userLogin, UserReducer}) {
   } else {
     return (
       <NavigationContainer>
-        {UserReducer.isUserLogin === true ? (
+        {UserReducer?.isUserLogin === true ? (
           // token != null || userLogin?.token != null ?
           <MainAppScreens />
         ) : (

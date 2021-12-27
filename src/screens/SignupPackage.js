@@ -16,6 +16,7 @@ import Button from '../components/Button';
 import StripeModal from '../components/StripeModal';
 import {StripeProvider} from '@stripe/stripe-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import AppStatusBar from '../components/AppStatusBar';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
@@ -118,7 +119,7 @@ const styles = StyleSheet.create({
     marginHorizontal: width * 0.1,
     justifyContent: 'center',
     flex: 1,
-    paddingBottom: height * 0.05,
+    paddingBottom:100,
   },
   btnStyle: {
     backgroundColor: 'white',

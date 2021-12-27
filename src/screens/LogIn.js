@@ -8,7 +8,8 @@ import {
   Dimensions,
   ImageBackground,
   ScrollView,
-  StatusBar
+  StatusBar,
+  Platform,
 } from 'react-native';
 import Button from '../components/Button';
 import Inputbox from '../components/Inputbox';
@@ -18,7 +19,7 @@ import {connect} from 'react-redux';
 import * as actions from '../store/actions/actions';
 import Heading from '../components/Heading';
 import colors from '../assets/colors';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import AppStatusBar from '../components/AppStatusBar';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -41,84 +42,90 @@ const LogIn = ({navigation, user_login, UserReducer}) => {
 
   return (
     <View style={styles.container}>
-      <SafeAreaView style={{ flex: 1, backgroundColor: '#EF2692'}}>
-      <AppStatusBar backgroundColor={colors.themePurple1} barStyle="light-content" />
-      <ImageBackground source={background_img} style={styles.image}>
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <View style={styles.centerView}>
-            <Image resizeMode="contain" source={logo} style={styles.logo} />
+      <SafeAreaView style={{flex: 1 , backgroundColor:'#EF2692'}}>
+        {/* {Platform.OS == 'ios' && ( */}
+          <AppStatusBar
+            platform={Platform.OS}
+            backgroundColors={colors.themePurple1}
+            barStyle="light-content"
+          />
+        {/* )} */}
+        <ImageBackground source={background_img} style={styles.image}>
+          <ScrollView showsVerticalScrollIndicator={false}>
+            <View style={styles.centerView}>
+              <Image resizeMode="contain" source={logo} style={styles.logo} />
 
-            <Inputbox
-              value={email}
-              setTextValue={setEmail}
-              placeholderTilte="E-mail"
-              isShowIcon={true}
-              names={'person'}
-            />
-
-            <Inputbox
-              value={password}
-              setTextValue={setPassword}
-              placeholderTilte="Password"
-              isSecure={!isShowPassword}
-              isPassword={true}
-              isShowIcon={true}
-              names={'lock'}
-              onPressIcon={_onPressShowPassword}
-            />
-            <Button
-              title="Login"
-              btnStyle={styles.loginBtnStyle}
-              btnTextStyle={styles.loginBtnTextStyle}
-              isBgColor={false}
-              onBtnPress={() => user_login({email, password})}
-            />
-            <View style={styles.forgotPassView}>
-              <Heading
-                passedStyle={styles.forgotPassTExt}
-                fontType="semi-bold"
-                title="Forgot Password?"
+              <Inputbox
+                value={email}
+                setTextValue={setEmail}
+                placeholderTilte="E-mail"
+                isShowIcon={true}
+                names={'person'}
               />
-              <TouchableOpacity onPress={() => console.log('forget')}>
-                <Heading
-                  passedStyle={styles.clickHere}
-                  fontType="semi-bold"
-                  title="Click Here"
-                />
-              </TouchableOpacity>
-            </View>
 
-            <View style={styles.horizontalLinePosition}>
-              <View style={styles.horizontalLine} />
-              <View>
+              <Inputbox
+                value={password}
+                setTextValue={setPassword}
+                placeholderTilte="Password"
+                isSecure={!isShowPassword}
+                isPassword={true}
+                isShowIcon={true}
+                names={'lock'}
+                onPressIcon={_onPressShowPassword}
+              />
+              <Button
+                title="Login"
+                btnStyle={styles.loginBtnStyle}
+                btnTextStyle={styles.loginBtnTextStyle}
+                isBgColor={false}
+                onBtnPress={() => user_login({email, password})}
+              />
+              <View style={styles.forgotPassView}>
                 <Heading
+                  passedStyle={styles.forgotPassTExt}
                   fontType="semi-bold"
-                  passedStyle={styles.orView}
-                  title="Or"
+                  title="Forgot Password?"
                 />
+                <TouchableOpacity onPress={() => console.log('forget')}>
+                  <Heading
+                    passedStyle={styles.clickHere}
+                    fontType="semi-bold"
+                    title="Click Here"
+                  />
+                </TouchableOpacity>
               </View>
-              <View style={styles.horizontalLine} />
+
+              <View style={styles.horizontalLinePosition}>
+                <View style={styles.horizontalLine} />
+                <View>
+                  <Heading
+                    fontType="semi-bold"
+                    passedStyle={styles.orView}
+                    title="Or"
+                  />
+                </View>
+                <View style={styles.horizontalLine} />
+              </View>
+              <Button
+                title="Sign Up Now"
+                onBtnPress={() => _onPressSignUp()}
+                btnStyle={{
+                  borderRadius: width * 0.08,
+                  borderWidth: 1,
+                  borderColor: 'white',
+                  backgroundColor: 'transparent',
+                  paddingVertical: height * 0.013,
+                }}
+                btnTextStyle={{
+                  color: 'white',
+                  fontFamily: 'Poppins-SemiBold',
+                }}
+                isBgColor={false}
+                isBgColor={false}
+              />
             </View>
-            <Button
-              title="Sign Up Now"
-              onBtnPress={() => _onPressSignUp()}
-              btnStyle={{
-                borderRadius: width * 0.08,
-                borderWidth: 1,
-                borderColor: 'white',
-                backgroundColor: 'transparent',
-                paddingVertical: height * 0.013,
-              }}
-              btnTextStyle={{
-                color: 'white',
-                fontFamily: 'Poppins-SemiBold',
-              }}
-              isBgColor={false}
-              isBgColor={false}
-            />
-          </View>
-        </ScrollView>
-      </ImageBackground>
+          </ScrollView>
+        </ImageBackground>
       </SafeAreaView>
     </View>
   );

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Heading from '../components/Heading';
 import Button from '../components/Button';
 import * as actions from '../store/actions/actions';
@@ -22,7 +22,7 @@ import AppStatusBar from '../components/AppStatusBar';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
-const Otp = ({navigation, user_signup, route}) => {
+const Otp = ({navigation, user_signup, route, getOtpCode}) => {
   const OTP = '0000';
   console.log(route.params);
 
@@ -39,6 +39,9 @@ const Otp = ({navigation, user_signup, route}) => {
     }
   };
 
+  useEffect(() => {
+    getOtpCode()
+  })
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#EF2692'}}>
     <AppStatusBar backgroundColor={colors.themePurple1} barStyle="light-content" />

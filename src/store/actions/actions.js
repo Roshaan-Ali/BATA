@@ -65,7 +65,7 @@ export const user_signup = data => async dispatch => {
     //     accessToken: response.data?.data?.token,
     //   },
     // });
-    console.log({data})
+    console.log({data});
     dispatch({
       type: types.USER_SIGNUP,
       payload: {
@@ -121,5 +121,15 @@ export const updateUserData = userData => async dispatch => {
     });
   } catch (error) {
     console.log('Failed to update data.');
+  }
+};
+
+export const getOtpCode = () => async dispatch => {
+  try {
+    const response = await axios.post(
+      `https://9e8f-110-93-244-255.ngrok.io/api/auth/getOtpCode?phonenumber=923032149856&channel=sms`,
+    );
+  } catch (err) {
+    console.log('Failed to get Otp Code.');
   }
 };
