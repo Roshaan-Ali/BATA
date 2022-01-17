@@ -1,40 +1,43 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   Dimensions,
   StyleSheet,
-  Text,
   View,
   TouchableOpacity,
-  FlatList,
   StatusBar,
   Image,
 } from 'react-native';
-import Modal from 'react-native-modal';
-import Button from './Button';
-import PROFILE_IMAGE from '../assets/Images/profile-image.jpeg';
+import PROFILE_IMAGE from '../assets/Images/Logo.png';
 import Heading from './Heading';
 import LinearGradient from 'react-native-linear-gradient';
 import IconComp from './IconComp';
 import colors from '../assets/colors';
+import LottieView from 'lottie-react-native';
+import * as actions from '../store/actions/actions';
+import {connect} from 'react-redux';
 
 const {width, height} = Dimensions.get('window');
 
-const ConfirmTranslatorModal = ({navigation, route}) => {
+const ConfirmTranslatorModal = ({UserReducer,navigation, route, getCurrentBooking}) => {
   const data = route.params;
-  console.log({data});
+  const [isLoading, setIsLoading] = useState(false);
+  const accessToken = UserReducer?.accessToken;
+
+  const _onPressGoBackHome = async () => {
+    setIsLoading(true);
+    await getCurrentBooking(accessToken);
+    setIsLoading(false);
+    navigation.navigate('Home');
+  };
   return (
     <View style={styles.mainContainerScreen}>
       <StatusBar translucent />
       <View style={styles.outterContainer}>
         <View style={styles.container}>
           <LinearGradient
-            colors={[
-              'rgba(129,36,108,1)',
-              // 'rgba(129,36,108,1)',
-              'white',
-            ]}
+            colors={['rgba(129,36,108,1)', 'white']}
             style={styles.linearGradient}>
-            <Heading title="Confirmation" passedStyle={styles.heading} />
+            <Heading title="Pending Approval" passedStyle={styles.heading} />
 
             {/* Details  */}
             <View style={styles.detailsContainer}>
@@ -47,18 +50,26 @@ const ConfirmTranslatorModal = ({navigation, route}) => {
                 />
                 <View style={styles.rowView}>
                   <Heading
-                    title={data.name}
+                    title={data?.name || 'Request Initiated'}
                     passedStyle={styles.usernameStyle}
                   />
-                  <Heading
-                    title={data.type}
+                  {/* <Heading
+                    title={data?.type || 'Interpreter'}
                     passedStyle={styles.userTypeStyle}
-                  />
+                  /> */}
                 </View>
               </View>
 
               {/* Language  */}
-              <View style={styles.btnContainer}>
+              <View
+                style={[
+                  styles.btnContainer,
+                  data?.translating_language?.length === 1 && {
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  },
+                ]}>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
                   <IconComp
                     type="FontAwesome"
@@ -66,16 +77,40 @@ const ConfirmTranslatorModal = ({navigation, route}) => {
                     iconStyle={styles.buttonIconStyle}
                   />
 
-                  <Heading title="Language" passedStyle={styles.buttonLabel} />
+                  <Heading title="Languages" passedStyle={styles.buttonLabel} />
                 </View>
-                <Heading
-                  title={data.native}
-                  passedStyle={styles.buttonLabel2}
-                />
+
+                {data?.translating_language?.length === 1 ? (
+                  <Heading
+                    key={data?.translating_language[0]}
+                    title={data?.translating_language[0]}
+                    fontType={'semi-bold'}
+                    passedStyle={styles.buttonLabel2}
+                  />
+                ) : (
+                  <View
+                    style={{
+                      flexWrap: 'wrap',
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      marginLeft: width * 0.05,
+                      // backgroundColor: 'green',
+                    }}>
+                    {/* {['English', 'Arabic', 'Rohingya', 'Burmese'].map((ele,idx) => ( */}
+                    {data?.translating_language?.map((ele, idx) => (
+                      <Heading
+                        key={idx}
+                        title={`${idx + 1}) ${ele}`}
+                        fontType={'semi-bold'}
+                        passedStyle={styles.buttonLabel2}
+                      />
+                    ))}
+                  </View>
+                )}
               </View>
 
               {/* Call Now */}
-              <TouchableOpacity style={styles.btnContainer}>
+              {/* <TouchableOpacity style={styles.btnContainer}>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
                   <IconComp
                     type="FontAwesome"
@@ -85,8 +120,11 @@ const ConfirmTranslatorModal = ({navigation, route}) => {
 
                   <Heading title="Call Now" passedStyle={styles.buttonLabel} />
                 </View>
-                <Heading title={data.phone} passedStyle={styles.buttonLabel2} />
-              </TouchableOpacity>
+                <Heading
+                  title={data?.phone || '+102332387654'}
+                  passedStyle={styles.buttonLabel2}
+                />
+              </TouchableOpacity> */}
 
               {/* Check Mark View  */}
               <View
@@ -108,23 +146,41 @@ const ConfirmTranslatorModal = ({navigation, route}) => {
 
               <Heading title="All right!" passedStyle={styles.allRightText} />
               <Heading
-                title="Your translator is on the way"
+                title="Your request for translator(s) has been initiated you will be notified as admin approves."
                 passedStyle={styles.translatorText}
               />
             </View>
 
             {/* Go Back Home  */}
-            <TouchableOpacity
-              activeOpacity={0.8}
-              onPress={() => navigation.navigate('Home')}
-              style={styles.goBackButton}>
-              <IconComp
-                type="FontAwesome"
-                name="arrow-left"
-                iconStyle={styles.goBackIconStyle}
-              />
-              <Heading title="Back To home" passedStyle={styles.goBackHome} />
-            </TouchableOpacity>
+
+            {isLoading ? (
+              <View style={styles.loadingComponent}>
+                <Heading
+                  title="Please Wait"
+                  passedStyle={styles.savingText}
+                  fontType="semi-bold"
+                />
+                <LottieView
+                  speed={1}
+                  style={styles.lottieStyles}
+                  autoPlay
+                  loop
+                  source={require('../assets/Lottie/purple-loading-2.json')}
+                />
+              </View>
+            ) : (
+              <TouchableOpacity
+                activeOpacity={0.8}
+                onPress={() => _onPressGoBackHome()}
+                style={styles.goBackButton}>
+                <IconComp
+                  type="FontAwesome"
+                  name="arrow-left"
+                  iconStyle={styles.goBackIconStyle}
+                />
+                <Heading title="Back To home" passedStyle={styles.goBackHome} />
+              </TouchableOpacity>
+            )}
           </LinearGradient>
         </View>
       </View>
@@ -133,7 +189,11 @@ const ConfirmTranslatorModal = ({navigation, route}) => {
   );
 };
 
-export default ConfirmTranslatorModal;
+const mapStateToProps = ({UserReducer}) => {
+  return {UserReducer};
+};
+
+export default connect(mapStateToProps, actions)(ConfirmTranslatorModal);
 
 const styles = StyleSheet.create({
   mainContainerScreen: {
@@ -179,6 +239,7 @@ const styles = StyleSheet.create({
     fontSize: width * 0.04,
     marginTop: height * 0.01,
     marginBottom: height * 0.02,
+    marginHorizontal: width * 0.05,
     alignSelf: 'center',
   },
   linearGradient: {
@@ -194,21 +255,22 @@ const styles = StyleSheet.create({
   container: {
     width: width * 0.9,
     // bottom: 0,
-    left: 0,
+    // left: 0,
     justifyContent: 'space-around',
     alignSelf: 'center',
-    right: 0,
+    // right: 0,
+    marginTop: height * 0.1,
     // position: 'absolute',
     // height: height * 0.8,
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
   },
   btnContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    // flexDirection: 'row',
+    // alignItems: 'center',
+    // justifyContent: 'space-between',
     paddingVertical: height * 0.03,
     borderTopWidth: 1,
-    justifyContent: 'space-between',
     borderTopColor: 'rgba(0,0,0,0.08)',
     paddingHorizontal: width * 0.06,
     backgroundColor: 'white',
@@ -237,7 +299,7 @@ const styles = StyleSheet.create({
   },
   imageStyle: {
     width: width * 0.15,
-    borderRadius: width * 0.5,
+    // borderRadius: width * 0.5,
   },
   rowView: {
     marginLeft: width * 0.03,
@@ -246,13 +308,13 @@ const styles = StyleSheet.create({
   usernameStyle: {
     fontSize: width * 0.05,
     fontWeight: '600',
-    textTransform:'capitalize',
+    textTransform: 'capitalize',
     color: 'black',
   },
   userTypeStyle: {
     fontSize: width * 0.04,
     color: 'grey',
-    textTransform:'capitalize',
+    textTransform: 'capitalize',
   },
   buttonIconStyle: {
     color: colors.themePurple1,
@@ -265,11 +327,13 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   buttonLabel2: {
-    textTransform:'capitalize',
+    textTransform: 'capitalize',
     fontSize: width * 0.035,
     marginLeft: width * 0.04,
     color: 'black',
-    fontWeight: '600',
+    width: width * 0.25,
+    marginTop: 2,
+    // backgroundColor: 'red',
   },
   checkIconStyle: {
     color: colors.themePurple1,
@@ -287,5 +351,31 @@ const styles = StyleSheet.create({
     elevation: 9,
     top: height * 0.085,
     right: width * 0.31,
+  },
+  lottieStyles: {
+    height: height * 0.13,
+    position: 'absolute',
+    left: width * 0.1,
+    right: 0,
+    top: height * -0.014,
+  },
+  loadingComponent: {
+    borderRadius: width * 0.02,
+    position: 'relative',
+    // borderWidth: 1,
+    // borderColor: colors.themePurple1,
+    // backgroundColor: colors.themePurple1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: height * 0.08,
+    width: width * 0.8,
+    marginVertical: height * 0.02,
+  },
+  savingText: {
+    color: colors.themePurple1,
+    position: 'absolute',
+    left: width * 0.22,
+    top: height * 0.022,
+    fontSize: width * 0.045,
   },
 });

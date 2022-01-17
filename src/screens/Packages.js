@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -6,64 +6,200 @@ import {
   View,
   Dimensions,
   FlatList,
+  TouchableOpacity,
 } from 'react-native';
 import colors from '../assets/colors';
 import Header from '../components/Header';
 import Heading from '../components/Heading';
 import PackagesMapper from '../components/PackagesMapper';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import AppStatusBar from '../components/AppStatusBar';
+import * as actions from '../store/actions/actions';
+import {connect} from 'react-redux';
+import {StripeProvider} from '@stripe/stripe-react-native';
+import {PUB_KEY_STRIPE} from '../config/config';
+import StripeModal from '../components/StripeModal';
+import AlertModal from '../components/AlertModal';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
-// on Packages Press
-const _onPackagePress = ({item, index}) => {
-  console.log('Pressed Pacakages');
-};
+const Packages = ({
+  navigation,
+  UserReducer,
+  getAllPackages,
+  buyPackage,
+  updatePackage,
+}) => {
+  const accessToken = UserReducer?.accessToken;
+  const [stripeGeneratedKey, setStripeGeneratedKey] = useState('');
+  const [packages, setPackages] = useState(UserReducer?.packages);
+  const [isStripeModalVisible, setIsStripeModalVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedPackage, setSelectedPackage] = useState(null);
+  const [isConfirmBuyModalVisible, setIsConfirmBuyModalVisible] =
+    useState(false);
+  // on Packages Get Started Press
+  const _onGetStartedPress = async (item, index) => {
+    setIsStripeModalVisible(true);
+    setSelectedPackage(item);
+  };
 
-const Packages = ({navigation}) => {
-  const [packages, setPackages] = useState(dummyPackages);
+  // Close Stripe Modal
+  const _closeStripeModal = () => {
+    setIsStripeModalVisible(false);
+    setIsConfirmBuyModalVisible(true);
+  };
+
+  // Buy Package
+  const _onPressBuy = async () => {
+    setIsLoading(true);
+    if (stripeGeneratedKey === '') {
+      alert('Card number is required');
+    } else {
+      console.log(stripeGeneratedKey);
+      const data = {
+        package_id: selectedPackage.id,
+        stripeToken: stripeGeneratedKey,
+      };
+      if (UserReducer?.userData?.current_package === null) {
+        await buyPackage(data, accessToken, _closeStripeModal);
+      } else {
+        await updatePackage(data, accessToken, _closeStripeModal);
+      }
+    }
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    getAllPackages(accessToken);
+  }, []);
+
+ 
   return (
-    <View style={styles.container}>
-      <SafeAreaView style={{ flex: 1}}>
-      <AppStatusBar backgroundColor={colors.themePurple1} barStyle="light-content" />
-      {/* Header  */}
-      <Header title="Menu" navigation={navigation} />
+    <StripeProvider publishableKey={PUB_KEY_STRIPE}>
+      <View style={styles.container}>
+        <SafeAreaView style={{flex: 1}}>
+          {/* <AppStatusBar
+            backgroundColor={colors.themePurple1}
+            barStyle="light-content"
+          /> */}
+          {/* Header  */}
+          <Header title="Menu" navigation={navigation} />
 
-      {/* Packages Rendering  */}
-      <FlatList
-        data={packages}
-        nestedScrollEnabled={true}
-        keyExtractor={item => item._id.toString()}
-        contentContainerStyle={styles.flatListStyle}
-        renderItem={({item, index}) => (
-          <PackagesMapper item={item} index={index} onPress={_onPackagePress} />
-        )}
-        ListHeaderComponentStyle={styles.flatListHeaderStyles}
-        ListHeaderComponent={() => {
-          return (
-            <View style={styles.rowView}>
-              <Heading
-                title="Our"
-                passedStyle={styles.ourLabel}
-                fontType="light"
-              />
-              <Heading
-                title="Packages"
-                passedStyle={styles.packageLabel}
-                fontType="semi-bold"
-              />
-            </View>
-          );
-        }}
-      />
-      </SafeAreaView>
-    </View>
+          {/* Packages Rendering  */}
+          <FlatList
+            data={packages}
+            nestedScrollEnabled={true}
+            keyExtractor={item => item.id.toString()}
+            contentContainerStyle={styles.flatListStyle}
+            renderItem={({item, index}) =>
+              (index === 0 || index === 1) && (
+                <PackagesMapper
+                  key={item?.id}
+                  item={item}
+                  index={index}
+                  current_package={UserReducer?.userData?.current_package}
+                  onPress={_onGetStartedPress}
+                />
+              )
+            }
+            ListHeaderComponentStyle={styles.flatListHeaderStyles}
+            ListHeaderComponent={() => {
+              return (
+                <View style={styles.rowView}>
+                  <Heading
+                    title="Our"
+                    passedStyle={styles.ourLabel}
+                    fontType="light"
+                  />
+                  <Heading
+                    title="Packages"
+                    passedStyle={styles.packageLabel}
+                    fontType="semi-bold"
+                  />
+                </View>
+              );
+            }}
+            ListFooterComponentStyle={styles.footerStyles}
+            ListFooterComponent={() => (
+              <View style={{paddingBottom: height * 0.025}}>
+                <Heading
+                  title={'Create & Subscribe Custom Package'}
+                  passedStyle={styles.packageName}
+                  fontType="semi-bold"
+                />
+                <TouchableOpacity
+                  activeOpacity={0.9}
+                  style={styles.btnStyle}
+                  onPress={() => navigation.navigate('CustomPackage')}>
+                  <Heading
+                    title="Get Started"
+                    passedStyle={styles.btnTextStyle}
+                    fontType={'semi-bold'}
+                  />
+                </TouchableOpacity>
+                {
+                
+                UserReducer?.userData?.current_package?.name?.toLowerCase() !==
+                  'individual' &&
+                  UserReducer?.userData?.current_package?.name?.toLowerCase() !==
+                    'enterprise' && 
+                    UserReducer?.userData?.current_package !== null &&
+                    (
+                    <View
+                      style={{
+                        width: width * 0.35,
+                        paddingVertical: height * 0.005,
+                        borderRadius: width * 0.07,
+                        alignItems: 'center',
+                        alignSelf: 'center',
+                        position: 'absolute',
+                        justifyContent: 'center',
+                        backgroundColor: colors.themeYellow,
+                        top: height * -0.05,
+                        left: width * 0.35,
+                      }}>
+                      <Heading
+                        title={'Activated'}
+                        fontType={'semi-bold'}
+                        passedStyle={{fontSize: width * 0.05, color: 'black'}}
+                      />
+                    </View>
+                  )}
+              </View>
+            )}
+          />
+        </SafeAreaView>
+      </View>
+
+      {isStripeModalVisible && (
+        <StripeModal
+          setId={setStripeGeneratedKey}
+          onPress={_onPressBuy}
+          isLoading={isLoading}
+          isModalVisible={isStripeModalVisible}
+          setIsModalVisible={setIsStripeModalVisible}
+        />
+      )}
+
+      {isConfirmBuyModalVisible && (
+        <AlertModal
+          title="Success!"
+          message={`${selectedPackage.name} package has been activated now.`}
+          isModalVisible={isConfirmBuyModalVisible}
+          setIsModalVisible={setIsConfirmBuyModalVisible}
+        />
+      )}
+    </StripeProvider>
   );
 };
 
-export default Packages;
+const mapStateToProps = ({UserReducer}) => {
+  return {UserReducer};
+};
+
+export default connect(mapStateToProps, actions)(Packages);
 
 const styles = StyleSheet.create({
   container: {
@@ -93,93 +229,38 @@ const styles = StyleSheet.create({
     width: width * 0.85,
     marginVertical: height * 0.02,
   },
+  footerStyles: {
+    width: width * 0.85,
+    marginBottom: height * 0.05,
+    borderRadius: width * 0.05,
+    backgroundColor: colors.themePurple1,
+    paddingVertical: height * 0.07,
+    paddingHorizontal: width * 0.1,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 10,
+    },
+    shadowOpacity: 0.53,
+    shadowRadius: 13.97,
+
+    elevation: 21,
+  },
+  btnStyle: {
+    backgroundColor: 'white',
+    width: width * 0.65,
+    paddingVertical: height * 0.018,
+    borderRadius: width * 0.08,
+    alignItems: 'center',
+  },
+  btnTextStyle: {
+    color: 'black',
+    fontFamily: 'Poppins-SemiBold',
+  },
+  packageName: {
+    color: 'white',
+    fontSize: width * 0.09,
+    textTransform: 'capitalize',
+    marginBottom: height * 0.03,
+  },
 });
-
-const dummyPackages = [
-  {
-    _id: 1,
-    package: {
-      name: 'package 1',
-      features: [
-        {
-          _id: 1,
-          name: 'lorem ipsum',
-        },
-        {
-          _id: 2,
-          name: 'lorem ipsum',
-        },
-        {
-          _id: 3,
-          name: 'lorem ipsum',
-        },
-        {
-          _id: 4,
-          name: 'lorem ipsum',
-        },
-        {
-          _id: 5,
-          name: 'lorem ipsum',
-        },
-      ],
-    },
-  },
-
-  {
-    _id: 2,
-    package: {
-      name: 'package 2',
-      features: [
-        {
-          _id: 1,
-          name: 'lorem ipsum',
-        },
-        {
-          _id: 2,
-          name: 'lorem ipsum',
-        },
-        {
-          _id: 3,
-          name: 'lorem ipsum',
-        },
-        {
-          _id: 4,
-          name: 'lorem ipsum',
-        },
-        {
-          _id: 5,
-          name: 'lorem ipsum',
-        },
-      ],
-    },
-  },
-
-  {
-    _id: 3,
-    package: {
-      name: 'package 3',
-      features: [
-        {
-          _id: 1,
-          name: 'lorem ipsum',
-        },
-        {
-          _id: 2,
-          name: 'lorem ipsum',
-        },
-        {
-          _id: 3,
-          name: 'lorem ipsum',
-        },
-        {
-          _id: 4,
-          name: 'lorem ipsum',
-        },
-        {
-          _id: 5,
-          name: 'lorem ipsum',
-        },
-      ],
-    },
-  },
-];

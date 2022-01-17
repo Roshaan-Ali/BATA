@@ -1,5 +1,13 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, StatusBar, PermissionsAndroid} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  StatusBar,
+  PermissionsAndroid,
+  BackHandler,
+} from 'react-native';
+import messaging from '@react-native-firebase/messaging';
 import colors from './assets/colors';
 import AuthRootStackScreen from './AuthRootStackScreen';
 import TextSample from './components/TextSample';
@@ -11,26 +19,28 @@ import {
 } from 'react-native-responsive-screen';
 import {NavigationContainer} from '@react-navigation/native';
 import {connect} from 'react-redux';
-// import * as actions from './store/actions/actions';
+import * as actions from './store/actions/actions';
 
-function Main({userLogin, UserReducer}) {
-  const [token, onChangeToken] = useState(null);
+function Main({UserReducer, getCurrentLocation,subscribeToTopic}) {
   const [loading, setLoading] = useState(false);
+  const [granted, setGranted] = useState(false);
+
+  useEffect(() => {
+    if (granted) {
+      getCurrentLocation();
+    }
+  }, [granted]);
 
   useEffect(() => {
     async function requestLocationPermission() {
       try {
         const granted = await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-          {
-            title: 'Location Permission',
-            message: 'This App needs access to your location. ',
-          },
         );
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-          console.log('You can use locations ');
+          setGranted(granted);
         } else {
-          console.log('Location permission denied');
+          BackHandler.exitApp();
         }
       } catch (err) {
         console.warn(err);
@@ -38,6 +48,15 @@ function Main({userLogin, UserReducer}) {
     }
     requestLocationPermission();
   }, []);
+
+  useEffect(() => {
+    if (UserReducer?.isUserLogin === true) {
+      if (UserReducer?.hasSubscribedToFCMNotification) {
+        subscribeToTopic(UserReducer?.userData?.id?.toString());
+      }
+    }
+  }, [UserReducer?.hasSubscribedToFCMNotification]);
+
   if (loading) {
     return (
       <View style={styles.lottieContainer}>
@@ -98,4 +117,4 @@ const mapStateToProps = ({UserReducer}) => {
   return {UserReducer};
 };
 
-export default connect(mapStateToProps, null)(Main);
+export default connect(mapStateToProps, actions)(Main);

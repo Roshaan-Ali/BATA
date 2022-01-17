@@ -82,7 +82,6 @@ const CustomDrawer = ({navigation, routes, user_logout}) => {
                   label={route}
                   key={index}
                   onPress={() => {
-                    // console.log(route.routeName, currentScreenName);
                     if (currentScreenName === route.routeName) {
                       const resetAction = CommonActions.reset({
                         index: 1,

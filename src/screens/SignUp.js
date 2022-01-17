@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   View,
@@ -9,64 +9,97 @@ import {
   ImageBackground,
   ScrollView,
 } from 'react-native';
-import Button from '../components/Button';
-import Inputbox from '../components/Inputbox';
-import background_img from '../assets/background_img.png';
-import Heading from '../components/Heading';
-import CustomDropdownModal from '../components/CustomDropdownModal';
+import {connect} from 'react-redux';
 import colors from '../assets/colors';
+import Button from '../components/Button';
+import Heading from '../components/Heading';
+import LottieView from 'lottie-react-native';
+import Inputbox from '../components/Inputbox';
 import IconComp from '../components/IconComp';
 import AlertModal from '../components/AlertModal';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import * as actions from '../store/actions/actions';
 import AppStatusBar from '../components/AppStatusBar';
+import background_img from '../assets/background_img.png';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import CustomDropdownModal from '../components/CustomDropdownModal';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
-const SignUp = ({navigation}) => {
+const SignUp = ({
+  navigation,
+  user_signup,
+  UserReducer,
+  setErrorModal,
+  getAllPackages,
+}) => {
   const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
+
+  let packages = UserReducer?.packages;
+  let p_language = UserReducer?.languages;
   const [lastname, setLastname] = useState('');
   const [firstname, setFirstname] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
+  const [showPasswordMismatchAlert, setShowPasswordMismatchAlert] =
+    useState(false);
+  const [selectedService, setSelectedService] = useState(null);
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [isShowPassword, setIsShowPassword] = useState(false);
-  const [selectedPrimaryLang, setSelectedPrimaryLang] = useState('');
-  const [selectedPerson, setSelectedPerson] = useState('');
   const [showLanguageModal, setShowLanguageModal] = useState(false);
-  const [showAccountTypeModal, setShowAccountTypeModal] = useState(false);
-  const [p_language, setP_language] = useState([
-    {_id: 1, label: 'Burmese'},
-    {_id: 11, label: 'Chin'},
-    {_id: 3, label: 'Kachin'},
-    {_id: 4, label: 'Karen'},
-    {_id: 22, label: 'Mon'},
-    {_id: 2, label: 'Rohingya'},
-  ]);
-  const [person, setPerson] = useState([
-    {label: 'Individual', _id: 2},
-    {label: 'Enterprise', _id: 1},
-  ]);
+  const [selectedPrimaryLang, setSelectedPrimaryLang] = useState(null);
+  const [showServicesModal, setShowServicesModal] = useState(false);
+  const [showSignupFailedModal, setShowSignupFailedModal] = useState(false);
 
-  const _onPressSignUp = () => {
-    if (
-      lastname === '' ||
-      p_language === '' ||
-      firstname === '' ||
-      email === ''
-    ) {
-      // alert('All fields required');
-      setShowAlert(true);
+  const _onPressSignUp = async () => {
+    if (password === confirmPassword) {
+      if (
+        firstname === '' ||
+        lastname === '' ||
+        email === '' ||
+        password === '' ||
+        confirmPassword === '' ||
+        phone === '' ||
+        selectedPrimaryLang === '' ||
+        selectedService === ''
+      ) {
+        setShowAlert(true);
+      } else {
+        setIsLoading(true);
+        const data = {
+          first_name: firstname,
+          last_name: lastname,
+          email: email,
+          phone: phone,
+          password: password,
+          confirmPassword: confirmPassword,
+          language: [selectedPrimaryLang?.id],
+          service_type: selectedService?.name,
+        };
+        await user_signup(data, _onSuccess);
+
+        setIsLoading(false);
+      }
     } else {
-      navigation.navigate('SignupPackage', {
-        firstname,
-        lastname,
-        password,
-        email,
-        selectedPrimaryLang,
-        selectedPerson,
-      });
+      setShowPasswordMismatchAlert(true);
     }
   };
+
+  const _onSuccess = () => {
+    navigation.navigate('Otp', {
+      first_name: firstname,
+      last_name: lastname,
+      email: email,
+      phone: phone,
+      password: password,
+      confirmPassword: confirmPassword,
+      language: [selectedPrimaryLang?.id],
+      service_type: selectedService,
+    });
+  };
+
   const _onPresslogin = () => {
     navigation.navigate('LogIn');
   };
@@ -78,177 +111,285 @@ const SignUp = ({navigation}) => {
   // on language selection
   const _onDropdownSelectionPress = item => {
     if (showLanguageModal) {
-      setSelectedPrimaryLang(item.label);
+      setSelectedPrimaryLang(item);
     }
-    if (showAccountTypeModal) {
-      setSelectedPerson(item.label);
+    if (showServicesModal) {
+      setSelectedService(item);
     }
     setShowLanguageModal(false);
-    setShowAccountTypeModal(false);
+    setShowServicesModal(false);
   };
 
+  useEffect(() => {
+    if (UserReducer?.errorModal?.status === true) {
+      setShowSignupFailedModal(true);
+    }
+    if (UserReducer?.errorModal?.status === false) {
+      setShowSignupFailedModal(false);
+    }
+  }, [UserReducer?.errorModal]);
+
+  useEffect(() => {
+    getAllPackages();
+  }, []);
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#EF2692'}}>
-    <AppStatusBar backgroundColor={colors.themePurple1} barStyle="light-content" />
-    <ImageBackground source={background_img} style={styles.image}>
-      <ScrollView showsVerticalScrollIndicator={false} style="">
-        <View style={styles.formStyle}>
-          {/* Sign Up Heading  */}
-          <Heading
-            title="Sign Up Now"
-            passedStyle={styles.heading}
-            fontType="bold"
-          />
-
-          {/* First Name  */}
-          <Inputbox
-            value={firstname}
-            setTextValue={setFirstname}
-            placeholderTilte="First Name"
-            isShowIcon={true}
-            names={'person'}
-          />
-
-          {/* Last Name  */}
-          <Inputbox
-            value={lastname}
-            setTextValue={setLastname}
-            placeholderTilte="Last Name"
-            isShowIcon={true}
-            names={'person'}
-          />
-
-          {/* Email  */}
-          <Inputbox
-            value={email}
-            setTextValue={setEmail}
-            placeholderTilte="Email"
-            names={'email'}
-          />
-
-          {/* Password  */}
-          <Inputbox
-            value={password}
-            setTextValue={setPassword}
-            placeholderTilte="Password"
-            isSecure={!isShowPassword}
-            isPassword={true}
-            isShowIcon={true}
-            names={'lock'}
-            onPressIcon={_onPressShowPassword}
-          />
-
-          {/* Primary Language  */}
-          <TouchableOpacity
-            style={styles.dropdown}
-            activeOpacity={0.8}
-            onPress={() => setShowLanguageModal(true)}>
+    <SafeAreaView style={{flex: 1, backgroundColor: '#EF2692'}}>
+      {/* <AppStatusBar
+        backgroundColor={colors.themePurple1}
+        barStyle="light-content"
+      /> */}
+      <ImageBackground source={background_img} style={styles.image}>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <View style={styles.formStyle}>
+            {/* Sign Up Heading  */}
             <Heading
-              title={
-                selectedPrimaryLang === ''
-                  ? 'Primary Language'
-                  : selectedPrimaryLang
-              }
-              passedStyle={styles.languageText}
+              title="Sign Up Now"
+              passedStyle={styles.heading}
+              fontType="bold"
             />
-            <IconComp
-              name="caretdown"
-              type="AntDesign"
-              iconStyle={styles.downIcon}
-            />
-          </TouchableOpacity>
 
-          {/* Account Type  */}
-          <TouchableOpacity
-            style={styles.dropdown}
-            activeOpacity={0.8}
-            onPress={() => setShowAccountTypeModal(true)}>
-            <Heading
-              title={
-                selectedPerson === ''
-                  ? 'Join As,'
-                  : `Join As, ${selectedPerson}`
-              }
-              passedStyle={styles.languageText}
+            {/* First Name  */}
+            <Inputbox
+              value={firstname}
+              setTextValue={setFirstname}
+              placeholderTilte="First Name"
+              isShowIcon={true}
+              names={'person'}
             />
-            <IconComp
-              name="caretdown"
-              type="AntDesign"
-              iconStyle={styles.downIcon}
-            />
-          </TouchableOpacity>
 
-          {/* Next Button  */}
-          <Button
-            title="Next >"
-            onBtnPress={() => _onPressSignUp()}
-            btnStyle={{
-              borderRadius: width * 0.08,
-              backgroundColor: 'white',
-              paddingVertical: height * 0.015,
-            }}
-            btnTextStyle={{
-              color: colors.themePurple1,
-              fontFamily: 'Poppins-SemiBold',
-            }}
-            isBgColor={false}
-          />
-          <View
-            style={{
-              flexDirection: 'row',
-              marginBottom: 10,
-              justifyContent: 'center',
-            }}>
-            <Heading
-              passedStyle={{color: 'white', fontSize: width * 0.035}}
-              title="Already have an Account?"
+            {/* Last Name  */}
+            <Inputbox
+              value={lastname}
+              setTextValue={setLastname}
+              placeholderTilte="Last Name"
+              isShowIcon={true}
+              names={'person'}
             />
-            <TouchableOpacity onPress={() => _onPresslogin()}>
+
+            {/* Email  */}
+            <Inputbox
+              value={email}
+              setTextValue={setEmail}
+              placeholderTilte="Email"
+              names={'email'}
+            />
+
+            {/* Password  */}
+            <Inputbox
+              value={password}
+              setTextValue={setPassword}
+              placeholderTilte="Password"
+              isSecure={!isShowPassword}
+              isPassword={true}
+              isShowIcon={true}
+              names={'lock'}
+              onPressIcon={_onPressShowPassword}
+              iconStyle={{
+                color: 'white',
+                paddingLeft: width * 0.006,
+              }}
+              iconWrapperStyle={{
+                position: 'absolute',
+                right: width * 0.04,
+                left: width * 0.7,
+              }}
+            />
+
+            {/* Confirm Password  */}
+            <Inputbox
+              value={confirmPassword}
+              setTextValue={setConfirmPassword}
+              placeholderTilte="Confirm Password"
+              isSecure={!isShowPassword}
+              isPassword={true}
+              isShowIcon={true}
+              names={'lock'}
+              iconStyle={{
+                color: 'white',
+                paddingLeft: width * 0.006,
+              }}
+              iconWrapperStyle={{
+                position: 'absolute',
+                right: width * 0.04,
+                left: width * 0.7,
+              }}
+              onPressIcon={_onPressShowPassword}
+            />
+
+            {/* Phone   */}
+            <Inputbox
+              value={phone}
+              setTextValue={setPhone}
+              placeholderTilte="Phone"
+              keyboardType="numeric"
+              names={'smartphone'}
+            />
+            <Heading
+              title="Mention your country code e.g: 1, 92 etc"
+              passedStyle={{fontSize: width * 0.038, color: 'white'}}
+            />
+            {/* Primary Language  */}
+            <TouchableOpacity
+              style={styles.dropdown}
+              activeOpacity={0.8}
+              onPress={() => setShowLanguageModal(true)}>
               <Heading
-                passedStyle={{
-                  color: 'white',
-                  fontSize: width * 0.035,
-                  textDecorationLine: 'underline',
-                  marginLeft: width * 0.02,
-                }}
-                title="Login"
+                title={
+                  selectedPrimaryLang === null
+                    ? 'Primary Language'
+                    : selectedPrimaryLang?.language_name
+                }
+                passedStyle={styles.languageText}
+              />
+              <IconComp
+                name="caretdown"
+                type="AntDesign"
+                iconStyle={styles.downIcon}
               />
             </TouchableOpacity>
+
+            {/* Account Type  */}
+            <TouchableOpacity
+              style={styles.dropdown}
+              activeOpacity={0.8}
+              onPress={() => setShowServicesModal(true)}>
+              <Heading
+                title={
+                  selectedService === null
+                    ? 'Join As,'
+                    : `Join As, ${selectedService?.name}`
+                }
+                passedStyle={styles.languageText}
+              />
+              <IconComp
+                name="caretdown"
+                type="AntDesign"
+                iconStyle={styles.downIcon}
+              />
+            </TouchableOpacity>
+
+            {/* Next Button  */}
+
+            {isLoading ? (
+              <TouchableOpacity
+                style={styles.loadingComponent}
+                activeOpacity={1}>
+                <LottieView
+                  speed={1}
+                  style={styles.lottieStyles}
+                  autoPlay
+                  colorFilters={'blue'}
+                  loop
+                  source={require('../assets/Lottie/purple-loading-2.json')}
+                />
+              </TouchableOpacity>
+            ) : (
+              <Button
+                title="Next >"
+                onBtnPress={() => _onPressSignUp()}
+                btnStyle={{
+                  borderRadius: width * 0.08,
+                  backgroundColor: 'white',
+                  paddingVertical: height * 0.015,
+                }}
+                btnTextStyle={{
+                  color: colors.themePurple1,
+                  fontFamily: 'Poppins-SemiBold',
+                }}
+                isBgColor={false}
+              />
+            )}
+            <View
+              style={{
+                flexDirection: 'row',
+                marginBottom: 10,
+                justifyContent: 'center',
+              }}>
+              <Heading
+                passedStyle={{color: 'white', fontSize: width * 0.035}}
+                title="Already have an Account?"
+              />
+              <TouchableOpacity onPress={() => _onPresslogin()}>
+                <Heading
+                  passedStyle={{
+                    color: 'white',
+                    fontSize: width * 0.035,
+                    textDecorationLine: 'underline',
+                    marginLeft: width * 0.02,
+                  }}
+                  title="Login"
+                />
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-        {showLanguageModal && (
-          <CustomDropdownModal
-            array={p_language}
-            onPress={_onDropdownSelectionPress}
-            isModalVisible={showLanguageModal}
-            setIsModalVisible={setShowLanguageModal}
+          {showLanguageModal && (
+            <CustomDropdownModal
+              array={p_language}
+              onPress={_onDropdownSelectionPress}
+              isModalVisible={showLanguageModal}
+              setIsModalVisible={setShowLanguageModal}
+            />
+          )}
+
+          {showServicesModal && (
+            <CustomDropdownModal
+              array={packages}
+              onPress={_onDropdownSelectionPress}
+              isModalVisible={showServicesModal}
+              setIsModalVisible={setShowServicesModal}
+            />
+          )}
+        </ScrollView>
+
+        {showAlert && (
+          <AlertModal
+            title="Oh Snaps!"
+            message="Look out, one or more requried fields are left empty."
+            isModalVisible={showAlert}
+            setIsModalVisible={setShowAlert}
+          />
+        )}
+        {showSignupFailedModal && (
+          <AlertModal
+            title="Oh Snaps!"
+            message={UserReducer?.errorModal?.msg}
+            isModalVisible={showSignupFailedModal}
+            onPress={() => setErrorModal()}
+            setIsModalVisible={setShowSignupFailedModal}
           />
         )}
 
-        {showAccountTypeModal && (
-          <CustomDropdownModal
-            array={person}
-            onPress={_onDropdownSelectionPress}
-            isModalVisible={showAccountTypeModal}
-            setIsModalVisible={setShowAccountTypeModal}
+        {showPasswordMismatchAlert && (
+          <AlertModal
+            title="Oh Snaps!"
+            message={'Passwords Mismatch!'}
+            isModalVisible={showPasswordMismatchAlert}
+            setIsModalVisible={setShowPasswordMismatchAlert}
           />
         )}
-      </ScrollView>
-
-      {showAlert && (
-        <AlertModal
-        title="Oh Snaps!"
-        message="Look out, one or more requried fields are left empty."
-          isModalVisible={showAlert}
-          setIsModalVisible={setShowAlert}
-        />
-      )}
-    </ImageBackground>
+      </ImageBackground>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  loadingComponent: {
+    borderRadius: 50,
+    position: 'relative',
+    backgroundColor: 'white',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: height * 0.08,
+    width: width * 0.8,
+    marginVertical: height * 0.02,
+  },
+  lottieStyles: {
+    height: height * 0.15,
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: height * -0.02,
+  },
   formStyle: {
     // paddingVertical: height * 0.1,
     paddingBottom: 200,
@@ -273,11 +414,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'flex-start',
     paddingLeft: width * 0.045,
-    height: 50
+    height: 50,
   },
   languageText: {
     fontSize: width * 0.045,
     color: 'white',
+    textTransform: 'capitalize',
   },
   image: {
     justifyContent: 'center',
@@ -297,4 +439,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SignUp;
+const mapStateToProps = ({UserReducer}) => {
+  return {UserReducer};
+};
+export default connect(mapStateToProps, actions)(SignUp);

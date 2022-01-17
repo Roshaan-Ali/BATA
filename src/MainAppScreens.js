@@ -2,18 +2,25 @@ import React, {useEffect, useState} from 'react';
 import Payment from './screens/Payment';
 import Settings from './screens/Settings';
 import CustomDrawer from './CustomDrawer';
-import Subscription from './screens/Subscription';
+import BookingHistory from './screens/BookingHistory';
 import HomeScreensStack from './HomeScreensStack';
+import * as actions from './store/actions/actions';
 import messaging from '@react-native-firebase/messaging';
-import {useNavigation} from '@react-navigation/native';
 import PushNotifications from './screens/PushNotifications';
 import {createDrawerNavigator} from '@react-navigation/drawer';
+import {connect} from 'react-redux';
+import PushNotification from 'react-native-push-notification';
 const Drawer = createDrawerNavigator();
 
-const MainAppScreens = ({navigation}) => {
+const MainAppScreens = ({
+  getCurrentLocation,
+  getCurrentBooking,
+  UserReducer,
+  getAllLanguages,
+}) => {
+  const initialRoute = 'Home';
   const [loading, setLoading] = useState(false);
-  const [FCMToken, setFCMToken] = useState(null);
-  const [initialRoute, setInitialRoute] = useState('Home');
+  const accessToken = UserReducer?.accessToken;
 
   const routes = [
     {
@@ -22,17 +29,23 @@ const MainAppScreens = ({navigation}) => {
       iconType: 'Entypo',
       routeName: 'home',
     },
-    {
-      id: 2,
-      iconName: 'dollar-bill',
-      iconType: 'Foundation',
-      routeName: 'payment',
-    },
+    // {
+    //   id: 2,
+    //   iconName: 'dollar-bill',
+    //   iconType: 'Foundation',
+    //   routeName: 'payment',
+    // },
+    // {
+    //   id: 3,
+    //   iconName: 'package',
+    //   iconType: 'Feather',
+    //   routeName: 'subscription',
+    // },
     {
       id: 3,
-      iconName: 'package',
-      iconType: 'Feather',
-      routeName: 'subscription',
+      iconName: 'history',
+      iconType: 'FontAwesome',
+      routeName: 'history',
     },
     {
       id: 4,
@@ -55,40 +68,105 @@ const MainAppScreens = ({navigation}) => {
       authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
     if (enabled) {
-      console.log('Authorization status:', authStatus);
+      console.log('FCM Authorization:', authStatus);
+    }
+  };
+
+  const fcmNotificationsListener = () => {
+    try {
+      messaging()
+        .getToken()
+        .then(token => {
+          console.log("TOKEN: : : : :  :",token);
+          // setFCMToken(token);
+        });
+      messaging().onNotificationOpenedApp(remoteMessage => {
+        console.log(
+          'Notification caused app to open from background state:',
+          remoteMessage.notification,
+        );
+      });
+      messaging()
+        .getInitialNotification()
+        .then(remoteMessage => {
+          if (remoteMessage) {
+            console.log(
+              'Notification caused app to open from quit state:',
+              remoteMessage.notification,
+            );
+          }
+        });
+
+      const unsubscribe = messaging().onMessage(async remoteMessage => {
+        console.log(remoteMessage, 'Ahsan');
+
+        // Call api to get current booking data
+        if (remoteMessage?.data?.type == 'accepted') {
+          getCurrentBooking(accessToken);
+        }
+
+        if (remoteMessage.notification) {
+          PushNotification.localNotification({
+            channelId: 'channel-id',
+            channelName: 'My channel',
+            message: remoteMessage.notification.body,
+            playSound: true,
+            title: remoteMessage.notification.title,
+            priority: 'high',
+            soundName: 'default',
+          });
+        }
+      });
+      return unsubscribe;
+    } catch (e) {
+      console.log(e);
     }
   };
 
   useEffect(() => {
+    getCurrentLocation();
     requestUserPermission();
+    fcmNotificationsListener();
+    getAllLanguages();
+    getCurrentBooking(accessToken);
+    console.log(
+      'ALL FUNCTIONS RAN SUCCESSFULLY!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!',
+    );
   }, []);
+
   if (loading) {
     return null;
   } else {
     return (
-      <Drawer.Navigator
-        initialRouteName={initialRoute}
-        screenOptions={{headerShown: false}}
-        drawerContent={props => {
-          return (
-            <CustomDrawer
-              navigation={props.navigation}
-              routes={routes}
-              drawerRoutes={props.state.routeNames}
-            />
-          );
-        }}>
-        <Drawer.Screen name="home" component={HomeScreensStack} />
-        <Drawer.Screen name="payment" component={Payment} />
-        <Drawer.Screen name="settings" component={Settings} />
-        <Drawer.Screen name="subscription" component={Subscription} />
-        <Drawer.Screen
-          name="push notifications"
-          component={PushNotifications}
-        />
-      </Drawer.Navigator>
+      <>
+        <Drawer.Navigator
+          initialRouteName={initialRoute}
+          screenOptions={{headerShown: false}}
+          drawerContent={props => {
+            return (
+              <CustomDrawer
+                navigation={props.navigation}
+                routes={routes}
+                drawerRoutes={props.state.routeNames}
+              />
+            );
+          }}>
+          <Drawer.Screen name="home" component={HomeScreensStack} />
+          <Drawer.Screen name="payment" component={Payment} />
+          <Drawer.Screen name="settings" component={Settings} />
+          {/* <Drawer.Screen name="subscription" component={Subscription} /> */}
+          <Drawer.Screen name="history" component={BookingHistory} />
+          <Drawer.Screen
+            name="push notifications"
+            component={PushNotifications}
+          />
+        </Drawer.Navigator>
+      </>
     );
   }
 };
 
-export default MainAppScreens;
+const mapStateToProps = ({UserReducer}) => {
+  return {UserReducer};
+};
+export default connect(mapStateToProps, actions)(MainAppScreens);

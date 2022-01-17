@@ -23,8 +23,12 @@ const Inputbox = ({
   keyboardType,
   isShowIcon,
   names,
+  placeholderTextColor,
   onPressIcon,
+  iconStyle,
+  iconType,
   isPassword,
+  iconWrapperStyle,
   passedStyle,
 }) => {
   return (
@@ -34,31 +38,38 @@ const Inputbox = ({
           styles.input,
           passedStyle && passedStyle,
           // {marginHorizontal: width * 0.05},
-          isShowIcon && isPassword ,
+          // isShowIcon && isPassword,
         ]}
         onChangeText={setTextValue}
         value={value}
         placeholder={placeholderTilte}
-        placeholderTextColor="#E3E3E3"
+        placeholderTextColor={placeholderTextColor || '#E3E3E3'}
         secureTextEntry={isSecure || false}
         keyboardType={keyboardType || 'default'}
       />
 
       {isShowIcon && isPassword ? (
         <TouchableOpacity
-          style={{
-            position: 'absolute',
-            left: width * 0.75,
-            top: height * 0.046,
-            // paddingLeft: 10,
-          }}
+          style={[
+            {
+              position: 'absolute',
+              left: width * 0.75,
+              top: height * 0.046,
+              // paddingLeft: 10,
+            },
+            iconWrapperStyle && iconWrapperStyle,
+          ]}
           onPress={() => onPressIcon()}>
           <IconComp
             name={names}
-            type={'MaterialIcons'}
-            // iconStyle={{
-            //   marginLeft: isShowIcon && isPassword && width * 0.05,
-            // }}
+            type={iconType || 'MaterialIcons'}
+            iconStyle={[
+              {
+                color: 'black',
+                marginLeft: isShowIcon && isPassword && width * 0.05,
+              },
+              iconStyle && iconStyle,
+            ]}
           />
         </TouchableOpacity>
       ) : (
@@ -88,7 +99,7 @@ const styles = StyleSheet.create({
     color: '#E3E3E3',
     width: width * 0.8,
     margin: height * 0.025,
-    height: 50,
+    height: height * 0.075,
     paddingRight: width * 0.07,
     paddingLeft: width * 0.05,
     fontSize: width * 0.045,

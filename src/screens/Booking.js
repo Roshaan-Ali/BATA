@@ -51,7 +51,7 @@ const Booking = ({navigation}) => {
   return (
     <View style={styles.container}>
       <SafeAreaView style={{ flex: 1}}>
-      <AppStatusBar backgroundColor={colors.themePurple1} barStyle="light-content" />
+      {/* <AppStatusBar backgroundColor={colors.themePurple1} barStyle="light-content" /> */}
       {/* <StatusBar translucent backgroundColor="transparent" /> */}
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Event View  */}
@@ -204,7 +204,6 @@ const Booking = ({navigation}) => {
         onConfirm={date => {
           setShowDatePicker(false);
           setDate(date);
-          console.log(date);
         }}
         onCancel={() => {
           setShowDatePicker(false);

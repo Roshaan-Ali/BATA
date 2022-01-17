@@ -13,7 +13,7 @@ const PackageFeaturesMapper = ({item, index}) => {
         type="AntDesign"
         iconStyle={styles.iconStyle}
       />
-      <Heading title={item?.name} passedStyle={styles.featureStyle} fontType="regular"/>
+      <Heading title={item} passedStyle={styles.featureStyle} fontType="regular"/>
     </View>
   );
 };

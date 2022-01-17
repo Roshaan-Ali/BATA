@@ -1,13 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {
-  StyleSheet,
-  View,
-  Image,
-  Dimensions,
-  ScrollView,
-  PermissionsAndroid,
-  Platform,
-} from 'react-native';
+import {StyleSheet, View, Image, Dimensions, ScrollView} from 'react-native';
 import {MotiView} from 'moti';
 import {connect} from 'react-redux';
 import colors from '../assets/colors';
@@ -18,158 +10,117 @@ import * as actions from '../store/actions/actions';
 import AppStatusBar from '../components/AppStatusBar';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import MapViewDirections from 'react-native-maps-directions';
+import RatingsAndReviewsModal from '../components/RatingsAndReviewsModal';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import Geolocation from '@react-native-community/geolocation';
+// import Geolocation from '@react-native-community/geolocation';
+import Geolocation from 'react-native-geolocation-service';
+import CurrentInterpreter from '../components/CurrentInterpreter';
+import AlertModal from '../components/AlertModal';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
-function Home({navigation, UserReducer}) {
+function Home({
+  navigation,
+  UserReducer,
+  setErrorModal,
+  completeEvent,
+  submitReviewsAndRatings,
+}) {
   var watchID = useRef(null);
   const [mapRef, setMapRef] = useState(null);
-  var markerRef = useRef(null);
-  const [position, setPosition] = useState(null);
-  const [username, setUsername] = useState(
-    UserReducer?.userData?.username?.split(' ')[0],
-  );
+  const accessToken = UserReducer?.accessToken;
+  const [isLoading, setIsLoading] = useState(false);
+  const [bookingId, setBookingId] = useState(false);
+  const currentBooking = UserReducer?.currentBooking;
+  const [hasAlreadyBooked, setHasAlreadyBooked] = useState(false);
+  const [showRatingsReviewsModal, setShowRatingsReviewsModal] = useState(false);
+  const [showMustBuyPackageModal, setShowMustBuyPackageModal] = useState(false);
+  const [showFailedCompletingModal, setShowFailedCompletingModal] =
+    useState(false);
+
+  // 
+  const username = UserReducer?.userData?.first_name;
   const [coordinates, setCoordinates] = useState({
-    latitude: 24.9219,
-    longitude: 67.0941,
+    latitude: UserReducer?.coords?.lat,
+    longitude: UserReducer?.coords?.lng,
   });
 
   const [coordinates2, setCoordinates2] = useState({
     latitude: 24.9298,
     longitude: 67.1148,
   });
-  // const _onPressOption = (item, index) => {
-  //   navigation.navigate(item?.routeName);
-  // };
-
-  const _onPaymentCardPress = () => {
-    console.log('Payment Card Selected');
-  };
 
   async function fitMapToBounds() {
     mapRef.fitToCoordinates(coordinates);
   }
 
   const watchLocation = () => {
-    // const coordinate = state
-    watchID = Geolocation.watchPosition(
+    watchID.current = Geolocation.watchPosition(
       position => {
-        const { latitude, longitude } = position.coords;
-        alert("SAD")
+        const {latitude, longitude} = position.coords;
         const newCoordinate = {
           latitude,
-          longitude
+          longitude,
         };
-        console.log("latitude, longitude ",latitude, longitude )
-        // if (Platform.OS === "android") {
-        //   if (markerRef) {
-        //       markerRef._component.animateMarkerToCoordinate(
-        //       newCoordinate,
-        //       500 // 500 is the duration to animate the marker
-        //     );
-        //   }
-        // } else {
-        //   coordinate.timing(newCoordinate).start();
-        // }
-        // onChangeLong(latitude)
-        // onChangeLat(longitude)
-        // setState({
-        //   latitude: parseFloat(latitude),
-        //   longitude: parseFloat(longitude)
-        // });
+        setCoordinates(newCoordinate);
       },
       error => console.log(error),
+
       {
         enableHighAccuracy: true,
-        timeout: 20000,
-        maximumAge: 1000,
-        distanceFilter: 10
-      }
+        timeout: 2000,
+      },
     );
   };
 
-  // const watchMyPosition = () => {
-  //   // Geolocation.requestAuthorization();
-  //   watchID = Geolocation.watchPosition(
-  //     pos => {
-  //       console.log("sssssssssssssss--------",pos)
-  //       setPosition(pos);
-  //     },
-  //     err => {
-  //       console.log("sssssssssssssss--------")
-  //       console.warn('ERROR(' + err.code + '): ' + err.message);
-  //     },
-  //   );
-  // };
-  // const watchLocation = () => {
-  //   const coordinate = {...position};
-  //   console.log("test")
-  //   // const config = {
-  //   //   enableHighAccuracy: true,
-  //   //   timeout: 2000,
-  //   //   maximumAge: 3600000,
-  //   // };
-  //   // Geolocation.getCurrentPosition(
-  //   //   info => console.log(info),
-  //   //   er => console.log(er),
-  //   //   config  
-  //   // );
-  //   watchID = Geolocation.watchPosition(
-  //     pos => {
-  //       const {latitude, longitude} = pos.coords;
+  const _onSucessSubmitReview = () => {
+    setShowRatingsReviewsModal(false);
+  };
 
-  //       const newCoordinate = {
-  //         latitude,
-  //         longitude,
-  //       };
-  //       console.log('latitude, longitude ', latitude, longitude);
-  //       if (Platform.OS === 'android') {
-  //         if (markerRef) {
-  //           markerRef._component.animateMarkerToCoordinate(
-  //             newCoordinate,
-  //             500, // 500 is the duration to animate the marker
-  //           );
-  //         }
-  //       } else {
-  //         coordinate.timing(newCoordinate).start();
-  //       }
-  //       // onChangeLong(latitude);
-  //       // onChangeLat(longitude);
-  //       // setPosition({
-  //       //   latitude: parseFloat(latitude),
-  //       //   longitude: parseFloat(longitude),
-  //       // });
-  //     },
-  //     error => console.log(error),
-  //     {
-  //       enableHighAccuracy: true,
-  //       timeout: 20000,
-  //       maximumAge: 1000,
-  //       distanceFilter: 10,
-  //     },
-  //   );
-  // };
+  const _onPressSubmitReview = async (review, ratings) => {
+    const data = {
+      // interpreter: 1,
+      comment: review,
+      booking: bookingId,
+      rate: ratings,
+    };
+    setIsLoading(true);
+    await submitReviewsAndRatings(data, accessToken, _onSucessSubmitReview);
+    setIsLoading(false);
+  };
 
-  // useEffect(() => {
-  //   console.log({position});
-  //   console.log({watchID});
-  // }, [position]);
+  const _onPressComplete = async () => {
+    setIsLoading(true);
+    await completeEvent(
+      UserReducer?.currentBooking?.id,
+      accessToken,
+      _onSuccessCompleteEvent,
+    );
+    setIsLoading(false);
+  };
+
+  const _onSuccessCompleteEvent = id => {
+    setShowRatingsReviewsModal(true);
+    setBookingId(id);
+  };
 
   useEffect(() => {
-    watchLocation();
-    // return Geolocation.clearWatch(watchID);
-  }, []);
+    if (UserReducer?.errorModal?.status) {
+      setShowFailedCompletingModal(true);
+    }
+    if (UserReducer?.errorModal?.status === false) {
+      setShowFailedCompletingModal(false);
+    }
+  }, [UserReducer.errorModal]);
 
   return (
     <View style={styles.container}>
       <SafeAreaView style={{flex: 1}}>
-        <AppStatusBar
+        {/* <AppStatusBar
           backgroundColor={colors.themePurple1}
           barStyle="light-content"
-        />
+        /> */}
         {/* Header  */}
         <Header title="Menu" navigation={navigation} />
 
@@ -178,7 +129,7 @@ function Home({navigation, UserReducer}) {
           nestedScrollEnabled={true}>
           {/* Greeting Container  */}
           <View style={styles.greetingContainer}>
-            <View style={{flexDirection: 'column', marginLeft: width * 0.05}}>
+            <View style={styles.animationView}>
               <MotiView
                 from={{
                   opacity: 0.5,
@@ -200,7 +151,6 @@ function Home({navigation, UserReducer}) {
                 />
                 <Heading
                   title={username}
-                  // title={username.length > 8 ? `${username.substring(0,8)}...` : username}
                   passedStyle={[
                     styles.heading_username,
                     username?.length > 7 && {fontSize: width * 0.08},
@@ -234,28 +184,26 @@ function Home({navigation, UserReducer}) {
           </View>
 
           {/* Home Options  */}
-          {/* <FlatList
-          nestedScrollEnabled={true}
-          data={options}
-          contentContainerStyle={styles.flatListStyle}
-          vertical
-          showsVerticalScrollIndicator={false}
-          numColumns={2}
-          keyExtractor={item => item._id.toString()}
-          renderItem={({item, index}) => {
-            return (
-              <HomeOptions item={item} index={index} onPress={_onPressOption} />
-            );
-          }}
-        /> */}
-
-          {/* Home Options  */}
           <View style={styles.optionsWrapper}>
             {/* Translators  */}
             <TouchableOpacity
               style={styles.optionContainer}
               activeOpacity={0.7}
-              onPress={() => navigation.navigate('Translator')}>
+              onPress={() => {
+                if (
+                  UserReducer?.userData?.current_package === null ||
+                  UserReducer?.userData?.current_package === undefined
+                ) {
+                  setShowMustBuyPackageModal(true);
+                } else if (
+                  UserReducer?.currentBooking !== null &&
+                  UserReducer?.currentBooking !== undefined
+                ) {
+                  setHasAlreadyBooked(true);
+                } else {
+                  navigation.navigate('Translator');
+                }
+              }}>
               <View style={styles.optionImageContainer}>
                 <Image
                   source={require('../assets/Images/translate.png')}
@@ -320,6 +268,7 @@ function Home({navigation, UserReducer}) {
                 setMapRef(ref);
               }}
               showsMyLocationButton={true}
+              showsCompass={true}
               zoomEnabled={true}
               followsUserLocation={true}
               scrollEnabled={true}
@@ -344,7 +293,7 @@ function Home({navigation, UserReducer}) {
                 //   zoom: 12,
                 // });
               }}>
-              <MapViewDirections
+              {/* <MapViewDirections
                 origin={coordinates}
                 destination={coordinates2}
                 apikey={
@@ -353,13 +302,10 @@ function Home({navigation, UserReducer}) {
                 }
                 strokeWidth={4}
                 strokeColor="#81246C"
-              />
+              /> */}
               <Marker coordinate={coordinates} />
               {/* <Marker coordinate={coordinates2} /> */}
-              <Marker
-              ref={markerRef}
-                coordinate={coordinates2}
-                >
+              {/* <Marker ref={markerRef} coordinate={coordinates2}>
                 <Image
                   source={require('../assets/Images/translator.png')}
                   resizeMode="contain"
@@ -368,9 +314,62 @@ function Home({navigation, UserReducer}) {
                     height: height * 0.03,
                   }}
                 />
-              </Marker>
+              </Marker> */}
             </MapView>
           </View>
+          {currentBooking !== null &&
+            currentBooking !== undefined &&
+            currentBooking?.status !== 'completed' && (
+              <>
+                <Heading
+                  title="Booking Detail"
+                  fontType={'bold'}
+                  passedStyle={{
+                    color: 'black',
+                    fontSize: width * 0.06,
+                    marginLeft: width * 0.05,
+                  }}
+                />
+                <CurrentInterpreter
+                  item={currentBooking}
+                  isLoading={isLoading}
+                  onPress={_onPressComplete}
+                />
+              </>
+            )}
+          {showRatingsReviewsModal && (
+            <RatingsAndReviewsModal
+              isModalVisible={showRatingsReviewsModal}
+              onPress={_onPressSubmitReview}
+              isLoading={isLoading}
+              setIsModalVisible={setShowRatingsReviewsModal}
+            />
+          )}
+          {hasAlreadyBooked && (
+            <AlertModal
+              title="Not allowed!"
+              message={'You have already booked an interpreter.'}
+              isModalVisible={hasAlreadyBooked}
+              setIsModalVisible={setHasAlreadyBooked}
+            />
+          )}
+          {showMustBuyPackageModal && (
+            <AlertModal
+              title="Not allowed!"
+              message={'You need to buy a package first.'}
+              isModalVisible={showMustBuyPackageModal}
+              setIsModalVisible={setShowMustBuyPackageModal}
+            />
+          )}
+          {showFailedCompletingModal && (
+            <AlertModal
+              title="Oh Snaps :("
+              message={UserReducer?.errorModal?.msg}
+              isModalVisible={showFailedCompletingModal}
+              setIsModalVisible={setShowFailedCompletingModal}
+              onPress={() => setErrorModal()}
+            />
+          )}
         </ScrollView>
       </SafeAreaView>
     </View>
@@ -378,12 +377,15 @@ function Home({navigation, UserReducer}) {
 }
 
 const styles = StyleSheet.create({
+  animationView: {
+    flexDirection: 'column',
+    marginLeft: width * 0.05,
+  },
   optionsWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     marginVertical: height * 0.025,
-    // backgroundColor: 'red',
     width: width * 0.9,
     alignSelf: 'center',
     flexWrap: 'wrap',
@@ -429,7 +431,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginHorizontal: width * 0.02,
     width: width * 0.4,
-    // backgroundColor:'yellow'
   },
   container: {
     flex: 1,
@@ -449,18 +450,18 @@ const styles = StyleSheet.create({
   },
   heading: {
     color: 'black',
-    // marginLeft: width * 0.12,
     fontSize: width * 0.11,
   },
   heading_username: {
     color: colors.themePurple1,
     fontSize: width * 0.11,
-    // marginTop: height * -0.03,
+    textTransform: 'capitalize',
   },
   greetingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     width: width * 0.9,
+    textTransform: 'capitalize',
     marginTop: height * 0.02,
     marginHorizontal: width * 0.05,
   },
@@ -504,18 +505,3 @@ const mapStateToProps = ({UserReducer}) => {
   return {UserReducer};
 };
 export default connect(mapStateToProps, actions)(Home);
-
-const options = [
-  {
-    _id: 1,
-    image: require('../assets/Images/translate.png'),
-    text: 'translator',
-    routeName: 'Translator',
-  },
-  {
-    _id: 2,
-    image: require('../assets/Images/package.png'),
-    text: 'packages',
-    routeName: 'Packages',
-  },
-];

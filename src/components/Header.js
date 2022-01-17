@@ -7,11 +7,12 @@ import Feather from 'react-native-vector-icons/Feather';
 import colors from '../assets/colors';
 import Heading from './Heading';
 import {connect} from 'react-redux';
+import {imageUrl} from '../config/config';
 
 const {width, height} = Dimensions.get('window');
 
 const Header = ({navigation, showBackBtn = false, title, UserReducer}) => {
-  const userImage = UserReducer?.userData?.photo;
+  const userImage = UserReducer?.userData?.profile_image;
   return (
     <View style={styles.container}>
       {showBackBtn ? (
@@ -48,7 +49,7 @@ const Header = ({navigation, showBackBtn = false, title, UserReducer}) => {
             <Image
               // resizeMode="contain"
               source={{
-                uri: userImage,
+                uri: `${imageUrl}${userImage}`,
               }}
               style={styles.userImage}
             />

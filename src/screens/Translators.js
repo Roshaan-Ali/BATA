@@ -9,77 +9,89 @@ import {
   TouchableOpacity,
   StatusBar,
 } from 'react-native';
-import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 import colors from '../assets/colors';
 import Button from '../components/Button';
-import CustomDropdownModal from '../components/CustomDropdownModal';
-// import DatePicker from '../components/DatePicker';
 import Heading from '../components/Heading';
 import IconComp from '../components/IconComp';
 import DatePicker from 'react-native-date-picker';
 import MapView, {Marker} from 'react-native-maps';
-import {SafeAreaView} from 'react-native-safe-area-context';
 import AppStatusBar from '../components/AppStatusBar';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import * as actions from '../store/actions/actions';
+import Geolocation from 'react-native-geolocation-service';
+import CustomDropdownModal from '../components/CustomDropdownModal';
+import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
+import {connect} from 'react-redux';
+import {useEffect} from 'react';
+import Inputbox from '../components/Inputbox';
+import AlertModal from '../components/AlertModal';
 
 const {width, height} = Dimensions.get('window');
 
-const Translator = ({navigation}) => {
+const Translator = ({
+  navigation,
+  UserReducer,
+  getCurrentLocation,
+  getOccasions,
+}) => {
+  const accessToken = UserReducer.accessToken;
   const [mapRef, setMapRef] = useState(null);
-  const [selectedValue, setSelectedValue] = useState(null);
-  const [showAdditionalInfo, setShowAdditionalInfo] = useState(false);
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(
     new Date(new Date().getTime() + 24 * 60 * 60 * 1000),
   );
+  const [location, setLocation] = useState('Karachi');
   const [showStartDatePicker, setShowStartDatePicker] = useState(false);
   const [showEndDatePicker, setShowEndDatePicker] = useState(false);
-  const [coordinates, setCoordinates] = useState({
-    latitude: 48.8587741,
-    longitude: 2.2069771,
-  });
-  const languages = [
-    {_id: 1, label: 'Information 1'},
-    {_id: 2, label: 'Information 2'},
-    {_id: 3, label: 'Information 3'},
-    {_id: 4, label: 'Information 4'},
-    {_id: 5, label: 'Information 5'},
-  ];
-
+  const [coordinates, setCoordinates] = useState(UserReducer?.coords);
+  const [showIncompleteFormAlert, setShowIncompleteFormAlert] = useState(false);
   //   Submit Button Handler
   const _onNextPress = () => {
-    navigation.navigate('Language');
+    // if (location && startDate && endDate && coordinates) {
+    //   navigation.navigate('Language', {
+    //     translation_address: location,
+    //     start_date: startDate.toString(),
+    //     end_date: endDate.toString(),
+    //     lat: coordinates.lat.toString(),
+    //     longe: coordinates.lng.toString(),
+    //   });
+    // } else {
+    //   setShowIncompleteFormAlert(true);
+    // }
+    navigation.navigate('Language', {
+      translation_address: location,
+      start_date: startDate.toString(),
+      end_date: endDate.toString(),
+      lat: coordinates.lat.toString(),
+      longe: coordinates.lng.toString(),
+    });
   };
 
   // My Location Handler
   const _onMicPress = () => {
-    console.log('My location searching');
   };
 
-  // on Press Dropdown item
-  const _onAddtionalInfoPress = item => {
-    setSelectedValue(item.label);
-    setShowAdditionalInfo(false);
-  };
+  useEffect(() => {
+    getCurrentLocation();
+    getOccasions(accessToken);
+  }, []);
 
-  async function fitMapToBounds() {
-    mapRef.current.fitToCoordinates(coordinates);
-  }
   return (
     <View style={styles.container}>
       <SafeAreaView style={{flex: 1}}>
-        <AppStatusBar
+        {/* <AppStatusBar
           backgroundColor={colors.themePurple1}
           barStyle="dark-content"
-        />
-        {/* <StatusBar showHideTransition='fade' animated={true} translucent backgroundColor="transparent" /> */}
+        /> */}
+
         <ScrollView
           showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps={false}>
+          nestedScrollEnabled={true}
+          keyboardShouldPersistTaps="always">
           {/* Map View  */}
           <View style={styles.mapView}>
             <MapView
-              // ref={mapRef}
-              style={{height: height * 0.3, width: width}}
+              style={{height: height * 0.45, width: width}}
               ref={ref => {
                 setMapRef(ref);
               }}
@@ -87,17 +99,36 @@ const Translator = ({navigation}) => {
               zoomEnabled={true}
               followsUserLocation={true}
               scrollEnabled={true}
-              initialRegion={{
-                latitude: coordinates.latitude,
-                longitude: coordinates.longitude,
-                latitudeDelta: 0.0922,
-                longitudeDelta: 0.0421,
+              region={{
+                latitude: coordinates?.lat,
+                longitude: coordinates?.lng,
+                latitudeDelta: 0.01,
+                longitudeDelta: 0.001,
               }}
+              // initialRegion={{
+              //   latitude: coordinates?.lat,
+              //   longitude: coordinates?.lng,
+              //   latitudeDelta: 0.0922,
+              //   longitudeDelta: 0.0421,
+              // }}
               onMapReady={() => {
-                fitMapToBounds();
+                mapRef.fitToCoordinates(coordinates, {
+                  animated: true,
+                  edgePadding: {
+                    top: 150,
+                    right: 50,
+                    bottom: 100,
+                    left: 50,
+                  },
+                });
               }}
               onRegionChangeComplete={movedCoords => {
-                setCoordinates(movedCoords);
+                setCoordinates({
+                  lat: movedCoords.latitude,
+                  lng: movedCoords.longitude,
+                  longitudeDelta: movedCoords.longitudeDelta,
+                  latitudeDelta: movedCoords.latitudeDelta,
+                });
               }}>
               {/* <Marker
                 draggable={true}
@@ -115,7 +146,7 @@ const Translator = ({navigation}) => {
               resizeMode="contain"
               style={{
                 position: 'absolute',
-                top: height * 0.1,
+                top: height * 0.17,
                 right: width * 0.45,
                 width: width * 0.1,
                 height: height * 0.07,
@@ -127,15 +158,21 @@ const Translator = ({navigation}) => {
           <View style={styles.filterView}>
             {/* Location Search  */}
             <GooglePlacesAutocomplete
-              placeholder="Translation Address"
-              onPress={(data, details = null) => {
+              enablePoweredByContainer={false}
+              placeholder={'Translational Address'}
+              // currentLocationLabel={location}
+              fetchDetails={true}
+              onPress={(data, details) => {
                 // 'details' is provided when fetchDetails = true
-                console.log(data, details);
+                console.log('Google Search Api : ', data.description);
+                setCoordinates(details.geometry.location);
+                setLocation(data.description);
               }}
               query={{
                 key: 'AIzaSyBTsC4XcbDQgH_tBwHdKAUUXyVtdOTL4l0',
                 language: 'en',
               }}
+              GooglePlacesDetailsQuery={{fields: 'geometry'}}
               renderLeftButton={() => (
                 <IconComp
                   name="search"
@@ -154,6 +191,7 @@ const Translator = ({navigation}) => {
               // )}
               styles={{
                 textInputContainer: {
+                  alignSelf: 'center',
                   width: width * 0.9,
                   borderRadius: width * 0.04,
                   borderWidth: 1.2,
@@ -167,37 +205,8 @@ const Translator = ({navigation}) => {
                   backgroundColor: 'rgba(0,0,0,0.006)',
                   fontSize: width * 0.04,
                 },
-                predefinedPlacesDescription: {
-                  color: '#1faadb',
-                },
               }}
             />
-
-            {/* Additional Info  */}
-            <TouchableOpacity
-              style={styles.additonalInfoView}
-              activeOpacity={0.7}
-              onPress={() => setShowAdditionalInfo(true)}>
-              <View style={styles.rowView}>
-                <IconComp
-                  type="Feather"
-                  name="menu"
-                  iconStyle={styles.menuStyle}
-                />
-                <Heading
-                  title={
-                    selectedValue ? selectedValue : 'Additional Information'
-                  }
-                  passedStyle={styles.additionalInfoText}
-                  fontType="regular"
-                />
-              </View>
-              <IconComp
-                type="AntDesign"
-                name="caretdown"
-                iconStyle={styles.caretdown}
-              />
-            </TouchableOpacity>
 
             {/* Date Pickers  */}
             <View style={styles.rowView}>
@@ -261,12 +270,12 @@ const Translator = ({navigation}) => {
           </View>
         </ScrollView>
 
-        {showAdditionalInfo && (
-          <CustomDropdownModal
-            array={languages}
-            onPress={_onAddtionalInfoPress}
-            isModalVisible={showAdditionalInfo}
-            setIsModalVisible={setShowAdditionalInfo}
+        {showIncompleteFormAlert && (
+          <AlertModal
+            title="Oh Snaps :("
+            message={'Some fields have been left empty.'}
+            isModalVisible={showIncompleteFormAlert}
+            setIsModalVisible={setShowIncompleteFormAlert}
           />
         )}
 
@@ -305,7 +314,10 @@ const Translator = ({navigation}) => {
   );
 };
 
-export default Translator;
+const mapStateToProps = ({UserReducer}) => {
+  return {UserReducer};
+};
+export default connect(mapStateToProps, actions)(Translator);
 
 const styles = StyleSheet.create({
   container: {
@@ -337,7 +349,7 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
   },
   mapView: {
-    height: height * 0.3,
+    height: height * 0.45,
     width: width,
     position: 'relative',
   },
@@ -419,6 +431,7 @@ const styles = StyleSheet.create({
   rowView: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginTop: height * 0.015,
   },
   datePickerView: {
     // marginVertical: height * 0.02,

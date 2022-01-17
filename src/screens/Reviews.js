@@ -15,7 +15,7 @@ const Reviews = ({navigation}) => {
   return (
     <View style={styles.container}>
       <SafeAreaView style={{ flex: 1}}>
-      <AppStatusBar backgroundColor={colors.themePurple1} barStyle="light-content" />
+      {/* <AppStatusBar backgroundColor={colors.themePurple1} barStyle="light-content" /> */}
       <Header title="Back" navigation={navigation} showBackBtn={true}/>
       <Heading
         passedStyle={styles.reviewHeading}
