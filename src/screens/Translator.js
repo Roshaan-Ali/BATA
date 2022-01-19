@@ -22,7 +22,6 @@ const {width, height} = Dimensions.get('window');
 const Translator = ({navigation}) => {
   const [selectedValue, setSelectedValue] = useState(null);
   const [message, setMessage] = useState('');
-  // console.log(navigation.getState());
   const languages = [
     {label: 'Langugae 1', value: 'Langugae 1'},
     {label: 'Langugae 2', value: 'Langugae 2'},
@@ -33,17 +32,15 @@ const Translator = ({navigation}) => {
 
   //   Submit Button Handler
   const _onSubmitPress = () => {
-    console.log('Submit');
   };
 
   // My Location Handler
   const _onMyLocationPress = () => {
-    console.log('My location searching');
   };
   return (
     <View style={styles.container}>
       <SafeAreaView style={{ flex: 1}}>
-      <AppStatusBar backgroundColor={colors.themePurple1} barStyle="light-content" />
+      {/* <AppStatusBar backgroundColor={colors.themePurple1} barStyle="light-content" /> */}
       {/* Header  */}
       <Header showBackBtn={true} navigation={navigation} />
       <ScrollView
@@ -57,7 +54,6 @@ const Translator = ({navigation}) => {
           placeholder="Location"
           onPress={(data, details = null) => {
             // 'details' is provided when fetchDetails = true
-            console.log(data, details);
           }}
           query={{
             key: 'YOUR API KEY',

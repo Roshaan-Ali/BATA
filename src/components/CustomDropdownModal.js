@@ -33,7 +33,7 @@ const CustomDropdownModal = ({
       <View style={styles.container}>
         <FlatList
           data={array}
-          keyExtractor={item => item._id.toString()}
+          keyExtractor={item => item.id.toString()}
           contentContainerStyle={styles.flatListContentStyle}
           showsVerticalScrollIndicator={false}
           style={{marginTop: 15}}
@@ -42,7 +42,10 @@ const CustomDropdownModal = ({
               activeOpacity={0.8}
               onPress={() => onPress(item)}
               style={styles.labelWrapper}>
-              <Heading title={item.label} passedStyle={styles.labelStyle} />
+              <Heading
+                title={item.label || item.name || item.language_name}
+                passedStyle={styles.labelStyle}
+              />
             </TouchableOpacity>
           )}
         />

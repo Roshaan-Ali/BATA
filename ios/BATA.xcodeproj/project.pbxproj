@@ -99,6 +99,7 @@
 		B7E34F47F45C4791898A7614 /* Poppins-BoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-BoldItalic.ttf"; path = "../src/assets/Fonts/Poppins-BoldItalic.ttf"; sourceTree = "<group>"; };
 		C06674B488C7418D8E310BFA /* Poppins-Italic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-Italic.ttf"; path = "../src/assets/Fonts/Poppins-Italic.ttf"; sourceTree = "<group>"; };
 		C0DE7D8B34B3483E6C5928AE /* libPods-BATA.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-BATA.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C562ED1327957E53002CA90A /* BATARelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = BATARelease.entitlements; path = BATA/BATARelease.entitlements; sourceTree = "<group>"; };
 		C586AA95277497F00050C4B1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		C586AA9827749BF30050C4B1 /* Poppins-BoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Poppins-BoldItalic.ttf"; path = "../src/assets/Fonts/Poppins-BoldItalic.ttf"; sourceTree = "<group>"; };
 		C586AA9927749BF30050C4B1 /* Poppins-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Poppins-Italic.ttf"; path = "../src/assets/Fonts/Poppins-Italic.ttf"; sourceTree = "<group>"; };
@@ -235,6 +236,8 @@
 		13B07FAE1A68108700A75B9A /* BATA */ = {
 			isa = PBXGroup;
 			children = (
+				C562ED14279590DC002CA90A /* New Group */,
+				C562ED1327957E53002CA90A /* BATARelease.entitlements */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
@@ -298,6 +301,13 @@
 				D26F8667545EA8E99EEB446D /* Pods-BATA-BATATests.release.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		C562ED14279590DC002CA90A /* New Group */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "New Group";
 			sourceTree = "<group>";
 		};
 		C586AA9727749BC80050C4B1 /* Fonts */ = {
@@ -708,7 +718,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.bata;
 				PRODUCT_NAME = BATA;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -722,6 +732,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = BATA/BATARelease.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -737,7 +748,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.bata;
 				PRODUCT_NAME = BATA;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;

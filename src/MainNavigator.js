@@ -1,5 +1,14 @@
-import React, {useState} from 'react';
-import {View, Text, StyleSheet, StatusBar} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  StatusBar,
+  PermissionsAndroid,
+  BackHandler,
+  Platform,
+} from 'react-native';
+import messaging from '@react-native-firebase/messaging';
 import colors from './assets/colors';
 import AuthRootStackScreen from './AuthRootStackScreen';
 import TextSample from './components/TextSample';
@@ -11,11 +20,46 @@ import {
 } from 'react-native-responsive-screen';
 import {NavigationContainer} from '@react-navigation/native';
 import {connect} from 'react-redux';
-// import * as actions from './store/actions/actions';
+import * as actions from './store/actions/actions';
 
-function Main({userLogin, UserReducer}) {
-  const [token, onChangeToken] = useState(null);
+function Main({UserReducer, getCurrentLocation,subscribeToTopic}) {
   const [loading, setLoading] = useState(false);
+  const [granted, setGranted] = useState(false);
+
+  useEffect(() => {
+    if (granted) {
+      getCurrentLocation();
+    }
+  }, [granted]);
+
+  useEffect(() => {
+    async function requestLocationPermission() {
+      try {
+        const platformCheck = Platform.OS
+        if(platformCheck != "ios"){
+          const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        );
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          setGranted(granted);
+        } else {
+          BackHandler.exitApp();
+        }
+        }
+      } catch (err) {
+        console.warn(err);
+      }
+    }
+    requestLocationPermission();
+  }, []);
+
+  useEffect(() => {
+    if (UserReducer?.isUserLogin === true) {
+      if (UserReducer?.hasSubscribedToFCMNotification) {
+        subscribeToTopic(UserReducer?.userData?.id?.toString());
+      }
+    }
+  }, [UserReducer?.hasSubscribedToFCMNotification]);
 
   if (loading) {
     return (
@@ -43,7 +87,7 @@ function Main({userLogin, UserReducer}) {
   } else {
     return (
       <NavigationContainer>
-        {UserReducer.isUserLogin === true ? (
+        {UserReducer?.isUserLogin === true ? (
           // token != null || userLogin?.token != null ?
           <MainAppScreens />
         ) : (
@@ -77,4 +121,4 @@ const mapStateToProps = ({UserReducer}) => {
   return {UserReducer};
 };
 
-export default connect(mapStateToProps, null)(Main);
+export default connect(mapStateToProps, actions)(Main);

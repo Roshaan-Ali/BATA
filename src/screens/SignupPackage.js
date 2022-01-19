@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   View,
@@ -6,121 +6,220 @@ import {
   ImageBackground,
   ScrollView,
   StatusBar,
-  Platform
+  Platform,
+  TouchableOpacity,
 } from 'react-native';
 import colors from '../assets/colors';
 import Heading from '../components/Heading';
 import background_img from '../assets/background_img.png';
+import LottieView from 'lottie-react-native';
+import * as actions from '../store/actions/actions';
 import IconComp from '../components/IconComp';
 import Button from '../components/Button';
 import StripeModal from '../components/StripeModal';
 import {StripeProvider} from '@stripe/stripe-react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import AppStatusBar from '../components/AppStatusBar';
+import {connect} from 'react-redux';
+import {PUB_KEY_STRIPE} from '../config/config';
+import AlertModal from '../components/AlertModal';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
-
-
-const SignupPackage = ({navigation, route}) => {
-    console.log(route.params)
+const SignupPackage = ({
+  route,
+  UserReducer,
+  buyPackage,
+  skipBuyingPackage,
+  setErrorModal,
+}) => {
+  const accessToken = UserReducer?.accessToken;
+  const [isLoading, setIsLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [stripeGeneratedKey, setStripeGeneratedKey] = useState('');
-  const _onPressBuyNow = () => {
+  const [showPackageBuyingFailedModal, setShowPackageBuyingFailedModal] =
+    useState(false);
+
+  const _onPressBuyNow = async () => {
     if (stripeGeneratedKey === '') {
       alert('Card number is required');
     } else {
-      console.log(stripeGeneratedKey);
-      navigation.navigate('Otp', route.params);
+      const data = {
+        package_id: route.params?.service_type?.id,
+        stripeToken: stripeGeneratedKey,
+      };
+      setIsLoading(true);
+      await buyPackage(data, accessToken, () => {});
+      setIsLoading(false);
     }
   };
 
-  const PUB_KEY_STRIPE =
-    'pk_test_51JVChuLcwRj59Ifbt31dML7GTICUq0WRuxkSvFr9cbrNEzJgLHt8GuDRpCldBdJ8uS8O4OFuXRbcfqEKNnTYHK5u007FIvTgKu';
 
+  const _onPressSkip = async () => {
+    setIsLoading(true);
+    await skipBuyingPackage();
+    // setIsLoading(false);
+  };
+
+  useEffect(() => {
+    if (UserReducer?.errorModal?.status === true) {
+      setShowPackageBuyingFailedModal(true);
+    }
+    if (UserReducer?.errorModal?.status === false) {
+      setShowPackageBuyingFailedModal(false);
+    }
+  }, [UserReducer?.errorModal]);
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#EF2692'}}>
-    <AppStatusBar backgroundColor={colors.themePurple1} barStyle="light-content" />
-    <StripeProvider publishableKey={PUB_KEY_STRIPE}>
-      <View style={styles.container}>
-        <ImageBackground source={background_img} style={styles.image}>
-          <ScrollView showsVerticalScrollIndicator={false}>
-            <View style={styles.contentView}>
-              <View style={styles.rowView}>
-                <Heading
-                  title="As,"
-                  passedStyle={styles.ourLabel}
-                  fontType="semi-bold"
-                />
-                <Heading
-                  title={route.params.selectedPerson}
-                  passedStyle={styles.packageLabel}
-                  fontType="semi-bold"
-                />
+    <SafeAreaView style={{flex: 1, backgroundColor: '#EF2692'}}>
+      {/* <AppStatusBar
+        backgroundColor={colors.themePurple1}
+        barStyle="light-content"
+      /> */}
+      <StripeProvider publishableKey={PUB_KEY_STRIPE}>
+        <View style={styles.container}>
+          <ImageBackground source={background_img} style={styles.image}>
+            <ScrollView showsVerticalScrollIndicator={false}>
+              <View style={styles.contentView}>
+                <View style={styles.rowView}>
+                  <Heading
+                    title="As,"
+                    passedStyle={styles.ourLabel}
+                    fontType="semi-bold"
+                  />
+                  <Heading
+                    title={route?.params?.service_type?.name}
+                    passedStyle={styles.packageLabel}
+                    fontType="semi-bold"
+                  />
+                </View>
+                <View style={styles.flatListStyle}>
+                  {/* Package Header  */}
+                  <Heading
+                    title={'Package Details'}
+                    passedStyle={styles.packageName}
+                    fontType="semi-bold"
+                  />
+
+                  {/* Packages Key Points */}
+                  {route?.params?.service_type?.description?.map((ele, idx) => {
+                    return (
+                      <View style={styles.packageKeyPointsView} key={idx}>
+                        <IconComp
+                          name="checkcircle"
+                          type="AntDesign"
+                          iconStyle={styles.iconStyle}
+                        />
+                        <Heading
+                          title={ele}
+                          passedStyle={styles.featureStyle}
+                          fontType="regular"
+                        />
+                      </View>
+                    );
+                  })}
+
+                  {/* Skip Button  */}
+                  {isLoading ? (
+                    <TouchableOpacity
+                      style={styles.loadingComponent}
+                      activeOpacity={1}>
+                      <LottieView
+                        speed={1}
+                        style={styles.lottieStyles}
+                        autoPlay
+                        colorFilters={'blue'}
+                        loop
+                        source={require('../assets/Lottie/purple-loading-2.json')}
+                      />
+                    </TouchableOpacity>
+                  ) : (
+                    <>
+                      <Button
+                        onBtnPress={() => {
+                          setIsModalVisible(true);
+                        }}
+                        title="Buy Now"
+                        isBgColor={false}
+                        btnStyle={styles.btnStyle}
+                        btnTextStyle={styles.btnTextStyle}
+                      />
+                      <Button
+                        onBtnPress={_onPressSkip}
+                        title="Skip"
+                        isBgColor={false}
+                        btnStyle={styles.skipbtnStyle}
+                        btnTextStyle={styles.btnTextStyle}
+                      />
+                    </>
+                  )}
+                </View>
               </View>
-              <View style={styles.flatListStyle}>
-                {/* Package Header  */}
-                <Heading
-                  title={'Package Details'}
-                  passedStyle={styles.packageName}
-                  fontType="semi-bold"
+              {isModalVisible && (
+                <StripeModal
+                  isLoading={isLoading}
+                  setId={setStripeGeneratedKey}
+                  onPress={_onPressBuyNow}
+                  isModalVisible={isModalVisible}
+                  setIsModalVisible={setIsModalVisible}
                 />
-
-                {/* Packages Key Points */}
-                {dummyPackage?.package?.features?.map((ele, idx) => {
-                  return (
-                    <View style={styles.packageKeyPointsView} key={idx}>
-                      <IconComp
-                        name="checkcircle"
-                        type="AntDesign"
-                        iconStyle={styles.iconStyle}
-                      />
-                      <Heading
-                        title={ele?.name}
-                        passedStyle={styles.featureStyle}
-                        fontType="regular"
-                      />
-                    </View>
-                  );
-                })}
-
-                {/* Get Started Button  */}
-                <Button
-                  onBtnPress={() => {
-                    setIsModalVisible(true);
+              )}
+              {showPackageBuyingFailedModal && (
+                <AlertModal
+                  title="Oh Snaps!"
+                  message={'Something went wrong.'}
+                  isModalVisible={showPackageBuyingFailedModal}
+                  onPress={() => {
+                    setErrorModal();
                   }}
-                  title="Buy Now"
-                  isBgColor={false}
-                  btnStyle={styles.btnStyle}
-                  btnTextStyle={styles.btnTextStyle}
+                  setIsModalVisible={setShowPackageBuyingFailedModal}
                 />
-              </View>
-            </View>
-            {isModalVisible && (
-              <StripeModal
-                setId={setStripeGeneratedKey}
-                onPress={_onPressBuyNow}
-                isModalVisible={isModalVisible}
-                setIsModalVisible={setIsModalVisible}
-              />
-            )}
-          </ScrollView>
-        </ImageBackground>
-      </View>
-    </StripeProvider>
+              )}
+            </ScrollView>
+          </ImageBackground>
+        </View>
+      </StripeProvider>
     </SafeAreaView>
   );
 };
+const mapStateToProps = ({UserReducer}) => {
+  return {UserReducer};
+};
 
-export default SignupPackage;
+export default connect(mapStateToProps, actions)(SignupPackage);
 
 const styles = StyleSheet.create({
+  loadingComponent: {
+    borderRadius: 50,
+    position: 'relative',
+    // backgroundColor: 'white',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: height * 0.08,
+    width: width * 0.8,
+    marginVertical: height * 0.02,
+  },
+  lottieStyles: {
+    height: height * 0.3,
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: height * -0.02,
+  },
   contentView: {
     marginHorizontal: width * 0.1,
     justifyContent: 'center',
     flex: 1,
-    paddingBottom: height * 0.05,
+    paddingBottom: 100,
   },
   btnStyle: {
+    backgroundColor: colors.themeYellow,
+    margin: 0,
+    marginTop: height * 0.03,
+    width: width * 0.8,
+    paddingVertical: height * 0.02,
+    borderRadius: width * 0.08,
+  },
+  skipbtnStyle: {
     backgroundColor: 'white',
     margin: 0,
     marginTop: height * 0.03,
@@ -170,6 +269,7 @@ const styles = StyleSheet.create({
   packageLabel: {
     fontSize: width * 0.09,
     color: colors.themeYellow,
+    textTransform: 'capitalize',
   },
   flatListStyle: {
     // alignItems: 'center',

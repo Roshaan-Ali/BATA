@@ -24,20 +24,17 @@ const Interpreter = ({navigation}) => {
   const [rateValue, setRateValue] = useState(5);
 
   const _onPressJoinDate = () => {
-    console.log('Join Date');
   };
 
   const _onPressLanguages = () => {
-    console.log('Languages');
   };
 
   const _onPressButton = item => {
-    console.log(item);
   };
   return (
     <View style={styles.container}>
       <SafeAreaView style={{ flex: 1}}>
-      <AppStatusBar backgroundColor={colors.themePurple1} barStyle="light-content" />
+      {/* <AppStatusBar backgroundColor={colors.themePurple1} barStyle="light-content" /> */}
       {/* <StatusBar translucent backgroundColor="transparent" /> */}
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Interpreter View  */}

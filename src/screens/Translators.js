@@ -9,262 +9,315 @@ import {
   TouchableOpacity,
   StatusBar,
 } from 'react-native';
-import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 import colors from '../assets/colors';
 import Button from '../components/Button';
-import CustomDropdownModal from '../components/CustomDropdownModal';
-// import DatePicker from '../components/DatePicker';
 import Heading from '../components/Heading';
 import IconComp from '../components/IconComp';
 import DatePicker from 'react-native-date-picker';
-import MapView from 'react-native-maps';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import MapView, {Marker} from 'react-native-maps';
 import AppStatusBar from '../components/AppStatusBar';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import * as actions from '../store/actions/actions';
+import Geolocation from 'react-native-geolocation-service';
+import CustomDropdownModal from '../components/CustomDropdownModal';
+import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
+import {connect} from 'react-redux';
+import {useEffect} from 'react';
+import Inputbox from '../components/Inputbox';
+import AlertModal from '../components/AlertModal';
 
 const {width, height} = Dimensions.get('window');
 
-const Translator = ({navigation}) => {
-  const [selectedValue, setSelectedValue] = useState(null);
-  const [showAdditionalInfo, setShowAdditionalInfo] = useState(false);
+const Translator = ({
+  navigation,
+  UserReducer,
+  getCurrentLocation,
+  getOccasions,
+}) => {
+  const accessToken = UserReducer.accessToken;
+  const [mapRef, setMapRef] = useState(null);
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(
     new Date(new Date().getTime() + 24 * 60 * 60 * 1000),
   );
+  const [location, setLocation] = useState('Karachi');
   const [showStartDatePicker, setShowStartDatePicker] = useState(false);
   const [showEndDatePicker, setShowEndDatePicker] = useState(false);
-
-  const languages = [
-    {_id: 1, label: 'Information 1'},
-    {_id: 2, label: 'Information 2'},
-    {_id: 3, label: 'Information 3'},
-    {_id: 4, label: 'Information 4'},
-    {_id: 5, label: 'Information 5'},
-  ];
-
+  const [coordinates, setCoordinates] = useState(UserReducer?.coords);
+  const [showIncompleteFormAlert, setShowIncompleteFormAlert] = useState(false);
   //   Submit Button Handler
   const _onNextPress = () => {
-    navigation.navigate('Language');
+    // if (location && startDate && endDate && coordinates) {
+    //   navigation.navigate('Language', {
+    //     translation_address: location,
+    //     start_date: startDate.toString(),
+    //     end_date: endDate.toString(),
+    //     lat: coordinates.lat.toString(),
+    //     longe: coordinates.lng.toString(),
+    //   });
+    // } else {
+    //   setShowIncompleteFormAlert(true);
+    // }
+    navigation.navigate('Language', {
+      translation_address: location,
+      start_date: startDate.toString(),
+      end_date: endDate.toString(),
+      lat: coordinates.lat.toString(),
+      longe: coordinates.lng.toString(),
+    });
   };
 
   // My Location Handler
   const _onMicPress = () => {
-    console.log('My location searching');
   };
 
-  // on Press Dropdown item
-  const _onAddtionalInfoPress = item => {
-    setSelectedValue(item.label);
-    setShowAdditionalInfo(false);
-  };
+  useEffect(() => {
+    getCurrentLocation();
+    getOccasions(accessToken);
+  }, []);
 
   return (
     <View style={styles.container}>
-      <SafeAreaView style={{ flex: 1}}>
-      <AppStatusBar backgroundColor={colors.themePurple1}  barStyle='dark-content' />
-      {/* <StatusBar showHideTransition='fade' animated={true} translucent backgroundColor="transparent" /> */}
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps={false}>
-        {/* Map View  */}
-        <View style={styles.mapView}>
-          <MapView
-            // ref={mapRef}
-            style={{height: height * 0.3, width: width}}
-            showsMyLocationButton={true}
-            zoomEnabled={true}
-            scrollEnabled={true}
-            initialRegion={{
-              latitude: 37.78825,
-              longitude: -122.4324,
-              latitudeDelta: 0.0922,
-              longitudeDelta: 0.0421,
-            }}
-            onRegionChangeComplete={e => {
-              console.log(e);
-            }}></MapView>
-        </View>
+      <SafeAreaView style={{flex: 1}}>
+        {/* <AppStatusBar
+          backgroundColor={colors.themePurple1}
+          barStyle="dark-content"
+        /> */}
+      <View style={{height: 300}}>
+        {/* <ScrollView
+          showsVerticalScrollIndicator={false}
+          nestedScrollEnabled={true}
+          keyboardShouldPersistTaps="always"> */}
+          {/* Map View  */}
+          <View style={styles.mapView}>
+            <MapView
+              style={{height: height * 0.45, width: width}}
+              ref={ref => {
+                setMapRef(ref);
+              }}
+              showsMyLocationButton={true}
+              zoomEnabled={true}
+              followsUserLocation={true}
+              scrollEnabled={true}
+              region={{
+                latitude: coordinates?.lat,
+                longitude: coordinates?.lng,
+                latitudeDelta: 0.01,
+                longitudeDelta: 0.001,
+              }}
+              // initialRegion={{
+              //   latitude: coordinates?.lat,
+              //   longitude: coordinates?.lng,
+              //   latitudeDelta: 0.0922,
+              //   longitudeDelta: 0.0421,
+              // }}
+              // onMapReady={() => {
+              //   mapRef.fitToCoordinates(coordinates, {
+              //     animated: true,
+              //     edgePadding: {
+              //       top: 150,
+              //       right: 50,
+              //       bottom: 100,
+              //       left: 50,
+              //     },
+              //   });
+              // }}
+              onRegionChangeComplete={movedCoords => {
+                setCoordinates({
+                  lat: movedCoords.latitude,
+                  lng: movedCoords.longitude,
+                  longitudeDelta: movedCoords.longitudeDelta,
+                  latitudeDelta: movedCoords.latitudeDelta,
+                });
+              }}>
+              {/* <Marker
+                draggable={true}
+                coordinate={coordinates}
+                position={coordinates}
 
-        {/* Filters View  */}
-        <View style={styles.filterView}>
-          {/* Location Search  */}
-          <GooglePlacesAutocomplete
-            placeholder="Translation Address"
-            onPress={(data, details = null) => {
-              // 'details' is provided when fetchDetails = true
-              console.log(data, details);
-            }}
-            query={{
-              key: 'AIzaSyDGCEsILkoCpmz1Gn63Kf754Jmb2YmOMJo',
-              language: 'en',
-            }}
-            renderLeftButton={() => (
-              <IconComp
-                name="search"
-                type="MaterialIcons"
-                iconStyle={styles.iconStyle}
-              />
-            )}
-            // renderRightButton={() => (
-            //   <TouchableOpacity onPress={() => _onMicPress()}>
-            //     <IconComp
-            //       name="mic"
-            //       type="Ionicons"
-            //       iconStyle={styles.myLocationIconStyle}
-            //     />
-            //   </TouchableOpacity>
-            // )}
-            styles={{
-              textInputContainer: {
-                width: width * 0.9,
-                borderRadius: width * 0.04,
-                borderWidth: 1.2,
-                height: height * 0.084,
-                borderColor: colors.themePurple1,
-              },
-              textInput: {
-                height: height * 0.084,
-                fontFamily: 'Poppins-Regular',
-                color: '#5d5d5d',
-                backgroundColor: 'rgba(0,0,0,0.006)',
-                fontSize: width * 0.04,
-              },
-              predefinedPlacesDescription: {
-                color: '#1faadb',
-              },
-            }}
-          />
-
-          {/* Additional Info  */}
-          <TouchableOpacity
-            style={styles.additonalInfoView}
-            activeOpacity={0.7}
-            onPress={() => setShowAdditionalInfo(true)}>
-            <View style={styles.rowView}>
-              <IconComp
-                type="Feather"
-                name="menu"
-                iconStyle={styles.menuStyle}
-              />
-              <Heading
-                title={selectedValue ? selectedValue : 'Additional Information'}
-                passedStyle={styles.additionalInfoText}
-                fontType="regular"
-              />
-            </View>
-            <IconComp
-              type="AntDesign"
-              name="caretdown"
-              iconStyle={styles.caretdown}
+                onDragEnd={e => {
+                  setCoordinates(e.nativeEvent.coordinate);
+                  console.log('dragEnd', e.nativeEvent.coordinate);
+                }}
+              /> */}
+            </MapView>
+            <Image
+              source={require('../assets/Images/pointer-purple.png')}
+              resizeMode="contain"
+              style={{
+                position: 'absolute',
+                top: height * 0.17,
+                right: width * 0.45,
+                width: width * 0.1,
+                height: height * 0.07,
+              }}
             />
-          </TouchableOpacity>
-
-          {/* Date Pickers  */}
-          <View style={styles.rowView}>
-            {/* start date  */}
-            <View style={styles.rowView}>
-              <TouchableOpacity
-                style={styles.datePickerView}
-                activeOpacity={0.7}
-                onPress={() => {
-                  setShowStartDatePicker(true);
-                }}>
-                <Heading
-                  title={moment(startDate).format('DD-MMM-YYYY')}
-                  passedStyle={styles.additionalInfoText}
-                />
-                <Heading
-                  title={moment(startDate).format('hh:mm A')}
-                  passedStyle={styles.additionalInfoText}
-                />
-              </TouchableOpacity>
-              <IconComp
-                type="Ionicons"
-                name="calendar"
-                iconStyle={styles.eventStyle}
-              />
-            </View>
-
-            {/* end date  */}
-            <View style={styles.rowView}>
-              <TouchableOpacity
-                style={styles.datePickerView}
-                activeOpacity={0.7}
-                onPress={() => {
-                  setShowEndDatePicker(true);
-                }}>
-                <Heading
-                  title={moment(endDate).format('DD-MMM-YYYY')}
-                  passedStyle={styles.additionalInfoText}
-                />
-                <Heading
-                  title={moment(endDate).format('hh:mm A')}
-                  passedStyle={styles.additionalInfoText}
-                />
-              </TouchableOpacity>
-              <IconComp
-                type="Ionicons"
-                name="calendar"
-                iconStyle={styles.eventStyle}
-              />
-            </View>
           </View>
 
-          {/* Next Button  */}
-          <Button
-            title="Next"
-            onBtnPress={() => _onNextPress()}
-            btnStyle={styles.btnStyle}
-            isBgColor={false}
-            btnTextStyle={{fontFamily: 'Poppins-SemiBold', color: 'white'}}
-          />
+          {/* Filters View  */}
+          <View style={styles.filterView}>
+            {/* Location Search  */}
+            <GooglePlacesAutocomplete
+              enablePoweredByContainer={false}
+              placeholder={'Translational Address'}
+              // currentLocationLabel={location}
+              fetchDetails={true}
+              onPress={(data, details) => {
+                // 'details' is provided when fetchDetails = true
+                console.log('Google Search Api : ', data.description);
+                setCoordinates(details.geometry.location);
+                setLocation(data.description);
+              }}
+              query={{
+                key: 'AIzaSyBTsC4XcbDQgH_tBwHdKAUUXyVtdOTL4l0',
+                language: 'en',
+              }}
+              GooglePlacesDetailsQuery={{fields: 'geometry'}}
+              renderLeftButton={() => (
+                <IconComp
+                  name="search"
+                  type="MaterialIcons"
+                  iconStyle={styles.iconStyle}
+                />
+              )}
+              // renderRightButton={() => (
+              //   <TouchableOpacity onPress={() => _onMicPress()}>
+              //     <IconComp
+              //       name="mic"
+              //       type="Ionicons"
+              //       iconStyle={styles.myLocationIconStyle}
+              //     />
+              //   </TouchableOpacity>
+              // )}
+              styles={{
+                textInputContainer: {
+                  alignSelf: 'center',
+                  width: width * 0.9,
+                  borderRadius: width * 0.04,
+                  borderWidth: 1.2,
+                  height: height * 0.084,
+                  borderColor: colors.themePurple1,
+                },
+                textInput: {
+                  height: height * 0.084,
+                  fontFamily: 'Poppins-Regular',
+                  color: '#5d5d5d',
+                  backgroundColor: 'rgba(0,0,0,0.006)',
+                  fontSize: width * 0.04,
+                },
+              }}
+            />
+
+            {/* Date Pickers  */}
+            <View style={styles.rowView}>
+              {/* start date  */}
+              <View style={styles.rowView}>
+                <TouchableOpacity
+                  style={styles.datePickerView}
+                  activeOpacity={0.7}
+                  onPress={() => {
+                    setShowStartDatePicker(true);
+                  }}>
+                  <Heading
+                    title={moment(startDate).format('DD-MMM-YYYY')}
+                    passedStyle={styles.additionalInfoText}
+                  />
+                  <Heading
+                    title={moment(startDate).format('hh:mm A')}
+                    passedStyle={styles.additionalInfoText}
+                  />
+                </TouchableOpacity>
+                <IconComp
+                  type="Ionicons"
+                  name="calendar"
+                  iconStyle={styles.eventStyle}
+                />
+              </View>
+
+              {/* end date  */}
+              <View style={styles.rowView}>
+                <TouchableOpacity
+                  style={styles.datePickerView}
+                  activeOpacity={0.7}
+                  onPress={() => {
+                    setShowEndDatePicker(true);
+                  }}>
+                  <Heading
+                    title={moment(endDate).format('DD-MMM-YYYY')}
+                    passedStyle={styles.additionalInfoText}
+                  />
+                  <Heading
+                    title={moment(endDate).format('hh:mm A')}
+                    passedStyle={styles.additionalInfoText}
+                  />
+                </TouchableOpacity>
+                <IconComp
+                  type="Ionicons"
+                  name="calendar"
+                  iconStyle={styles.eventStyle}
+                />
+              </View>
+            </View>
+
+            {/* Next Button  */}
+            <Button
+              title="Next"
+              onBtnPress={() => _onNextPress()}
+              btnStyle={styles.btnStyle}
+              isBgColor={false}
+              btnTextStyle={{fontFamily: 'Poppins-SemiBold', color: 'white'}}
+            />
+          </View>
         </View>
-      </ScrollView>
 
-      {showAdditionalInfo && (
-        <CustomDropdownModal
-          array={languages}
-          onPress={_onAddtionalInfoPress}
-          isModalVisible={showAdditionalInfo}
-          setIsModalVisible={setShowAdditionalInfo}
+        {showIncompleteFormAlert && (
+          <AlertModal
+            title="Oh Snaps :("
+            message={'Some fields have been left empty.'}
+            isModalVisible={showIncompleteFormAlert}
+            setIsModalVisible={setShowIncompleteFormAlert}
+          />
+        )}
+
+        {/* Start Date Picker  */}
+        <DatePicker
+          modal
+          // mode="date"
+          open={showStartDatePicker}
+          minimumDate={startDate}
+          date={startDate}
+          onConfirm={date => {
+            setShowStartDatePicker(false);
+            setStartDate(date);
+          }}
+          onCancel={() => {
+            setShowStartDatePicker(false);
+          }}
         />
-      )}
-
-      {/* Start Date Picker  */}
-      <DatePicker
-        modal
-        // mode="date"
-        open={showStartDatePicker}
-        minimumDate={startDate}
-        date={startDate}
-        onConfirm={date => {
-          setShowStartDatePicker(false);
-          setStartDate(date);
-        }}
-        onCancel={() => {
-          setShowStartDatePicker(false);
-        }}
-      />
-      {/* End Date Picker  */}
-      <DatePicker
-        modal
-        // mode="date"
-        minimumDate={endDate}
-        open={showEndDatePicker}
-        date={endDate}
-        onConfirm={date => {
-          setShowEndDatePicker(false);
-          setEndDate(date);
-        }}
-        onCancel={() => {
-          setShowEndDatePicker(false);
-        }}
-      />
+        {/* End Date Picker  */}
+        <DatePicker
+          modal
+          // mode="date"
+          minimumDate={endDate}
+          open={showEndDatePicker}
+          date={endDate}
+          onConfirm={date => {
+            setShowEndDatePicker(false);
+            setEndDate(date);
+          }}
+          onCancel={() => {
+            setShowEndDatePicker(false);
+          }}
+        />
       </SafeAreaView>
     </View>
   );
 };
 
-export default Translator;
+const mapStateToProps = ({UserReducer}) => {
+  return {UserReducer};
+};
+export default connect(mapStateToProps, actions)(Translator);
 
 const styles = StyleSheet.create({
   container: {
@@ -296,8 +349,9 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
   },
   mapView: {
-    height: height * 0.3,
+    height: height * 0.45,
     width: width,
+    position: 'relative',
   },
   map: {
     width: '120%',
@@ -308,6 +362,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingTop: height * 0.02,
+    // backgroundColor:'red',
+    height: 300
   },
   btnStyle: {
     marginTop: height * 0.03,
@@ -377,6 +433,7 @@ const styles = StyleSheet.create({
   rowView: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginTop: height * 0.015,
   },
   datePickerView: {
     // marginVertical: height * 0.02,

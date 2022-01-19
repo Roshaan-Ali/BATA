@@ -14,177 +14,198 @@ import colors from '../assets/colors';
 import Heading from '../components/Heading';
 import PROFILE_IMAGE from '../assets/Images/profile-image.jpeg';
 import IconComp from '../components/IconComp';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import AppStatusBar from '../components/AppStatusBar';
 
 const {width, height} = Dimensions.get('window');
 
-const SearchingScreen = () => {
+const SearchingScreen = ({navigation, route}) => {
   const key = 'AIzaSyDGCEsILkoCpmz1Gn63Kf754Jmb2YmOMJo';
   const [status, setStatus] = useState('arrived');
   return (
     <View style={styles.container}>
-      <SafeAreaView style={{ flex: 1}}>
-      <AppStatusBar backgroundColor={colors.themePurple1} barStyle="light-content" />
-      {/* <StatusBar translucent backgroundColor="transparent" /> */}
-      <MapView
-        // ref={mapRef}
-        style={{height: height, width: width}}
-        showsMyLocationButton={true}
-        zoomEnabled={true}
-        scrollEnabled={true}
-        initialRegion={{
-          latitude: 37.78825,
-          longitude: -122.4324,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        }}
-        onRegionChangeComplete={e => {
-          console.log(e);
-        }}></MapView>
+      <SafeAreaView style={{flex: 1}}>
+        {/* <AppStatusBar
+          backgroundColor={colors.themePurple1}
+          barStyle="light-content"
+        /> */}
+        {/* <StatusBar translucent backgroundColor="transparent" /> */}
+        <MapView
+          // ref={mapRef}
+          style={{height: height, width: width}}
+          showsMyLocationButton={true}
+          zoomEnabled={true}
+          scrollEnabled={true}
+          initialRegion={{
+            latitude: 37.78825,
+            longitude: -122.4324,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+          onRegionChangeComplete={e => {
+            console.log(e);
+          }}></MapView>
 
-      {/* Information View  */}
-      <View
-        style={[
-          styles.informationView,
-          status === 'arrived' && {height: height * 0.35},
-          status === 'work done' && {height: height * 0.2},
-        ]}>
-        {status == 'work assigned' ? (
-          <>
-            {/* Interpreter Details  */}
-            <View style={styles.interpreterView}>
-              <Image
-                resizeMode="contain"
-                source={PROFILE_IMAGE}
-                style={styles.imageStyle}
-              />
-              <View style={styles.rowView}>
-                <Heading
-                  title="Interpreter John"
-                  passedStyle={styles.usernameStyle}
-                  fontType="semi-bold"
+        {/* Information View  */}
+        <View
+          style={[
+            styles.informationView,
+            status === 'arrived' && {height: height * 0.35},
+            status === 'work done' && {height: height * 0.2},
+          ]}>
+          {status == 'work assigned' ? (
+            <>
+              {/* Interpreter Details  */}
+              <View style={styles.interpreterView}>
+                <Image
+                  resizeMode="contain"
+                  source={PROFILE_IMAGE}
+                  style={styles.imageStyle}
                 />
-                <Heading
-                  title="Professional"
-                  passedStyle={styles.userTypeStyle}
-                />
+                <View style={styles.rowView}>
+                  <Heading
+                    title="Interpreter John"
+                    passedStyle={styles.usernameStyle}
+                    fontType="semi-bold"
+                  />
+                  <Heading
+                    title="Professional"
+                    passedStyle={styles.userTypeStyle}
+                  />
+                </View>
               </View>
-            </View>
 
-            {/* Location Pick Point Details  */}
-            <View style={styles.detailView}>
-              {/* Timeline  */}
-              <View style={styles.timelineView}>
+              {/* Location Pick Point Details  */}
+              <View style={styles.detailView}>
+                {/* Timeline  */}
+                <View style={styles.timelineView}>
+                  <IconComp
+                    type="FontAwesome"
+                    name="dot-circle-o"
+                    iconStyle={styles.eventStyle}
+                  />
+                  <View style={styles.verticalLine} />
+                  <IconComp
+                    type="Entypo"
+                    name="location-pin"
+                    iconStyle={styles.eventStyle}
+                  />
+                </View>
+
+                {/* Pick Points  */}
+                <View style={styles.textView}>
+                  <View style={styles.pickpoint1}>
+                    <Heading
+                      title="Pickup Point"
+                      passedStyle={styles.pickupLabel}
+                      fontType="semi-bold"
+                    />
+                    <Heading
+                      title="New York, USA"
+                      passedStyle={styles.loctionLabel}
+                    />
+                  </View>
+                  <View style={styles.pickpoint2}>
+                    <Heading
+                      title="Pickup Point"
+                      passedStyle={styles.pickupLabel}
+                      fontType="semi-bold"
+                    />
+                    <Heading
+                      title="New York, USA"
+                      passedStyle={styles.loctionLabel}
+                    />
+                  </View>
+                </View>
+              </View>
+            </>
+          ) : status == 'arrived' ? (
+            <View style={{width: width * 0.9}}>
+              {/* Interpreter View  */}
+              <View style={styles.interpreterView}>
+                <Image
+                  resizeMode="contain"
+                  source={PROFILE_IMAGE}
+                  style={styles.imageStyle}
+                />
+                <View style={styles.rowView}>
+                  <Heading
+                    title="Interpreter John"
+                    passedStyle={styles.usernameStyle}
+                    fontType="semi-bold"
+                  />
+                  <Heading
+                    title="Professional"
+                    passedStyle={styles.userTypeStyle}
+                  />
+                </View>
+              </View>
+              {/* Call Now  */}
+              <TouchableOpacity
+                style={styles.buttonWrapper}
+                activeOpacity={0.8}
+                onPress={() => Linking.openURL(`tel:${'030322112121'}`)}>
                 <IconComp
                   type="FontAwesome"
-                  name="dot-circle-o"
-                  iconStyle={styles.eventStyle}
+                  name="phone"
+                  iconStyle={styles.buttonIconStyle}
                 />
-                <View style={styles.verticalLine} />
-                <IconComp
-                  type="Entypo"
-                  name="location-pin"
-                  iconStyle={styles.eventStyle}
-                />
-              </View>
 
-              {/* Pick Points  */}
-              <View style={styles.textView}>
-                <View style={styles.pickpoint1}>
-                  <Heading
-                    title="Pickup Point"
-                    passedStyle={styles.pickupLabel}
-                    fontType="semi-bold"
-                  />
-                  <Heading
-                    title="New York, USA"
-                    passedStyle={styles.loctionLabel}
-                  />
-                </View>
-                <View style={styles.pickpoint2}>
-                  <Heading
-                    title="Pickup Point"
-                    passedStyle={styles.pickupLabel}
-                    fontType="semi-bold"
-                  />
-                  <Heading
-                    title="New York, USA"
-                    passedStyle={styles.loctionLabel}
-                  />
-                </View>
-              </View>
-            </View>
-          </>
-        ) : status == 'arrived' ? (
-          <View style={{width: width * 0.9}}>
-            {/* Interpreter View  */}
-            <View style={styles.interpreterView}>
-              <Image
-                resizeMode="contain"
-                source={PROFILE_IMAGE}
-                style={styles.imageStyle}
-              />
-              <View style={styles.rowView}>
                 <Heading
-                  title="Interpreter John"
-                  passedStyle={styles.usernameStyle}
+                  title="Call Now"
+                  passedStyle={styles.buttonLabel}
+                  fontType="medium"
+                />
+              </TouchableOpacity>
+
+              {/* Message  */}
+              <TouchableOpacity
+                style={styles.buttonWrapper}
+                activeOpacity={0.8}>
+                <IconComp
+                  type="FontAwesome"
+                  name="envelope"
+                  iconStyle={styles.buttonIconStyle}
+                />
+
+                <Heading
+                  title="Message"
+                  passedStyle={styles.buttonLabel}
+                  fontType="medium"
+                />
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <>
+              {/* Payment View 💵 */}
+              <View style={styles.paymentView}>
+                <Heading
+                  title="Payment Type"
+                  passedStyle={styles.payment}
                   fontType="semi-bold"
                 />
                 <Heading
-                  title="Professional"
-                  passedStyle={styles.userTypeStyle}
+                  title="Stripe"
+                  passedStyle={styles.payment}
+                  fontType="semi-bold"
                 />
               </View>
-            </View>
-            {/* Call Now  */}
-            <TouchableOpacity
-              style={styles.buttonWrapper}
-              activeOpacity={0.8}
-              onPress={() => Linking.openURL(`tel:${'030322112121'}`)}>
-              <IconComp
-                type="FontAwesome"
-                name="phone"
-                iconStyle={styles.buttonIconStyle}
-              />
 
-              <Heading title="Call Now" passedStyle={styles.buttonLabel} fontType="medium"/>
-            </TouchableOpacity>
-
-            {/* Message  */}
-            <TouchableOpacity style={styles.buttonWrapper} activeOpacity={0.8}>
-              <IconComp
-                type="FontAwesome"
-                name="envelope"
-                iconStyle={styles.buttonIconStyle}
-              />
-
-              <Heading title="Message" passedStyle={styles.buttonLabel} fontType="medium"/>
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <>
-            {/* Payment View 💵 */}
-            <View style={styles.paymentView}>
-              <Heading title="Payment Type" passedStyle={styles.payment} fontType="semi-bold"/>
-              <Heading title="Stripe" passedStyle={styles.payment} fontType="semi-bold"/>
-            </View>
-
-            {/* Work Done ✔ */}
-            <View style={styles.workDoneView}>
-              <Heading title="Work Done" passedStyle={styles.workDone} />
-              <IconComp
-                type="AntDesign"
-                name="checkcircleo"
-                iconStyle={[
-                  styles.workDoneIconStyle,
-                  {marginLeft: width * 0.04},
-                ]}
-              />
-            </View>
-          </>
-        )}
-      </View>
+              {/* Work Done ✔ */}
+              <View style={styles.workDoneView}>
+                <Heading title="Work Done" passedStyle={styles.workDone} />
+                <IconComp
+                  type="AntDesign"
+                  name="checkcircleo"
+                  iconStyle={[
+                    styles.workDoneIconStyle,
+                    {marginLeft: width * 0.04},
+                  ]}
+                />
+              </View>
+            </>
+          )}
+        </View>
       </SafeAreaView>
     </View>
   );
