@@ -36,7 +36,7 @@ const BookingHistory = ({navigation, UserReducer, getBookingHistory}) => {
           showsVerticalScrollIndicator={false}
           keyExtractor={item => item.id.toString()}
           contentContainerStyle={styles.flatListContentContainerStyle}
-          renderItem={({item, index}) => <CurrentInterpreter item={item} key={item?.id}/>}
+          renderItem={({item, index}) => <CurrentInterpreter item={item} key={index}/>}
           ListFooterComponentStyle={{alignItems: 'center', marginTop:height * 0.02}}
           ListFooterComponent={() =>
             bookingHistory?.length === 0 && (

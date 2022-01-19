@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {StyleSheet, View, Image, Dimensions, ScrollView} from 'react-native';
+import {StyleSheet, View, Image, Dimensions, ScrollView, PermissionsAndroid, Platform} from 'react-native';
 import {MotiView} from 'moti';
 import {connect} from 'react-redux';
 import colors from '../assets/colors';
@@ -12,13 +12,18 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import MapViewDirections from 'react-native-maps-directions';
 import RatingsAndReviewsModal from '../components/RatingsAndReviewsModal';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-// import Geolocation from '@react-native-community/geolocation';
-import Geolocation from 'react-native-geolocation-service';
+import Geolocation from '@react-native-community/geolocation';
+// import Geolocation from 'react-native-geolocation-service';
 import CurrentInterpreter from '../components/CurrentInterpreter';
 import AlertModal from '../components/AlertModal';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
+
+// const { width, height } = Dimensions.get('window');
+const ASPECT_RATIO = width / height;
+const LATITUDE_DELTA = 0.0925;
+const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
 function Home({
   navigation,
@@ -29,6 +34,7 @@ function Home({
 }) {
   var watchID = useRef(null);
   const [mapRef, setMapRef] = useState(null);
+  // const mapRef = useRef(null);
   const accessToken = UserReducer?.accessToken;
   const [isLoading, setIsLoading] = useState(false);
   const [bookingId, setBookingId] = useState(false);
@@ -41,38 +47,186 @@ function Home({
 
   // 
   const username = UserReducer?.userData?.first_name;
-  const [coordinates, setCoordinates] = useState({
-    latitude: UserReducer?.coords?.lat,
-    longitude: UserReducer?.coords?.lng,
-  });
+  // const [coordinates, setCoordinates] = useState({
+  //   latitude: UserReducer?.coords?.lat,
+  //   longitude: UserReducer?.coords?.lng,
+  // });\
 
   const [coordinates2, setCoordinates2] = useState({
     latitude: 24.9298,
     longitude: 67.1148,
   });
 
-  async function fitMapToBounds() {
-    mapRef.fitToCoordinates(coordinates);
-  }
+  const [coordinatesLat, setCoordinatesLat] = useState(UserReducer?.coords?.lat)
+  const [coordinatesLong, setCoordinatesLong] = useState(UserReducer?.coords?.lng)
+  const [
+    currentLongitude,
+    setCurrentLongitude
+  ] = useState('...');
+  const [
+    currentLatitude,
+    setCurrentLatitude
+  ] = useState('...');
+  const [
+    locationStatus,
+    setLocationStatus
+  ] = useState('');
 
-  const watchLocation = () => {
-    watchID.current = Geolocation.watchPosition(
-      position => {
-        const {latitude, longitude} = position.coords;
-        const newCoordinate = {
-          latitude,
-          longitude,
-        };
-        setCoordinates(newCoordinate);
+  useEffect(() => {
+
+    
+    const requestLocationPermission = async () => {
+      if (Platform.OS === 'ios') {
+        getOneTimeLocation();
+        subscribeLocationLocation();
+      } else {
+        try {
+          const granted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+            {
+              title: 'Location Access Required',
+              message: 'This App needs to Access your location',
+            },
+          );
+          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+            //To Check, If Permission is granted
+            getOneTimeLocation();
+            subscribeLocationLocation();
+          } else {
+            setLocationStatus('Permission Denied');
+          }
+        } catch (err) {
+          console.warn(err);
+        }
+      }
+    };
+    requestLocationPermission();
+    return () => {
+      Geolocation.clearWatch(watchID);
+    };
+  }, []);
+
+  const getOneTimeLocation = () => {
+    setLocationStatus('Getting Location ...');
+    Geolocation.getCurrentPosition(
+      //Will give you the current location
+      (position) => {
+        setLocationStatus('You are Here');
+        console.log(position, "getOneTimeLocation")
+
+        const region = {
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude,
+                latitudeDelta: LATITUDE_DELTA,
+                longitudeDelta: LONGITUDE_DELTA,
+        }
+
+        // if(mapRef){
+        //   // alert("SAD")
+        //   mapRef.animateToRegion(region,1000)
+        // }
+        //getting the Longitude from the location json
+        // const currentLongitude = 
+        //   JSON.stringify(position.coords.longitude);
+
+        // //getting the Latitude from the location json
+        // const currentLatitude = 
+        //   JSON.stringify(position.coords.latitude);
+
+        // //Setting Longitude state
+        // setCurrentLongitude(currentLongitude);
+        
+        // //Setting Longitude state
+        // setCurrentLatitude(currentLatitude);
       },
-      error => console.log(error),
-
+      (error) => {
+        setLocationStatus(error.message);
+      },
       {
-        enableHighAccuracy: true,
-        timeout: 2000,
+        enableHighAccuracy: false,
+        timeout: 30000,
+        maximumAge: 1000
       },
     );
   };
+
+  const subscribeLocationLocation = () => {
+    watchID = Geolocation.watchPosition(
+      (position) => {
+        //Will give you the location on location change
+        const region = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          latitudeDelta: LATITUDE_DELTA,
+          longitudeDelta: LONGITUDE_DELTA,
+        }
+
+        // if(mapRef){
+        //   mapRef.animateToRegion(region,1000)
+        // }
+        setLocationStatus('You are Here');
+        console.log(position, "subscribeLocationLocation");
+        setCoordinatesLat(position.coords.latitude)
+        setCoordinatesLong(position.coords.longitude)
+        //getting the Longitude from the location json        
+        // const currentLongitude =
+        //   JSON.stringify(position.coords.longitude);
+
+        // //getting the Latitude from the location json
+        // const currentLatitude = 
+        //   JSON.stringify(position.coords.latitude);
+
+        // //Setting Longitude state
+        // setCurrentLongitude(currentLongitude);
+
+        // //Setting Latitude state
+        // setCurrentLatitude(currentLatitude);
+      },
+      (error) => {
+        setLocationStatus(error.message);
+      },
+      {
+        enableHighAccuracy: false,
+        maximumAge: 1000
+      },
+    );
+  };
+
+  async function fitMapToBounds() {
+    // console.log(coordinatesLat)
+    // console.log(coordinatesLong)
+    // const region = {
+    //   latitude: position.coords.latitude,
+    //   longitude: position.coords.longitude,
+    //   latitudeDelta: LATITUDE_DELTA,
+    //   longitudeDelta: LONGITUDE_DELTA,
+    // }
+
+    if(mapRef){
+      // console.log(mapRef)
+      // mapRef.animateToRegion(region,1000)
+    }
+    // mapRef.fitToCoordinates([coordinatesLat, coordinatesLong] ,{ edgePadding: { top: 10, right: 10, bottom: 10, left: 10 }, animated: false });
+  }
+
+  // const watchLocation = () => {
+  //   watchID.current = Geolocation.watchPosition(
+  //     position => {
+  //       const {latitude, longitude} = position.coords;
+  //       const newCoordinate = {
+  //         latitude,
+  //         longitude,
+  //       };
+  //       setCoordinates(newCoordinate);
+  //     },
+  //     error => console.log(error),
+
+  //     {
+  //       enableHighAccuracy: true,
+  //       timeout: 2000,
+  //     },
+  //   );
+  // };
 
   const _onSucessSubmitReview = () => {
     setShowRatingsReviewsModal(false);
@@ -264,35 +418,40 @@ function Home({
           <View style={styles.map}>
             <MapView
               style={{width: width * 0.8, height: height * 0.36}}
-              ref={ref => {
-                setMapRef(ref);
-              }}
-              showsMyLocationButton={true}
+              ref={(ref)=> setMapRef(ref)}
+              // showsMyLocationButton={true}
               showsCompass={true}
               zoomEnabled={true}
+              
               followsUserLocation={true}
               scrollEnabled={true}
+              mapType={Platform.OS == "android" ? "none" : "standard"}
               initialRegion={{
-                latitude: coordinates.latitude,
-                longitude: coordinates.longitude,
-                latitudeDelta: 0.0922,
-                longitudeDelta: 0.0421,
+                latitude:coordinatesLat,
+                longitude: coordinatesLong,
+                latitudeDelta: LATITUDE_DELTA,
+                longitudeDelta: LONGITUDE_DELTA
               }}
+              // lat: "24.9180588",
+              // lng: "67.0947953"
               onMapReady={() => {
                 fitMapToBounds();
               }}
-              onRegionChangeComplete={e => {
-                // mapRef.animateCamera({
-                //   center: {
-                //     latitude: coordinates.latitude,
-                //     longitude: coordinates.longitude,
-                //   },
-                //   heading: 0,
-                //   pitch: 90,
-                //   altitude: 200,
-                //   zoom: 12,
-                // });
-              }}>
+              // onRegionChangeComplete={e => {
+              //   mapRef.animateCamera({
+              //     // center: {
+              //     //   latitude: coordinatesLat,
+              //     //   longitude: coordinatesLong,
+              //     //   latitudeDelta: LATITUDE_DELTA,
+              //     //   longitudeDelta: LONGITUDE_DELTA
+              //     // },
+              //     // heading: 10,
+              //     // pitch: 80,
+              //     // altitude: 700,
+              //     // zoom: 40,
+              //   });
+              // }}
+              >
               {/* <MapViewDirections
                 origin={coordinates}
                 destination={coordinates2}
@@ -303,7 +462,10 @@ function Home({
                 strokeWidth={4}
                 strokeColor="#81246C"
               /> */}
-              <Marker coordinate={coordinates} />
+              <Marker coordinate={{
+                latitude: coordinatesLat,
+                longitude: coordinatesLong,
+              }} />
               {/* <Marker coordinate={coordinates2} /> */}
               {/* <Marker ref={markerRef} coordinate={coordinates2}>
                 <Image
@@ -334,6 +496,7 @@ function Home({
                   item={currentBooking}
                   isLoading={isLoading}
                   onPress={_onPressComplete}
+                  // key={currentBooking.id}
                 />
               </>
             )}

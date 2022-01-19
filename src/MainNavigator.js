@@ -6,6 +6,7 @@ import {
   StatusBar,
   PermissionsAndroid,
   BackHandler,
+  Platform,
 } from 'react-native';
 import messaging from '@react-native-firebase/messaging';
 import colors from './assets/colors';
@@ -34,13 +35,16 @@ function Main({UserReducer, getCurrentLocation,subscribeToTopic}) {
   useEffect(() => {
     async function requestLocationPermission() {
       try {
-        const granted = await PermissionsAndroid.request(
+        const platformCheck = Platform.OS
+        if(platformCheck != "ios"){
+          const granted = await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
         );
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
           setGranted(granted);
         } else {
           BackHandler.exitApp();
+        }
         }
       } catch (err) {
         console.warn(err);

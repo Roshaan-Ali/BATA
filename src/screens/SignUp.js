@@ -17,7 +17,10 @@ import LottieView from 'lottie-react-native';
 import Inputbox from '../components/Inputbox';
 import IconComp from '../components/IconComp';
 import AlertModal from '../components/AlertModal';
+<<<<<<< HEAD
 import {useIsFocused} from '@react-navigation/native';
+=======
+>>>>>>> origin/Ahsan
 import * as actions from '../store/actions/actions';
 import AppStatusBar from '../components/AppStatusBar';
 import background_img from '../assets/background_img.png';
@@ -35,7 +38,10 @@ const SignUp = ({
   getAllPackages,
 }) => {
   const [email, setEmail] = useState('');
+<<<<<<< HEAD
   const isFocused = useIsFocused();
+=======
+>>>>>>> origin/Ahsan
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
 

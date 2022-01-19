@@ -79,6 +79,7 @@ const Packages = ({
     getAllPackages(accessToken);
   }, []);
 
+ 
   return (
     <StripeProvider publishableKey={PUB_KEY_STRIPE}>
       <View style={styles.container}>
@@ -132,34 +133,10 @@ const Packages = ({
                   passedStyle={styles.packageName}
                   fontType="semi-bold"
                 />
-                <View style={styles.packageDescCntainer}>
-                  <IconComp
-                    name="checkcircle"
-                    type="AntDesign"
-                    iconStyle={styles.iconStyle}
-                  />
-                  <Heading
-                    title={
-                      'Video And Audio Interpretation Depending On The Business And People Required.'
-                    }
-                    passedStyle={styles.featureStyle}
-                    fontType="regular"
-                  />
-                </View>
-
                 <TouchableOpacity
                   activeOpacity={0.9}
                   style={styles.btnStyle}
-                  onPress={() => {
-                    if (
-                      currentBooking === undefined ||
-                      currentBooking === null
-                    ) {
-                      navigation.navigate('CustomPackage');
-                    } else {
-                      setShowNotAllowed(true);
-                    }
-                  }}>
+                  onPress={() => navigation.navigate('CustomPackage')}>
                   <Heading
                     title="Get Started"
                     passedStyle={styles.btnTextStyle}
@@ -213,16 +190,6 @@ const Packages = ({
           message={`${selectedPackage.name} package has been activated now.`}
           isModalVisible={isConfirmBuyModalVisible}
           setIsModalVisible={setIsConfirmBuyModalVisible}
-        />
-      )}
-      {showNotAllowed && (
-        <AlertModal
-          title="Woah!"
-          message={
-            'Packages are not allowed to be cancelled or upgraded while you have a booking.'
-          }
-          isModalVisible={showNotAllowed}
-          setIsModalVisible={setShowNotAllowed}
         />
       )}
     </StripeProvider>

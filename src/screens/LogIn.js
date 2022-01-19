@@ -37,7 +37,6 @@ const LogIn = ({navigation, user_login, UserReducer, setErrorModal}) => {
   const [showLoginFailedModal, setShowLoginFailedModal] = useState(
     UserReducer?.loginFailed?.status,
   );
-  console.log(isFocused, '= login =========================');
 
   const _onPressSignUp = () => {
     navigation.navigate('SignUp');
@@ -225,10 +224,13 @@ const styles = StyleSheet.create({
   },
   lottieStyles: {
     height: height * 0.15,
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: height * -0.02,
+    // height: 100,
+    width: 100,
+    // position: 'absolute',
+    // left: 0,
+    // backgroundColor:'red'
+    // right: 0,
+    // top: height * -0.02,
   },
   container: {
     flex: 1,

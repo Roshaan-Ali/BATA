@@ -83,11 +83,11 @@ const Translator = ({
           backgroundColor={colors.themePurple1}
           barStyle="dark-content"
         /> */}
-
-        <ScrollView
+      <View style={{height: 300}}>
+        {/* <ScrollView
           showsVerticalScrollIndicator={false}
           nestedScrollEnabled={true}
-          keyboardShouldPersistTaps="always">
+          keyboardShouldPersistTaps="always"> */}
           {/* Map View  */}
           <View style={styles.mapView}>
             <MapView
@@ -111,17 +111,17 @@ const Translator = ({
               //   latitudeDelta: 0.0922,
               //   longitudeDelta: 0.0421,
               // }}
-              onMapReady={() => {
-                mapRef.fitToCoordinates(coordinates, {
-                  animated: true,
-                  edgePadding: {
-                    top: 150,
-                    right: 50,
-                    bottom: 100,
-                    left: 50,
-                  },
-                });
-              }}
+              // onMapReady={() => {
+              //   mapRef.fitToCoordinates(coordinates, {
+              //     animated: true,
+              //     edgePadding: {
+              //       top: 150,
+              //       right: 50,
+              //       bottom: 100,
+              //       left: 50,
+              //     },
+              //   });
+              // }}
               onRegionChangeComplete={movedCoords => {
                 setCoordinates({
                   lat: movedCoords.latitude,
@@ -268,7 +268,7 @@ const Translator = ({
               btnTextStyle={{fontFamily: 'Poppins-SemiBold', color: 'white'}}
             />
           </View>
-        </ScrollView>
+        </View>
 
         {showIncompleteFormAlert && (
           <AlertModal
@@ -362,6 +362,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingTop: height * 0.02,
+    // backgroundColor:'red',
+    height: 300
   },
   btnStyle: {
     marginTop: height * 0.03,

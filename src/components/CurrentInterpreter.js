@@ -18,10 +18,15 @@ import {connect} from 'react-redux';
 
 const {width, height} = Dimensions.get('window');
 
-const CurrentInterpreter = ({item, onPress, isLoading, UserReducer}) => {
+const {width, height} = Dimensions.get('window');
+
+const CurrentInterpreter = ({item, onPress, isLoading, key, UserReducer}) => {
   const route = useRoute();
+  const m = Math.random() * 100000000000
+  console.log(Math.round(m))
   return (
-    <View style={styles.container}>
+
+    <View key={Math.round(m)} style={styles.container}>
       {/* initiator  */}
 
       {/* Event Heading  */}
@@ -59,18 +64,15 @@ const CurrentInterpreter = ({item, onPress, isLoading, UserReducer}) => {
         </View>
 
         {/* Language View  */}
-        {item?.translating_language?.map(ele => (
-          <View style={styles.locationView} key={ele.id}>
+        {item?.translating_language?.map((ele, index) => (
+          <View key={index} style={styles.locationView} >
             <IconComp
               type="FontAwesome"
               name="language"
               iconStyle={styles.locationIcon}
             />
             <Heading title={ele?.name} passedStyle={styles.value} />
-            {/* <Heading
-              title="-"
-              passedStyle={styles.value}
-            /> */}
+
             <Heading
               title={`(${ele?.qty} Interpreters)`}
               passedStyle={styles.value}
@@ -86,9 +88,7 @@ const CurrentInterpreter = ({item, onPress, isLoading, UserReducer}) => {
             iconStyle={styles.locationIcon}
           />
           <Heading
-            title={`From: ${moment(item?.start_date).format(
-              'MMM/DD/YYYY - hh:mm A',
-            )}`}
+            title={`From: ${moment(item?.start_date,'MMM/DD/YYYY - hh:mm:A')}`}
             passedStyle={styles.value}
           />
         </View>
@@ -101,9 +101,7 @@ const CurrentInterpreter = ({item, onPress, isLoading, UserReducer}) => {
             iconStyle={styles.locationIcon}
           />
           <Heading
-            title={`Till: ${moment(item?.end_date).format(
-              'MMM/DD/YYYY - hh:mm A',
-            )}`}
+            title={`Till: ${moment(item?.end_date,'MMM/DD/YYYY - hh:mm:A',)}`}
             passedStyle={styles.value}
           />
         </View>
@@ -234,7 +232,7 @@ const styles = StyleSheet.create({
   locationView: {
     flexDirection: 'row',
     paddingVertical: height * 0.01,
-    flexWrap: 'wrap',
+    flexWrap:'wrap'
   },
   occasionText: {
     color: 'white',

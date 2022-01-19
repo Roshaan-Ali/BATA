@@ -731,28 +731,101 @@ export const resetPassword =
     }
   };
 
+// export const getCurrentLocation = () => async dispatch => {
+//   try {
+//     const config = {
+//       enableHighAccuracy: true,
+//       timeout: 200000,
+//       maximumAge: 3600000,
+//     };
+
+//     Geolocation.getCurrentPosition(
+//       info => {
+//         dispatch({
+//           type: types.GET_CURRENT_LOC,
+//           payload: {
+//             lat: info.coords.latitude,
+//             lng: info.coords.longitude,
+//           },
+//         });
+//       },
+//       err => console.log(err),
+//       config,
+//     );
+//   } catch (err) {
+//     console.log(err);
+//   }
+// };
 export const getCurrentLocation = () => async dispatch => {
   try {
-    const config = {
-      enableHighAccuracy: true,
-      timeout: 200000,
-      maximumAge: 3600000,
-    };
+    // dispatch({
+    //   type: types.GET_CURRENT_LOC,
+    //   payload: {
+    //     lat: "24.9180588",
+    //     lng: "67.0947953"
+    //   },
+    // });
 
     Geolocation.getCurrentPosition(
-      info => {
-        dispatch({
-          type: types.GET_CURRENT_LOC,
-          payload: {
-            lat: info.coords.latitude,
-            lng: info.coords.longitude,
-          },
-        });
+      //Will give you the current location
+      (position) => {
+        console.log(position, "ACTION")
+        //getting the Longitude from the location json
+        const currentLongitude = 
+          JSON.stringify(position.coords.longitude);
+
+        //getting the Latitude from the location json
+        const currentLatitude = 
+          JSON.stringify(position.coords.latitude);
+
+          dispatch({
+            type: types.GET_CURRENT_LOC,
+            payload: {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            },
+          });
+
+        //Setting Longitude state
+        // setCurrentLongitude(currentLongitude);
+        
+        // //Setting Longitude state
+        // setCurrentLatitude(currentLatitude);
       },
-      err => console.log(err),
-      config,
+      (error) => {
+        console.log(error.message)
+      },
+      {
+        enableHighAccuracy: false,
+        timeout: 30000,
+        maximumAge: 1000
+      },
     );
+    // const config = {
+    //   enableHighAccuracy: true,
+    //   timeout: 200000,
+    //   maximumAge: 3600000,
+    // };
+
+    // Geolocation.getCurrentPosition(
+    //   info => {
+    //     console.log("AHSAN", info)
+    //     dispatch({
+    //       type: types.GET_CURRENT_LOC,
+    //       payload: {
+    //         lat: info.coords.latitude,
+    //         lng: info.coords.longitude,
+    //       },
+    //     });
+    //   },
+    //   err => {
+    //     console.log(err, "ERROR")
+    //   },
+    //   config,
+    // );
   } catch (err) {
     console.log(err);
   }
 };
+
+

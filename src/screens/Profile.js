@@ -429,7 +429,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: height * 0.19,
     right: width * 0.025,
-    // borderRadius: 30 / 0.2,
+    borderRadius: 50,
+     overflow:'hidden'
   },
   border_line: {
     borderBottomWidth: 1,
