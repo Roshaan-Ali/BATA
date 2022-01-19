@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
   Dimensions,
   ImageBackground,
@@ -20,6 +20,7 @@ import OTPInputView from '@twotalltotems/react-native-otp-input';
 import {connect} from 'react-redux';
 import AlertModal from '../components/AlertModal';
 import {useIsFocused} from '@react-navigation/native';
+import PhoneInput from 'react-native-phone-number-input';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -32,6 +33,7 @@ const ForgetPassword = ({
   requestOtpForResetPassword,
   verifyResetPasswordOtpCode,
 }) => {
+  const phoneInput = useRef(null);
   const [step, setStep] = useState(1);
   const [phone, setPhone] = useState('');
   const [otpCode, setOtpCode] = useState('');
@@ -56,6 +58,9 @@ const ForgetPassword = ({
     setIsShowPassword(!isShowPassword);
   };
 
+  const [value, setValue] = useState('');
+  const [formattedValue, setFormattedValue] = useState('');
+  
   //STEP 1 FUNCTION CALL
   const _onPressSubmitNumber = async () => {
     if (!phone.length > 0) {
@@ -129,6 +134,7 @@ const ForgetPassword = ({
       setShowErrorModal(false);
     }
   }, [UserReducer?.errorModal]);
+
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#EF2692'}}>
       {/* <AppStatusBar
@@ -145,14 +151,61 @@ const ForgetPassword = ({
           {step === 1 && (
             <>
               <Heading title="Forget Password" passedStyle={styles.heading} />
-              <Inputbox
+              <PhoneInput
+              ref={phoneInput}
+              defaultValue={value}
+              defaultCode="US"
+              layout="first"
+              placeholder="Phone"
+              containerStyle={{
+                backgroundColor: 'transparent',
+                borderWidth: 1,
+                borderColor: 'white',
+                borderRadius: width * 0.045,
+                color: 'white',
+                height: height * 0.0753,
+                marginVertical: height * 0.02,
+              }}
+              // flagButtonStyle={{
+              //   // backgroundColor: 'red',
+              //   width: width * 0.2,
+              // }}
+              // countryPickerButtonStyle={{
+              //   // backgroundColor: 'red',
+              //   // paddingRight: 10,
+              // }}
+              textInputStyle={{
+                color: 'white',
+                fontSize: width * 0.045,
+                paddingVertical: 0,
+              }}
+              codeTextStyle={{
+                color: 'white',
+                fontSize: width * 0.045,
+              }}
+              textContainerStyle={{
+                backgroundColor: 'transparent',
+                // backgroundColor:'red',
+                //  height: height * 0.09,
+                color: 'white',
+                // paddingVertical: 5,
+              }}
+              onChangeText={text => {
+                setValue(text);
+              }}
+              onChangeFormattedText={text => {
+                setPhone(text);
+              }}
+              withDarkTheme
+            />
+              {/* <Inputbox
                 value={phone}
                 setTextValue={setPhone}
                 placeholderTilte="Phone Number"
                 isShowIcon={true}
                 keyboardType={'numeric'}
                 names={'smartphone'}
-              />
+              /> */}
               {isRequestingCode ? (
                 <View style={styles.loadingComponent}>
                   <LottieView

@@ -79,7 +79,6 @@ const Packages = ({
     getAllPackages(accessToken);
   }, []);
 
- 
   return (
     <StripeProvider publishableKey={PUB_KEY_STRIPE}>
       <View style={styles.container}>
@@ -133,6 +132,19 @@ const Packages = ({
                   passedStyle={styles.packageName}
                   fontType="semi-bold"
                 />
+                <View style={styles.packageDescCntainer}>
+                  <IconComp
+                    name="checkcircle"
+                    type="AntDesign"
+                    iconStyle={styles.iconStyle}
+                  />
+                  <Heading
+                    title={"Video And Audio Interpretation Depending On The Business And People Required."}
+                    passedStyle={styles.featureStyle}
+                    fontType="regular"
+                  />
+                </View>
+
                 <TouchableOpacity
                   activeOpacity={0.9}
                   style={styles.btnStyle}
@@ -147,7 +159,8 @@ const Packages = ({
                   'individual' &&
                   UserReducer?.userData?.current_package?.name?.toLowerCase() !==
                     'enterprise' &&
-                  UserReducer?.userData?.current_package !== null && (
+                  UserReducer?.userData?.current_package !== null &&
+                  UserReducer?.userData?.current_package !== undefined && (
                     <View
                       style={{
                         width: width * 0.35,
@@ -205,7 +218,7 @@ export default connect(mapStateToProps, actions)(Packages);
 const styles = StyleSheet.create({
   featureStyle: {
     color: 'white',
-    fontSize: width * 0.05,
+    fontSize: width * 0.045,
     textTransform: 'capitalize',
     fontWeight: '600',
     paddingLeft: width * 0.025,
@@ -265,7 +278,7 @@ const styles = StyleSheet.create({
     elevation: 21,
   },
   btnStyle: {
-    marginTop:height * 0.03,
+    marginTop: height * 0.03,
     backgroundColor: 'white',
     width: width * 0.65,
     paddingVertical: height * 0.018,

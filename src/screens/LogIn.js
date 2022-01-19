@@ -46,20 +46,19 @@ const LogIn = ({navigation, user_login, UserReducer, setErrorModal}) => {
     setIsShowPassword(!isShowPassword);
   };
 
-  const _onPressLogin =async () => {
+  const _onPressLogin = async () => {
     if (email.length > 0 && password.length > 0) {
       setIsLoading(true);
 
       // setTimeout(() => {
-       await user_login({email, password});
-        setIsLoading(false);
+      await user_login({email, password});
+      setIsLoading(false);
       // }, 2000);
     } else {
       setShowAlertModal(true);
     }
   };
   const currentBooking = UserReducer?.currentBooking;
-  console.log(currentBooking);
   useEffect(() => {
     if (UserReducer?.errorModal?.status) {
       setShowLoginFailedModal(true);
@@ -71,7 +70,7 @@ const LogIn = ({navigation, user_login, UserReducer, setErrorModal}) => {
 
   useEffect(() => {
     setErrorModal();
-  },[]);
+  }, []);
   return (
     <View style={styles.container}>
       <SafeAreaView style={{flex: 1, backgroundColor: '#EF2692'}}>

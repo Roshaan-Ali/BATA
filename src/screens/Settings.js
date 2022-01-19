@@ -20,6 +20,7 @@ const {width, height} = Dimensions.get('window');
 
 const Settings = ({navigation, UserReducer, cancelSubscription}) => {
   const accessToken = UserReducer?.accessToken;
+  // const currentBooking = {};
   const currentBooking = UserReducer?.currentBooking;
   const [isLoading, setIsLoading] = useState(false);
   const packageDetails = UserReducer?.userData?.current_package;
@@ -34,7 +35,6 @@ const Settings = ({navigation, UserReducer, cancelSubscription}) => {
     setShowCancelSubscriptionModal(false);
     setShowSuccessCancellationAlert(true);
   };
-console.log(currentBooking)
   // Cancel Subscription
   const _onPressCancelSubscription = async () => {
     setIsLoading(true);
@@ -75,7 +75,7 @@ console.log(currentBooking)
         </TouchableOpacity>
 
         {/* Cancel Subscription  */}
-        {currentBooking !== null && (
+        {UserReducer?.userData?.current_package !== null && (
           <TouchableOpacity
             onPress={() => {
               if (currentBooking == undefined || currentBooking === null) {

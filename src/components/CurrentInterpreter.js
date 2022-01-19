@@ -18,14 +18,11 @@ import {connect} from 'react-redux';
 
 const {width, height} = Dimensions.get('window');
 
-const {width, height} = Dimensions.get('window');
-
 const CurrentInterpreter = ({item, onPress, isLoading, key, UserReducer}) => {
   const route = useRoute();
-  const m = Math.random() * 100000000000
-  console.log(Math.round(m))
+  const m = Math.random() * 100000000000;
+  console.log(item);
   return (
-
     <View key={Math.round(m)} style={styles.container}>
       {/* initiator  */}
 
@@ -65,7 +62,7 @@ const CurrentInterpreter = ({item, onPress, isLoading, key, UserReducer}) => {
 
         {/* Language View  */}
         {item?.translating_language?.map((ele, index) => (
-          <View key={index} style={styles.locationView} >
+          <View key={index} style={styles.locationView}>
             <IconComp
               type="FontAwesome"
               name="language"
@@ -87,8 +84,10 @@ const CurrentInterpreter = ({item, onPress, isLoading, key, UserReducer}) => {
             name="event-note"
             iconStyle={styles.locationIcon}
           />
+
+          
           <Heading
-            title={`From: ${moment(item?.start_date,'MMM/DD/YYYY - hh:mm:A')}`}
+            title={`From: ${ moment(moment(item?.start_date).toISOString()).format('DDD/MMM/yyyy (HH:mm A)')}`}
             passedStyle={styles.value}
           />
         </View>
@@ -101,7 +100,7 @@ const CurrentInterpreter = ({item, onPress, isLoading, key, UserReducer}) => {
             iconStyle={styles.locationIcon}
           />
           <Heading
-            title={`Till: ${moment(item?.end_date,'MMM/DD/YYYY - hh:mm:A',)}`}
+            title={`Till: ${ moment(moment(item?.end_date).toISOString()).format('DDD/MMM/yyyy (HH:mm A)')}`}
             passedStyle={styles.value}
           />
         </View>
@@ -232,7 +231,7 @@ const styles = StyleSheet.create({
   locationView: {
     flexDirection: 'row',
     paddingVertical: height * 0.01,
-    flexWrap:'wrap'
+    flexWrap: 'wrap',
   },
   occasionText: {
     color: 'white',

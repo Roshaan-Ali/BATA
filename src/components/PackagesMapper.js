@@ -19,7 +19,6 @@ const PackagesMapper = ({
 }) => {
   const [showNotAllowed, setShowNotAllowed] = useState(false);
   const currentBooking = UserReducer?.currentBooking;
-  console.log(JSON.stringify(UserReducer, null, 2));
   return (
     <View style={styles.container}>
       <FlatList

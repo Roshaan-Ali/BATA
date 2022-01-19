@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   StyleSheet,
   View,
@@ -17,15 +17,13 @@ import LottieView from 'lottie-react-native';
 import Inputbox from '../components/Inputbox';
 import IconComp from '../components/IconComp';
 import AlertModal from '../components/AlertModal';
-<<<<<<< HEAD
 import {useIsFocused} from '@react-navigation/native';
-=======
->>>>>>> origin/Ahsan
 import * as actions from '../store/actions/actions';
 import AppStatusBar from '../components/AppStatusBar';
 import background_img from '../assets/background_img.png';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import CustomDropdownModal from '../components/CustomDropdownModal';
+import PhoneInput from 'react-native-phone-number-input';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -38,12 +36,9 @@ const SignUp = ({
   getAllPackages,
 }) => {
   const [email, setEmail] = useState('');
-<<<<<<< HEAD
-  const isFocused = useIsFocused();
-=======
->>>>>>> origin/Ahsan
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
+  const isFocused = useIsFocused();
 
   let packages = UserReducer?.packages;
   let p_language = UserReducer?.languages;
@@ -65,7 +60,6 @@ const SignUp = ({
     useState(false);
   const CHECK_EMAIL =
     /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-console.log(isFocused," signup==========================")
   const _onPressSignUp = async () => {
     if (
       firstname === '' ||
@@ -147,6 +141,10 @@ console.log(isFocused," signup==========================")
   useEffect(() => {
     getAllPackages();
   }, []);
+
+  const [value, setValue] = useState('');
+ 
+  const phoneInput = useRef(null);
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#EF2692'}}>
       {/* <AppStatusBar
@@ -231,14 +229,61 @@ console.log(isFocused," signup==========================")
               onPressIcon={_onPressShowPassword}
             />
 
+            <PhoneInput
+              ref={phoneInput}
+              defaultValue={value}
+              defaultCode="US"
+              layout="first"
+              placeholder="Phone"
+              containerStyle={{
+                backgroundColor: 'transparent',
+                borderWidth: 1,
+                borderColor: 'white',
+                borderRadius: width * 0.045,
+                color: 'white',
+                height: height * 0.0753,
+                marginVertical: height * 0.02,
+              }}
+              // flagButtonStyle={{
+              //   // backgroundColor: 'red',
+              //   width: width * 0.2,
+              // }}
+              // countryPickerButtonStyle={{
+              //   // backgroundColor: 'red',
+              //   // paddingRight: 10,
+              // }}
+              textInputStyle={{
+                color: 'white',
+                fontSize: width * 0.045,
+                paddingVertical: 0,
+              }}
+              codeTextStyle={{
+                color: 'white',
+                fontSize: width * 0.045,
+              }}
+              textContainerStyle={{
+                backgroundColor: 'transparent',
+                // backgroundColor:'red',
+                //  height: height * 0.09,
+                color: 'white',
+                // paddingVertical: 5,
+              }}
+              onChangeText={text => {
+                setValue(text);
+              }}
+              onChangeFormattedText={text => {
+                setPhone(text);
+              }}
+              withDarkTheme
+            />
             {/* Phone   */}
-            <Inputbox
+            {/* <Inputbox
               value={phone}
               setTextValue={setPhone}
               placeholderTilte="Phone"
               keyboardType="numeric"
               names={'smartphone'}
-            />
+            /> */}
             <Heading
               title="Mention your country code e.g: 1, 92 etc"
               passedStyle={{fontSize: width * 0.038, color: 'white'}}

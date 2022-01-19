@@ -62,7 +62,6 @@ const CreateCustomPackage = ({
     if (stripeGeneratedKey === '') {
       alert('Card number is required');
     } else {
-      console.log(stripeGeneratedKey);
       const data = {
         price: Number(noOfInterpreters) * price,
         package_limit: noOfInterpreters,
@@ -125,14 +124,7 @@ const CreateCustomPackage = ({
               // names={'counter'}
             />
 
-            <TouchableOpacity
-              style={styles.approxBox}
-              activeOpacity={0.9}
-              onPress={() =>
-                navigation.navigate('ConfirmModal', dummyTranslator)
-              }
-              // onPress={() => setShowConfirmModal(true)}
-            >
+            <View style={styles.approxBox}>
               <Heading
                 title={`$${(Number(noOfInterpreters) * price).toFixed(2)}`}
                 passedStyle={styles.approxLabel}
@@ -142,7 +134,7 @@ const CreateCustomPackage = ({
                 title={`$${price} per interpreter`}
                 passedStyle={styles.totalHours}
               />
-            </TouchableOpacity>
+            </View>
 
             {isLoading ? (
               <View style={styles.loadingComponent} activeOpacity={1}>

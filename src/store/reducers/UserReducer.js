@@ -139,7 +139,6 @@ export function UserReducer(state = initialData, action) {
       };
 
     case PACKAGE_MODIFIED:
-      
       return {
         ...state,
         errorModal: {
@@ -153,8 +152,6 @@ export function UserReducer(state = initialData, action) {
         },
       };
 
-      
-
     case GET_LANGUAGES:
       return {
         ...state,
@@ -162,8 +159,6 @@ export function UserReducer(state = initialData, action) {
       };
 
     case UPDATE_USER_DATA:
-     
-
       return {
         ...state,
         loginFailed: {
@@ -176,7 +171,6 @@ export function UserReducer(state = initialData, action) {
       };
 
     case UPDATE_PHOTO:
-     
       return {
         ...state,
         loginFailed: {
@@ -223,7 +217,7 @@ export function UserReducer(state = initialData, action) {
         ...state,
         isUserLogin: true,
       };
-      
+
     case IS_VALID_RESET_PASS_OTP:
       return {
         ...state,
