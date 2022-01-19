@@ -31,14 +31,14 @@ const PushNotifications = ({
   // Toggle Notifications Function
   const _onPressToggleNotificationSubscription = async () => {
     setIsLoading(true);
-    setTimeout(async () => {
+    // setTimeout(async () => {
       if (UserReducer?.hasSubscribedToFCMNotification) {
         await unSubscribeFromTopic(UserReducer?.userData?.id);
       } else {
         await subscribeToTopic(UserReducer?.userData?.id);
       }
       setIsLoading(false);
-    }, 2000);
+    // }, 2000);
   };
 
   return (

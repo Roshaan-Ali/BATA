@@ -115,13 +115,14 @@ const CreateCustomPackage = ({
               placeholderTilte="No. of Interpreters"
               keyboardType="numeric"
               placeholderTextColor={'grey'}
-              isShowIcon={true}
-              isPassword={true}
+              // isShowIcon={true}
+              // isPassword={true}
+              // onPressIcon={() => {}}
               passedStyle={styles.inputStyle}
-              iconStyle={styles.iconStyle}
-              iconWrapperStyle={styles.iconWrapperStyle}
-              iconType={'MaterialCommunityIcons'}
-              names={'counter'}
+              // iconStyle={styles.iconStyle}
+              // iconWrapperStyle={styles.iconWrapperStyle}
+              // iconType={'MaterialCommunityIcons'}
+              // names={'counter'}
             />
 
             <TouchableOpacity

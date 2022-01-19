@@ -16,7 +16,6 @@ const DisplayNameChangeModal = ({
   setIsModalVisible,
   onPressCancelSubscription,
 }) => {
-
   var end = moment(
     new Date(
       new Date(packageDetails?.created_date).getTime() +
@@ -24,14 +23,12 @@ const DisplayNameChangeModal = ({
     ),
   ).format('DD/MMMM/yyyy');
 
-  console.log({packageDetails})
   //   )}
   return (
     <Modal
       isVisible={isModalVisible}
       swipeDirection={'up'}
-      onSwipeMove={p => setIsModalVisible(false)}
-      onBackButtonPress={p => setTimeout}>
+      onSwipeMove={p => setIsModalVisible(false)}>
       <View style={styles.container}>
         <Heading
           fontType="semi-bold"
@@ -157,8 +154,6 @@ const DisplayNameChangeModal = ({
             />
           </View>
         )}
-
-       
       </View>
     </Modal>
   );

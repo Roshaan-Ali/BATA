@@ -12,6 +12,7 @@ import {
 import colors from '../assets/colors';
 import Heading from '../components/Heading';
 import background_img from '../assets/background_img.png';
+import {useIsFocused} from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
 import * as actions from '../store/actions/actions';
 import IconComp from '../components/IconComp';
@@ -37,6 +38,8 @@ const SignupPackage = ({
   const [isLoading, setIsLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [stripeGeneratedKey, setStripeGeneratedKey] = useState('');
+  const isFocused = useIsFocused();
+
   const [showPackageBuyingFailedModal, setShowPackageBuyingFailedModal] =
     useState(false);
 
@@ -54,7 +57,6 @@ const SignupPackage = ({
     }
   };
 
-
   const _onPressSkip = async () => {
     setIsLoading(true);
     await skipBuyingPackage();
@@ -62,9 +64,9 @@ const SignupPackage = ({
   };
 
   useEffect(() => {
-    if (UserReducer?.errorModal?.status === true) {
-      setShowPackageBuyingFailedModal(true);
-    }
+    // if (UserReducer?.errorModal?.status === true) {
+    //   setShowPackageBuyingFailedModal(true);
+    // }
     if (UserReducer?.errorModal?.status === false) {
       setShowPackageBuyingFailedModal(false);
     }
@@ -163,12 +165,13 @@ const SignupPackage = ({
                   setIsModalVisible={setIsModalVisible}
                 />
               )}
-              {showPackageBuyingFailedModal && (
+              {isFocused && showPackageBuyingFailedModal && (
                 <AlertModal
                   title="Oh Snaps!"
-                  message={'Something went wrong.'}
+                  message={UserReducer?.errorModal?.status}
                   isModalVisible={showPackageBuyingFailedModal}
                   onPress={() => {
+                    setShowPackageBuyingFailedModal(false);
                     setErrorModal();
                   }}
                   setIsModalVisible={setShowPackageBuyingFailedModal}

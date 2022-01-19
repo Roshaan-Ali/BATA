@@ -212,7 +212,7 @@ function Home({
               </View>
               <Heading
                 passedStyle={styles.textStyle}
-                title={'Translators'}
+                title={'Interpreters'}
                 fontType="regular"
               />
             </TouchableOpacity>

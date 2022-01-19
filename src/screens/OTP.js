@@ -1,14 +1,8 @@
-import React, {useEffect, useState, InteractionManager, useRef} from 'react';
-import {
-  StyleSheet,
-  View,
-  TouchableOpacity,
-  Dimensions,
-  ImageBackground,
-  ScrollView,
-} from 'react-native';
+import React, {useEffect, useState, useRef} from 'react';
+import {StyleSheet, View, Dimensions, ImageBackground} from 'react-native';
 import Heading from '../components/Heading';
 import * as actions from '../store/actions/actions';
+import {useIsFocused} from '@react-navigation/native';
 import background_img from '../assets/background_img.png';
 import OTPInputView from '@twotalltotems/react-native-otp-input';
 import {connect} from 'react-redux';
@@ -17,8 +11,6 @@ import LottieView from 'lottie-react-native';
 import AlertModal from '../components/AlertModal';
 import AppStatusBar from '../components/AppStatusBar';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {MotiView} from 'moti';
-import {NavigationContainer} from '@react-navigation/native';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -28,26 +20,23 @@ const Otp = ({
   verifySignUpOtpCode,
   UserReducer,
   setErrorModal,
-  user_signup,
+  requestNewOtp,
   navigation,
 }) => {
   const [otpCode, setOtpCode] = useState('');
-  const [showAlertModal, setShowAlertModal] = useState(false);
+  const isFocused = useIsFocused();
+  const [showVerificationFailedModal, setShowVerificationFailedModal] =
+    useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
   const [isRequesting, setIsRequesting] = useState(false);
-  const inputRef = useRef()
-
-  useEffect(() => {
-    // setTimeout(() => inputRef.current.focus(), 100);
-    console.log(inputRef.current)
-    setErrorModal();
-  }, []);
-
+  const [showErrorAlert, setShowErrorAlert] = useState(false);
+  const inputRef = useRef();
+ 
   // Confirm Code
   const _onConfirmOtp = async code => {
     setIsVerifying(true);
 
-    setTimeout(async () => {
+    // setTimeout(async () => {
       await verifySignUpOtpCode(
         {
           phone: UserReducer?.userData?.phone,
@@ -56,24 +45,24 @@ const Otp = ({
         _onSuccess,
         _onFailure,
       );
-    }, 5000);
+    // }, 2000);
   };
 
   // Request New Code
   const _onPressRequestNewCode = async () => {
     setIsRequesting(true);
-    // setIsRequesting(false);
-    // setShowAlertModal(false);
     const data = {
       ...route.params,
-      service_type: route.params?.selectedService?.name,
+      service_type: route.params?.service_type?.name,
     };
-    setTimeout(async () => {
-      await user_signup(data, () => {});
-      setShowAlertModal(false);
+
+    // setTimeout(async () => {
+      await requestNewOtp(data);
+      setShowVerificationFailedModal(false);
       setOtpCode('');
       setIsRequesting(false);
-    }, 5000);
+    // }, 3000);
+    // console.log(data)
   };
 
   const _onSuccess = () => {
@@ -85,9 +74,17 @@ const Otp = ({
   const _onFailure = () => {
     setIsVerifying(false);
     setOtpCode('');
-    setShowAlertModal(true);
+    setShowVerificationFailedModal(true);
   };
 
+  useEffect(() => {
+    if (UserReducer?.errorModal?.status) {
+      setShowErrorAlert(true);
+    }
+    if (UserReducer?.errorModal?.status === false) {
+      setShowErrorAlert(false);
+    }
+  }, [UserReducer?.errorModal]);
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#EF2692'}}>
       {/* <AppStatusBar
@@ -137,15 +134,28 @@ const Otp = ({
             </View>
           )}
 
-          {showAlertModal && (
+          {showVerificationFailedModal && (
             <AlertModal
               buttonText={'Request New Code'}
               title="Verification Failed :("
               onPress={_onPressRequestNewCode}
               showLoader={isRequesting}
-              isModalVisible={showAlertModal}
-              setIsModalVisible={setShowAlertModal}
-              message="Your 4 digit verification code is invalid."
+              isModalVisible={showVerificationFailedModal}
+              setIsModalVisible={setShowVerificationFailedModal}
+              message="Something went wrong in verification."
+            />
+          )}
+          {isFocused && showErrorAlert && (
+            <AlertModal
+              title="Oh Snaps:("
+              isModalVisible={showErrorAlert}
+              setIsModalVisible={setShowErrorAlert}
+              onPress={() => {
+                setShowErrorAlert(false);
+                setErrorModal();
+                setShowVerificationFailedModal(true)
+              }}
+              message={UserReducer?.errorModal?.msg}
             />
           )}
         </View>

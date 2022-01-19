@@ -22,12 +22,13 @@ import colors from '../assets/colors';
 import LottieView from 'lottie-react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import AppStatusBar from '../components/AppStatusBar';
-import Loading from '../components/Loading';
+import {useIsFocused} from '@react-navigation/native';
 import AlertModal from '../components/AlertModal';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
-const LogIn = ({navigation, user_login, UserReducer}) => {
+const LogIn = ({navigation, user_login, UserReducer, setErrorModal}) => {
+  const isFocused = useIsFocused();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isShowPassword, setIsShowPassword] = useState(false);
@@ -36,6 +37,7 @@ const LogIn = ({navigation, user_login, UserReducer}) => {
   const [showLoginFailedModal, setShowLoginFailedModal] = useState(
     UserReducer?.loginFailed?.status,
   );
+  console.log(isFocused, '= login =========================');
 
   const _onPressSignUp = () => {
     navigation.navigate('SignUp');
@@ -45,24 +47,32 @@ const LogIn = ({navigation, user_login, UserReducer}) => {
     setIsShowPassword(!isShowPassword);
   };
 
-  const _onPressLogin = () => {
+  const _onPressLogin =async () => {
     if (email.length > 0 && password.length > 0) {
       setIsLoading(true);
 
-      setTimeout(() => {
-        user_login({email, password});
+      // setTimeout(() => {
+       await user_login({email, password});
         setIsLoading(false);
-      }, 2000);
+      // }, 2000);
     } else {
       setShowAlertModal(true);
     }
   };
-
+  const currentBooking = UserReducer?.currentBooking;
+  console.log(currentBooking);
   useEffect(() => {
-    if (UserReducer?.loginFailed?.status) {
+    if (UserReducer?.errorModal?.status) {
       setShowLoginFailedModal(true);
     }
+    if (UserReducer?.errorModal?.status == false) {
+      setShowLoginFailedModal(false);
+    }
   }, [UserReducer]);
+
+  useEffect(() => {
+    setErrorModal();
+  },[]);
   return (
     <View style={styles.container}>
       <SafeAreaView style={{flex: 1, backgroundColor: '#EF2692'}}>
@@ -81,7 +91,7 @@ const LogIn = ({navigation, user_login, UserReducer}) => {
               <Inputbox
                 value={email}
                 setTextValue={setEmail}
-                placeholderTilte="E-mail"
+                placeholderTilte="Email"
                 isShowIcon={true}
                 names={'person'}
               />
@@ -150,7 +160,7 @@ const LogIn = ({navigation, user_login, UserReducer}) => {
                   <Heading
                     fontType="semi-bold"
                     passedStyle={styles.orView}
-                    title="Or"
+                    title="OR"
                   />
                 </View>
                 <View style={styles.horizontalLine} />
@@ -184,12 +194,17 @@ const LogIn = ({navigation, user_login, UserReducer}) => {
             setIsModalVisible={setShowAlertModal}
           />
         )}
-        {showLoginFailedModal && (
+        {isFocused && showLoginFailedModal && (
           <AlertModal
             title="Login Failed!"
-            message={UserReducer?.loginFailed?.msg}
+            // message={'login se araha'}
+            message={UserReducer?.errorModal?.msg}
             isModalVisible={showLoginFailedModal}
             setIsModalVisible={setShowLoginFailedModal}
+            onPress={() => {
+              setShowLoginFailedModal(false);
+              setErrorModal();
+            }}
           />
         )}
       </SafeAreaView>

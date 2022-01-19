@@ -20,19 +20,21 @@ const {width, height} = Dimensions.get('window');
 
 const Settings = ({navigation, UserReducer, cancelSubscription}) => {
   const accessToken = UserReducer?.accessToken;
+  const currentBooking = UserReducer?.currentBooking;
   const [isLoading, setIsLoading] = useState(false);
   const packageDetails = UserReducer?.userData?.current_package;
   const [showCancelSubscriptionModal, setShowCancelSubscriptionModal] =
     useState(false);
   const [showSuccessCancellationAlert, setShowSuccessCancellationAlert] =
     useState(false);
+  const [showNotAllowed, setShowNotAllowed] = useState(false);
 
   // Close Success Cancellation Alert
   const _openSuccessCancellationAlert = () => {
     setShowCancelSubscriptionModal(false);
     setShowSuccessCancellationAlert(true);
   };
-
+console.log(currentBooking)
   // Cancel Subscription
   const _onPressCancelSubscription = async () => {
     setIsLoading(true);
@@ -44,7 +46,6 @@ const Settings = ({navigation, UserReducer, cancelSubscription}) => {
     setIsLoading(false);
   };
 
-  console.log("rrrrr",UserReducer?.userData)
   return (
     <View style={styles.container}>
       <SafeAreaView style={{flex: 1}}>
@@ -74,10 +75,14 @@ const Settings = ({navigation, UserReducer, cancelSubscription}) => {
         </TouchableOpacity>
 
         {/* Cancel Subscription  */}
-        {UserReducer?.userData?.current_package !== null && (
+        {currentBooking !== null && (
           <TouchableOpacity
             onPress={() => {
-              setShowCancelSubscriptionModal(true);
+              if (currentBooking == undefined || currentBooking === null) {
+                setShowCancelSubscriptionModal(true);
+              } else {
+                setShowNotAllowed(true);
+              }
             }}
             style={styles.btnContainer}>
             <IconComp
@@ -106,6 +111,17 @@ const Settings = ({navigation, UserReducer, cancelSubscription}) => {
             message={`Your subscription has been cancelled.`}
             isModalVisible={showSuccessCancellationAlert}
             setIsModalVisible={setShowSuccessCancellationAlert}
+          />
+        )}
+
+        {showNotAllowed && (
+          <AlertModal
+            title="Woah!"
+            message={
+              'Packages are not allowed to be cancelled or upgraded while you have a booking.'
+            }
+            isModalVisible={showNotAllowed}
+            setIsModalVisible={setShowNotAllowed}
           />
         )}
       </SafeAreaView>

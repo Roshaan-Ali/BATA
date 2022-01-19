@@ -14,10 +14,11 @@ import LottieView from 'lottie-react-native';
 import moment from 'moment';
 import {useRoute} from '@react-navigation/native';
 import {color} from 'react-native-reanimated';
+import {connect} from 'react-redux';
 
 const {width, height} = Dimensions.get('window');
 
-const CurrentInterpreter = ({item, onPress, isLoading}) => {
+const CurrentInterpreter = ({item, onPress, isLoading, UserReducer}) => {
   const route = useRoute();
   return (
     <View style={styles.container}>
@@ -42,21 +43,20 @@ const CurrentInterpreter = ({item, onPress, isLoading}) => {
           <Heading title={item?.status} passedStyle={styles.value} />
         </View>
 
-        {/* Interpreter Name  */}
-        {/* <View style={styles.locationView}>
+        {/* Native Language  */}
+        <View style={styles.locationView}>
           <IconComp
             type="Fontisto"
             name="person"
             iconStyle={styles.locationIcon}
           />
-          <Heading title={`Interpreter(s):`} passedStyle={styles.label} />
-          {item?.interpreter_id?.map((ele, id) => (
-            <Heading
-              title={ele?.first_name?.concat(`${ele?.last_name}`) || 'Dummy Name,'}
-              passedStyle={styles.value}
-            />
-          ))}
-        </View> */}
+          <Heading title={`Native Language:`} passedStyle={styles.label} />
+
+          <Heading
+            title={`${UserReducer?.userData?.language?.language_name}`}
+            passedStyle={styles.value}
+          />
+        </View>
 
         {/* Language View  */}
         {item?.translating_language?.map(ele => (
@@ -87,7 +87,7 @@ const CurrentInterpreter = ({item, onPress, isLoading}) => {
           />
           <Heading
             title={`From: ${moment(item?.start_date).format(
-              'MMM/DD/YYYY - hh:mm:A',
+              'MMM/DD/YYYY - hh:mm A',
             )}`}
             passedStyle={styles.value}
           />
@@ -102,7 +102,7 @@ const CurrentInterpreter = ({item, onPress, isLoading}) => {
           />
           <Heading
             title={`Till: ${moment(item?.end_date).format(
-              'MMM/DD/YYYY - hh:mm:A',
+              'MMM/DD/YYYY - hh:mm A',
             )}`}
             passedStyle={styles.value}
           />
@@ -203,7 +203,10 @@ const CurrentInterpreter = ({item, onPress, isLoading}) => {
   );
 };
 
-export default CurrentInterpreter;
+const mapStateToProps = ({UserReducer}) => {
+  return {UserReducer};
+};
+export default connect(mapStateToProps, null)(CurrentInterpreter);
 
 const styles = StyleSheet.create({
   container: {
@@ -231,7 +234,7 @@ const styles = StyleSheet.create({
   locationView: {
     flexDirection: 'row',
     paddingVertical: height * 0.01,
-    flexWrap:'wrap'
+    flexWrap: 'wrap',
   },
   occasionText: {
     color: 'white',

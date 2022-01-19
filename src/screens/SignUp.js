@@ -17,6 +17,7 @@ import LottieView from 'lottie-react-native';
 import Inputbox from '../components/Inputbox';
 import IconComp from '../components/IconComp';
 import AlertModal from '../components/AlertModal';
+import {useIsFocused} from '@react-navigation/native';
 import * as actions from '../store/actions/actions';
 import AppStatusBar from '../components/AppStatusBar';
 import background_img from '../assets/background_img.png';
@@ -34,6 +35,7 @@ const SignUp = ({
   getAllPackages,
 }) => {
   const [email, setEmail] = useState('');
+  const isFocused = useIsFocused();
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
 
@@ -48,46 +50,53 @@ const SignUp = ({
   const [selectedService, setSelectedService] = useState(null);
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isShowPassword, setIsShowPassword] = useState(false);
-  const [showLanguageModal, setShowLanguageModal] = useState(false);
   const [selectedPrimaryLang, setSelectedPrimaryLang] = useState(null);
+  const [showLanguageModal, setShowLanguageModal] = useState(false);
   const [showServicesModal, setShowServicesModal] = useState(false);
+  const [showInvalidEmailAlert, setShowInvalidEmailAlert] = useState(false);
   const [showSignupFailedModal, setShowSignupFailedModal] = useState(false);
-
+  const [showPasswordShouldBeLongAlert, setShowPasswordShouldBeLongAlert] =
+    useState(false);
+  const CHECK_EMAIL =
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+console.log(isFocused," signup==========================")
   const _onPressSignUp = async () => {
-    if (password === confirmPassword) {
-      if (
-        firstname === '' ||
-        lastname === '' ||
-        email === '' ||
-        password === '' ||
-        confirmPassword === '' ||
-        phone === '' ||
-        selectedPrimaryLang === '' ||
-        selectedService === ''
-      ) {
-        setShowAlert(true);
-      } else {
-        setIsLoading(true);
-        const data = {
-          first_name: firstname,
-          last_name: lastname,
-          email: email,
-          phone: phone,
-          password: password,
-          confirmPassword: confirmPassword,
-          language: [selectedPrimaryLang?.id],
-          service_type: selectedService?.name,
-        };
-        await user_signup(data, _onSuccess);
-
-        setIsLoading(false);
-      }
-    } else {
+    if (
+      firstname === '' ||
+      lastname === '' ||
+      email === '' ||
+      password === '' ||
+      confirmPassword === '' ||
+      phone === '' ||
+      selectedPrimaryLang === null ||
+      selectedService === null
+    ) {
+      setShowAlert(true);
+    } else if (!CHECK_EMAIL.test(email)) {
+      setShowInvalidEmailAlert(true);
+    } else if (password?.length < 8 || confirmPassword?.length < 8) {
+      setShowPasswordShouldBeLongAlert(true);
+    } else if (password !== confirmPassword) {
       setShowPasswordMismatchAlert(true);
+    } else {
+      setIsLoading(true);
+      const data = {
+        first_name: firstname,
+        last_name: lastname,
+        email: email,
+        phone: phone,
+        password: password,
+        confirmPassword: confirmPassword,
+        language: [selectedPrimaryLang?.id],
+        service_type: selectedService?.name,
+      };
+      await user_signup(data, _onSuccess);
+      setIsLoading(false);
     }
   };
 
-  const _onSuccess = () => {
+  const _onSuccess = async () => {
+    await setErrorModal();
     navigation.navigate('Otp', {
       first_name: firstname,
       last_name: lastname,
@@ -256,8 +265,8 @@ const SignUp = ({
               <Heading
                 title={
                   selectedService === null
-                    ? 'Join As,'
-                    : `Join As, ${selectedService?.name}`
+                    ? 'Package Type,'
+                    : `Package Type, ${selectedService?.name}`
                 }
                 passedStyle={styles.languageText}
               />
@@ -349,12 +358,15 @@ const SignUp = ({
             setIsModalVisible={setShowAlert}
           />
         )}
-        {showSignupFailedModal && (
+        {(isFocused || showSignupFailedModal) && (
           <AlertModal
             title="Oh Snaps!"
             message={UserReducer?.errorModal?.msg}
             isModalVisible={showSignupFailedModal}
-            onPress={() => setErrorModal()}
+            onPress={() => {
+              setShowSignupFailedModal(false);
+              setErrorModal();
+            }}
             setIsModalVisible={setShowSignupFailedModal}
           />
         )}
@@ -365,6 +377,24 @@ const SignUp = ({
             message={'Passwords Mismatch!'}
             isModalVisible={showPasswordMismatchAlert}
             setIsModalVisible={setShowPasswordMismatchAlert}
+          />
+        )}
+
+        {showPasswordShouldBeLongAlert && (
+          <AlertModal
+            title="Oh Snaps!"
+            message={'Password should be of atleast 8 characters.'}
+            isModalVisible={showPasswordShouldBeLongAlert}
+            setIsModalVisible={setShowPasswordShouldBeLongAlert}
+          />
+        )}
+
+        {showInvalidEmailAlert && (
+          <AlertModal
+            title="Oh Snaps!"
+            message="Invalid email format."
+            isModalVisible={showInvalidEmailAlert}
+            setIsModalVisible={setShowInvalidEmailAlert}
           />
         )}
       </ImageBackground>

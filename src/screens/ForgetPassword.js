@@ -19,6 +19,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import OTPInputView from '@twotalltotems/react-native-otp-input';
 import {connect} from 'react-redux';
 import AlertModal from '../components/AlertModal';
+import {useIsFocused} from '@react-navigation/native';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -37,7 +38,8 @@ const ForgetPassword = ({
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isShowPassword, setIsShowPassword] = useState(false);
-  const [showAlertModal, setShowAlertModal] = useState(false);
+  const [showVerificationFailedModal, setShowVerificationFailedModal] =
+    useState(false);
   const [isVerifyingCode, setIsVerifyingCode] = useState(false);
   const [isRequestingCode, setIsRequestingCode] = useState(false);
   const [isResetingPassword, setIsResetingPassword] = useState(false);
@@ -46,6 +48,9 @@ const ForgetPassword = ({
   const [showPasswordMismatchModal, setShowPasswordMismatchModal] =
     useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
+  const isFocused = useIsFocused();
+  const [showPasswordShouldBeLongAlert, setShowPasswordShouldBeLongAlert] =
+    useState(false);
 
   const _onPressShowPassword = () => {
     setIsShowPassword(!isShowPassword);
@@ -82,48 +87,39 @@ const ForgetPassword = ({
   };
 
   const _onFailureVerifyOtp = () => {
-    setShowAlertModal(true);
+    setShowVerificationFailedModal(true);
   };
 
   // STEP 3 FUNCTION CALL
   const _resetPassword = async () => {
-    if (newPassword === confirmPassword) {
-      setIsResetingPassword(true);
-      await resetPassword({
-        userId: UserReducer?.userData?.id,
-        password: newPassword,
-        confirmPassword: confirmPassword,
-      });
-      setIsResetingPassword(false);
-      setShowConfirmChangeModal(true);
+    if (newPassword?.length < 8 || confirmPassword?.length < 8) {
+      setShowPasswordShouldBeLongAlert(true);
     } else {
-      setShowPasswordMismatchModal(true);
+      if (newPassword === confirmPassword) {
+        setIsResetingPassword(true);
+        await resetPassword({
+          userId: UserReducer?.userData?.id,
+          password: newPassword,
+          confirmPassword: confirmPassword,
+        },_onSuccessPasswordChange);
+        setIsResetingPassword(false);
+      } else {
+        setShowPasswordMismatchModal(true);
+      }
     }
   };
 
+  const _onSuccessPasswordChange = () => {
+    setShowConfirmChangeModal(true);
+
+  }
   const _onPressRequestNewOtpCode = async () => {
     setIsRequestingCode(true);
     await requestOtpForResetPassword(phone, () => {});
     setIsRequestingCode(false);
-    setShowAlertModal(false);
+    setShowVerificationFailedModal(false);
     setOtpCode('');
   };
-
-  // useEffect(() => {
-  //   if (step === 2) {
-  //     // Verification Success
-  //     if (!UserReducer?.isValidResetPassOtp) {
-  //       setShowAlertModal(true);
-  //     }
-
-  //     // Verification Failed
-  //     if (UserReducer?.isValidResetPassOtp) {
-  //       setStep(step + 1);
-  //     }
-
-  //     setIsVerifyingCode(false);
-  //   }
-  // }, [UserReducer]);
 
   useEffect(() => {
     if (UserReducer?.errorModal?.status === true) {
@@ -299,15 +295,15 @@ const ForgetPassword = ({
           )}
         </View>
 
-        {showAlertModal && (
+        {showVerificationFailedModal && (
           <AlertModal
             buttonText={'Request New Code'}
             title="Verification Failed :("
             onPress={_onPressRequestNewOtpCode}
             showLoader={isRequestingCode}
-            isModalVisible={showAlertModal}
-            setIsModalVisible={setShowAlertModal}
-            message="Your 4 digit verification code is invalid."
+            isModalVisible={showVerificationFailedModal}
+            setIsModalVisible={setShowVerificationFailedModal}
+            message="Something went wrong in verification process."
           />
         )}
 
@@ -332,13 +328,19 @@ const ForgetPassword = ({
           />
         )}
 
-        {showErrorModal && (
+        {isFocused && showErrorModal && (
           <AlertModal
             title="Oh Snaps!"
             isModalVisible={showErrorModal}
             setIsModalVisible={setShowErrorModal}
             message={UserReducer?.errorModal?.msg}
-            onPress={() => setErrorModal()}
+            onPress={() => {
+              if (step === 2 && showVerificationFailedModal) {
+                setShowVerificationFailedModal(true);
+              }
+              setOtpCode('');
+              setErrorModal();
+            }}
           />
         )}
 
@@ -348,6 +350,15 @@ const ForgetPassword = ({
             isModalVisible={showPasswordMismatchModal}
             setIsModalVisible={setShowPasswordMismatchModal}
             message={'Password Mismatch!'}
+          />
+        )}
+
+        {showPasswordShouldBeLongAlert && (
+          <AlertModal
+            title="Oh Snaps!"
+            message={'Password should be of atleast 8 characters.'}
+            isModalVisible={showPasswordShouldBeLongAlert}
+            setIsModalVisible={setShowPasswordShouldBeLongAlert}
           />
         )}
       </ImageBackground>
