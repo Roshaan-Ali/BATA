@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   StyleSheet,
   View,
@@ -8,131 +8,275 @@ import {
   Dimensions,
   ImageBackground,
   ScrollView,
+  StatusBar,
+  Platform,
 } from 'react-native';
 import Button from '../components/Button';
 import Inputbox from '../components/Inputbox';
 import logo from '../assets/Logo.png';
 import background_img from '../assets/background_img.png';
-// import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-// import Icon from 'react-native-vector-icons/MaterialIcons';
-// import Icon from 'react-native-vector-icons/MaterialIcons';
-import IconComp from '../components/IconComp';
-
+import {connect} from 'react-redux';
+import * as actions from '../store/actions/actions';
+import Heading from '../components/Heading';
+import colors from '../assets/colors';
+import LottieView from 'lottie-react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import AppStatusBar from '../components/AppStatusBar';
+import {useIsFocused} from '@react-navigation/native';
+import AlertModal from '../components/AlertModal';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
-const LogIn = ({navigation}) => {
+const LogIn = ({navigation, user_login, UserReducer, setErrorModal}) => {
+  const isFocused = useIsFocused();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isShowPassword, setIsShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [showAlertModal, setShowAlertModal] = useState(false);
+  const [showLoginFailedModal, setShowLoginFailedModal] = useState(
+    UserReducer?.loginFailed?.status,
+  );
 
-  const _onPressLogIn = () => {
-    if (email === '' || password === '') {
-      alert('Invalid Login');
-    } else {
-      navigation.navigate('Home');
-      console.log(email);
-    }
-  };
   const _onPressSignUp = () => {
     navigation.navigate('SignUp');
   };
-  const _onPresspassword = () => {
-    navigation.navigate('ForgotPassword');
+
+  const _onPressShowPassword = () => {
+    setIsShowPassword(!isShowPassword);
   };
 
+  const _onPressLogin = async () => {
+    if (email.length > 0 && password.length > 0) {
+      setIsLoading(true);
+
+      // setTimeout(() => {
+      await user_login({email, password});
+      setIsLoading(false);
+      // }, 2000);
+    } else {
+      setShowAlertModal(true);
+    }
+  };
+  const currentBooking = UserReducer?.currentBooking;
+  useEffect(() => {
+    if (UserReducer?.errorModal?.status) {
+      setShowLoginFailedModal(true);
+    }
+    if (UserReducer?.errorModal?.status == false) {
+      setShowLoginFailedModal(false);
+    }
+  }, [UserReducer]);
+
+  useEffect(() => {
+    setErrorModal();
+  }, []);
   return (
-    // <View style={{flex: 1}}>
-    //   <ImageBackground
-    //     source={background_img}
-    //     resizeMode="cover"
-    //     style={styles.image}>
-    //     <Text>Inside</Text>
-    //   </ImageBackground>
-    // </View>
-    <View
-      style={{
-        // backgroundColor: '#ED228F',
-        // backgroundColor: 'red',
-        flex: 1,
-        // justifyContent: 'center',
-      }}>
-      <ScrollView style={{backgroundColor:'blue'}} showsVerticalScrollIndicator={false}>
-        <ImageBackground
-          source={background_img}
-          // resizeMode="cover"
-          style={styles.image}
-          // style={{flex:1}}
-          >
-          <Image
-          resizeMode="contain"
-          source={logo} style={styles.logo} />
+    <View style={styles.container}>
+      <SafeAreaView style={{flex: 1, backgroundColor: '#EF2692'}}>
+        {/* {Platform.OS == 'ios' && ( */}
+        {/* <AppStatusBar
+          platform={Platform.OS}
+          backgroundColors={colors.themePurple1}
+          barStyle="light-content"
+        /> */}
+        {/* )} */}
+        <ImageBackground source={background_img} style={styles.image}>
+          <ScrollView showsVerticalScrollIndicator={false}>
+            <View style={styles.centerView}>
+              <Image resizeMode="contain" source={logo} style={styles.logo} />
 
-          {/* <View style={styles.inputBoxes}> */}
-            <Inputbox
-              value={email}
-              setTextValue={setEmail}
-              placeholderTilte="User Name"
-              isShowIcon={true}
-              names={'person'}
-            />
+              <Inputbox
+                value={email}
+                setTextValue={setEmail}
+                placeholderTilte="Email"
+                isShowIcon={true}
+                names={'person'}
+              />
 
-            <Inputbox
-              value={password}
-              setTextValue={setPassword}
-              placeholderTilte="Password"
-              isSecure={true}
-              isShowIcon={true}
-              names={'lock'}
-            />
-          {/* </View> */}
-          <Button title="Login" onBtnPress={() => _onPressLogIn()} />
-          <View
-            style={{
-              flexDirection: 'row',
-              // marginBottom: 10,
-              justifyContent: 'center',
-            }}>
-            <Text style={{color: 'white'}}>Forgot Password?</Text>
-            <TouchableOpacity onPress={() => console.log("pressed")}>
-              <Text style={{color: 'white'}}> Click Here</Text>
-            </TouchableOpacity>
-          </View>
+              <Inputbox
+                value={password}
+                setTextValue={setPassword}
+                placeholderTilte="Password"
+                isSecure={!isShowPassword}
+                isPassword={true}
+                isShowIcon={true}
+                iconStyle={{
+                  color: 'white',
+                  paddingLeft: width * 0.006,
+                }}
+                iconWrapperStyle={{
+                  position: 'absolute',
+                  right: width * 0.04,
+                  left: width * 0.7,
+                }}
+                names={'lock'}
+                onPressIcon={_onPressShowPassword}
+              />
 
-          <View style={styles.horizontalLinePosition}>
-            <View style={styles.horizontalLine} />
-            <View>
-              <Text style={{width: 30, textAlign: 'center', color: 'white'}}>
-                Or
-              </Text>
+              {isLoading ? (
+                <TouchableOpacity
+                  style={styles.loadingComponent}
+                  activeOpacity={1}>
+                  <LottieView
+                    speed={1}
+                    style={styles.lottieStyles}
+                    autoPlay
+                    colorFilters={'blue'}
+                    loop
+                    source={require('../assets/Lottie/purple-loading-2.json')}
+                  />
+                </TouchableOpacity>
+              ) : (
+                <Button
+                  title="Login"
+                  btnStyle={styles.loginBtnStyle}
+                  btnTextStyle={styles.loginBtnTextStyle}
+                  isBgColor={false}
+                  onBtnPress={_onPressLogin}
+                />
+              )}
+              <View style={styles.forgotPassView}>
+                <Heading
+                  passedStyle={styles.forgotPassTExt}
+                  fontType="semi-bold"
+                  title="Forgot Password?"
+                />
+                <TouchableOpacity
+                  onPress={() => navigation.navigate('ForgetPassword')}>
+                  <Heading
+                    passedStyle={styles.clickHere}
+                    fontType="semi-bold"
+                    title="Click Here"
+                  />
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.horizontalLinePosition}>
+                <View style={styles.horizontalLine} />
+                <View>
+                  <Heading
+                    fontType="semi-bold"
+                    passedStyle={styles.orView}
+                    title="OR"
+                  />
+                </View>
+                <View style={styles.horizontalLine} />
+              </View>
+              <Button
+                title="Sign Up Now"
+                onBtnPress={() => _onPressSignUp()}
+                btnStyle={{
+                  borderRadius: width * 0.08,
+                  borderWidth: 1,
+                  borderColor: 'white',
+                  backgroundColor: 'transparent',
+                  paddingVertical: height * 0.013,
+                }}
+                btnTextStyle={{
+                  color: 'white',
+                  fontFamily: 'Poppins-SemiBold',
+                }}
+                isBgColor={false}
+                isBgColor={false}
+              />
             </View>
-            <View style={styles.horizontalLine} />
-          </View>
-          {/* <View style={{position: 'relative'}}> */}
-            <Button
-              title="Sign Up Now"
-              onBtnPress={() => _onPressSignUp()}
-              isBgColor={false}
-            />
-          {/* </View> */}
+          </ScrollView>
         </ImageBackground>
-      </ScrollView>
+
+        {showAlertModal && (
+          <AlertModal
+            title="Oh Snaps!"
+            message="Look out, one or more requried fields are left empty."
+            isModalVisible={showAlertModal}
+            setIsModalVisible={setShowAlertModal}
+          />
+        )}
+        {isFocused && showLoginFailedModal && (
+          <AlertModal
+            title="Login Failed!"
+            // message={'login se araha'}
+            message={UserReducer?.errorModal?.msg}
+            isModalVisible={showLoginFailedModal}
+            setIsModalVisible={setShowLoginFailedModal}
+            onPress={() => {
+              setShowLoginFailedModal(false);
+              setErrorModal();
+            }}
+          />
+        )}
+      </SafeAreaView>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  loadingComponent: {
+    borderRadius: 50,
+    position: 'relative',
+    backgroundColor: 'white',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: height * 0.08,
+    width: width * 0.8,
+    marginVertical: height * 0.02,
+  },
+  lottieStyles: {
+    height: height * 0.15,
+    // height: 100,
+    width: 100,
+    // position: 'absolute',
+    // left: 0,
+    // backgroundColor:'red'
+    // right: 0,
+    // top: height * -0.02,
+  },
+  container: {
+    flex: 1,
+  },
+  centerView: {
+    alignItems: 'center',
+  },
+  forgotPassView: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loginBtnTextStyle: {
+    color: colors.themePurple1,
+    fontFamily: 'Poppins-SemiBold',
+  },
+  loginBtnStyle: {
+    borderRadius: width * 0.08,
+    backgroundColor: 'white',
+    paddingVertical: height * 0.015,
+  },
+  clickHere: {
+    paddingLeft: width * 0.01,
+    color: 'white',
+    fontSize: width * 0.035,
+    textDecorationLine: 'underline',
+  },
+  forgotPassTExt: {
+    color: 'white',
+    fontSize: width * 0.04,
+  },
   horizontalLine: {
     flex: 1,
     height: 1,
     backgroundColor: 'white',
-    // alignItems: 'center',
-    // justifyContent: 'center',
   },
   horizontalLinePosition: {
     flexDirection: 'row',
     alignItems: 'center',
     width: width * 0.5,
     marginVertical: height * 0.02,
+  },
+  orView: {
+    width: 30,
+    textAlign: 'center',
+    color: 'white',
+    fontSize: width * 0.04,
   },
   // inputView: {
   //   flexDirection: 'row',
@@ -145,27 +289,22 @@ const styles = StyleSheet.create({
   // },
   logo: {
     width: width * 0.4,
-    // height: height * 0.22,
     marginTop: height * 0.1,
   },
 
   image: {
-    // flex: 1,
-    // justifyContent: 'center',
-    // width: width,
     height: height,
-    // alignSelf: 'center',
     alignItems: 'center',
+    justifyContent: 'center',
   },
-  // scrollview: {
-  //   height: height,
-  // },
+
   inputBoxes: {
-    // marginTop: height * 0.02,
-    // height: height * 0.2,
     backgroundColor: 'yellow',
     justifyContent: 'space-around',
   },
 });
 
-export default LogIn;
+const mapStateToProps = ({UserReducer}) => {
+  return {UserReducer};
+};
+export default connect(mapStateToProps, actions)(LogIn);

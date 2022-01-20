@@ -4,12 +4,24 @@ import {Colors} from 'react-native/Libraries/NewAppScreen';
 import colors from '../assets/colors';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
-const Button = ({title, onBtnPress, isBgColor = true}) => {
+const Button = ({
+  title,
+  onBtnPress,
+  isBgColor = true,
+  btnStyle,
+  btnTextStyle,
+}) => {
   return (
     <TouchableOpacity
+      activeOpacity={0.8}
       style={[
         styles.btn,
-        isBgColor ? styles.btnWithBgColor : styles.btnWithOutBgColor,
+
+        isBgColor
+          ? styles.btnWithBgColor
+          : btnStyle
+          ? btnStyle
+          : styles.btnWithOutBgColor,
       ]}
       onPress={() => {
         onBtnPress();
@@ -17,7 +29,11 @@ const Button = ({title, onBtnPress, isBgColor = true}) => {
       <Text
         style={[
           styles.text,
-          {color: isBgColor ? colors.themePurple1 : '#ffffff'},
+          isBgColor
+            ? {color: colors.themePurple1}
+            : btnTextStyle
+            ? btnTextStyle
+            : {color: 'white'},
           // {color: colors.themePurple1 },
         ]}>
         {title}
@@ -29,7 +45,7 @@ const Button = ({title, onBtnPress, isBgColor = true}) => {
 const styles = StyleSheet.create({
   text: {
     fontSize: width * 0.05,
-    fontWeight: 'bold',
+    // fontWeight: 'bold',
   },
   btn: {
     width: width * 0.8,
