@@ -26,7 +26,7 @@ const DisplayNameChangeModal = ({
       isVisible={isModalVisible}
       swipeDirection={'up'}
       onSwipeMove={p => setIsModalVisible(false)}
-      onBackButtonPress={p => setTimeout}>
+     >
       <View style={styles.container}>
         <Heading
           fontType="semi-bold"

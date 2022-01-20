@@ -29,7 +29,7 @@ const CustomDropdownModal = ({
       animationOut="bounceInDown"
       onBackdropPress={() => setIsModalVisible(false)}
       style={{margin: 0}}
-      onBackButtonPress={p => setTimeout}>
+    >
       <View style={styles.container}>
         <FlatList
           data={array}

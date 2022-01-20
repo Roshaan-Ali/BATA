@@ -5,6 +5,7 @@ import android.content.Context;
 import com.airbnb.android.react.maps.MapsPackage;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import com.reactnativecommunity.geolocation.GeolocationPackage;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
@@ -39,6 +40,7 @@ public class MainApplication extends Application implements ReactApplication {
       new VectorIconsPackage();
       new GeolocationPackage();
       new MapsPackage();
+      new GeolocationPackage();
       return packages;
     }
     @Override

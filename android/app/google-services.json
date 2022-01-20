@@ -29,6 +29,13 @@
             {
               "client_id": "385824149869-7efcjn9qc5rel7j4jgq2oj08knmgrkej.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "385824149869-fo300562t0ja6a4no84ugtptotnhp6bv.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.bata"
+              }
             }
           ]
         }

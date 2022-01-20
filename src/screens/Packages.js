@@ -20,6 +20,7 @@ import {StripeProvider} from '@stripe/stripe-react-native';
 import {PUB_KEY_STRIPE} from '../config/config';
 import StripeModal from '../components/StripeModal';
 import AlertModal from '../components/AlertModal';
+import IconComp from '../components/IconComp';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -31,10 +32,13 @@ const Packages = ({
   buyPackage,
   updatePackage,
 }) => {
+  const currentBooking = UserReducer?.currentBooking;
+
   const accessToken = UserReducer?.accessToken;
   const [stripeGeneratedKey, setStripeGeneratedKey] = useState('');
   const [packages, setPackages] = useState(UserReducer?.packages);
   const [isStripeModalVisible, setIsStripeModalVisible] = useState(false);
+  const [showNotAllowed, setShowNotAllowed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState(null);
   const [isConfirmBuyModalVisible, setIsConfirmBuyModalVisible] =
@@ -75,7 +79,6 @@ const Packages = ({
     getAllPackages(accessToken);
   }, []);
 
- 
   return (
     <StripeProvider publishableKey={PUB_KEY_STRIPE}>
       <View style={styles.container}>
@@ -129,6 +132,19 @@ const Packages = ({
                   passedStyle={styles.packageName}
                   fontType="semi-bold"
                 />
+                <View style={styles.packageDescCntainer}>
+                  <IconComp
+                    name="checkcircle"
+                    type="AntDesign"
+                    iconStyle={styles.iconStyle}
+                  />
+                  <Heading
+                    title={"Video And Audio Interpretation Depending On The Business And People Required."}
+                    passedStyle={styles.featureStyle}
+                    fontType="regular"
+                  />
+                </View>
+
                 <TouchableOpacity
                   activeOpacity={0.9}
                   style={styles.btnStyle}
@@ -139,14 +155,12 @@ const Packages = ({
                     fontType={'semi-bold'}
                   />
                 </TouchableOpacity>
-                {
-                
-                UserReducer?.userData?.current_package?.name?.toLowerCase() !==
+                {UserReducer?.userData?.current_package?.name?.toLowerCase() !==
                   'individual' &&
                   UserReducer?.userData?.current_package?.name?.toLowerCase() !==
-                    'enterprise' && 
-                    UserReducer?.userData?.current_package !== null &&
-                    (
+                    'enterprise' &&
+                  UserReducer?.userData?.current_package !== null &&
+                  UserReducer?.userData?.current_package !== undefined && (
                     <View
                       style={{
                         width: width * 0.35,
@@ -202,6 +216,23 @@ const mapStateToProps = ({UserReducer}) => {
 export default connect(mapStateToProps, actions)(Packages);
 
 const styles = StyleSheet.create({
+  featureStyle: {
+    color: 'white',
+    fontSize: width * 0.045,
+    textTransform: 'capitalize',
+    fontWeight: '600',
+    paddingLeft: width * 0.025,
+  },
+  iconStyle: {
+    fontSize: width * 0.05,
+    marginTop: height * 0.008,
+    color: colors.themeYellow,
+  },
+  packageDescCntainer: {
+    flexDirection: 'row',
+    // alignItems: 'center',
+    paddingVertical: height * 0.01,
+  },
   container: {
     flex: 1,
     backgroundColor: 'white',
@@ -247,6 +278,7 @@ const styles = StyleSheet.create({
     elevation: 21,
   },
   btnStyle: {
+    marginTop: height * 0.03,
     backgroundColor: 'white',
     width: width * 0.65,
     paddingVertical: height * 0.018,
@@ -259,7 +291,7 @@ const styles = StyleSheet.create({
   },
   packageName: {
     color: 'white',
-    fontSize: width * 0.09,
+    fontSize: width * 0.065,
     textTransform: 'capitalize',
     marginBottom: height * 0.03,
   },

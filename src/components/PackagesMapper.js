@@ -1,14 +1,24 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {FlatList, StyleSheet, Text, View, Dimensions} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import {connect} from 'react-redux';
 import colors from '../assets/colors';
+import AlertModal from './AlertModal';
 import Button from './Button';
 import Heading from './Heading';
 import PackageFeaturesMapper from './PackageFeaturesMapper';
 
 const {width, height} = Dimensions.get('window');
 
-const PackagesMapper = ({item, index, onPress, current_package}) => {
+const PackagesMapper = ({
+  item,
+  index,
+  onPress,
+  current_package,
+  UserReducer,
+}) => {
+  const [showNotAllowed, setShowNotAllowed] = useState(false);
+  const currentBooking = UserReducer?.currentBooking;
   return (
     <View style={styles.container}>
       <FlatList
@@ -29,16 +39,7 @@ const PackagesMapper = ({item, index, onPress, current_package}) => {
         )}
         ListFooterComponent={() =>
           current_package?.id === item.id ? (
-            <View
-              style={{
-                width: width * 0.7,
-                paddingVertical: height * 0.01,
-                borderRadius: width * 0.07,
-                alignItems: 'center',
-                alignSelf: 'center',
-                justifyContent: 'center',
-                backgroundColor: colors.themeYellow,
-              }}>
+            <View style={styles.activateBtnContainer}>
               <Heading
                 title={'Activated'}
                 fontType={'semi-bold'}
@@ -49,7 +50,13 @@ const PackagesMapper = ({item, index, onPress, current_package}) => {
             <TouchableOpacity
               activeOpacity={0.9}
               style={styles.btnStyle}
-              onPress={() => onPress(item, index)}>
+              onPress={() => {
+                if (currentBooking === undefined || currentBooking === null) {
+                  onPress(item, index);
+                } else {
+                  setShowNotAllowed(true);
+                }
+              }}>
               <Heading
                 title="Get Started"
                 passedStyle={styles.btnTextStyle}
@@ -59,11 +66,23 @@ const PackagesMapper = ({item, index, onPress, current_package}) => {
           )
         }
       />
+      {showNotAllowed && (
+        <AlertModal
+          title="Woah!"
+          message={
+            'Packages are not allowed to be cancelled or upgraded while you have a booking.'
+          }
+          isModalVisible={showNotAllowed}
+          setIsModalVisible={setShowNotAllowed}
+        />
+      )}
     </View>
   );
 };
-
-export default PackagesMapper;
+const mapStateToProps = ({UserReducer}) => {
+  return {UserReducer};
+};
+export default connect(mapStateToProps, null)(PackagesMapper);
 
 const styles = StyleSheet.create({
   container: {
@@ -82,6 +101,15 @@ const styles = StyleSheet.create({
     shadowRadius: 13.97,
 
     elevation: 21,
+  },
+  activateBtnContainer: {
+    width: width * 0.7,
+    paddingVertical: height * 0.01,
+    borderRadius: width * 0.07,
+    alignItems: 'center',
+    alignSelf: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.themeYellow,
   },
   packageName: {
     color: 'white',

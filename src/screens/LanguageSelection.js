@@ -145,7 +145,6 @@ const LanguageSelection = ({
       return;
     }
   };
-console.log(route.params)
 
 
   useEffect(() => {

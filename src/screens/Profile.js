@@ -102,7 +102,7 @@ const Profile = ({navigation, UserReducer, updateUserData, updatePhoto}) => {
       const userData = {
         first_name: firstName,
         last_name: lastName,
-        language: [language.id],
+        language: [language?.id],
       };
       await updateUserData(userData, accessToken);
       setUserImage(null)
@@ -110,7 +110,7 @@ const Profile = ({navigation, UserReducer, updateUserData, updatePhoto}) => {
       const userData = {
         first_name: firstName,
         last_name: lastName,
-        language: [language.id],
+        language: [language?.id],
       };
       await updateUserData(userData, accessToken);
     }
@@ -408,13 +408,13 @@ const styles = StyleSheet.create({
     // paddingVertical: height * 0.005,
   },
   nameLabel: {
-    fontSize: height * 0.031,
+    fontSize: height * 0.027,
     color: 'black',
     textTransform: 'capitalize',
     marginHorizontal: width * 0.1,
   },
   usernameStyle: {
-    fontSize: height * 0.031,
+    fontSize: height * 0.027,
     marginRight: width * 0.01,
     color: colors.themePurple1,
     textTransform: 'capitalize',

@@ -133,10 +133,12 @@ export const getCurrentBooking = token => async dispatch => {
         },
       },
     );
-    dispatch({
-      type: types.GET_CURRENT_BOOKING,
-      payload: response.data.data,
-    });
+    if (response.data.success) {
+      dispatch({
+        type: types.GET_CURRENT_BOOKING,
+        payload: response.data.data,
+      });
+    }
   } catch (err) {
     dispatch({
       type: types.ERROR_MODAL,
@@ -211,11 +213,11 @@ export const buyPackage =
       dispatch({
         type: types.ERROR_MODAL,
         payload: {
-          msg: 'SUBMISSION ERROR',
+          msg: 'Something went wrong.',
           status: true,
         },
       });
-      console.log('PACKAGE BYING FAILED:', err);
+      console.log('PACKAGE BUYING FAILED:', err);
     }
   };
 
@@ -236,20 +238,23 @@ export const user_login = data => async dispatch => {
       });
     } else {
       dispatch({
-        type: types.LOGIN_FAILED,
+        type: types.ERROR_MODAL,
         payload: response.data.msg,
       });
     }
   } catch (error) {
     dispatch({
-      type: types.LOGIN_FAILED,
-      payload: 'Network Error.',
+      type: types.ERROR_MODAL,
+      payload: {
+        msg: 'Network Error',
+        status: true,
+      },
     });
     console.log('Network Error', JSON.stringify(error.response, null, 2));
   }
 };
 
-export const user_signup = (data, _onSuccess) => async dispatch => {
+export const requestNewOtp = data => async dispatch => {
   try {
     const response = await axios.post(`${apiUrl}/users/register`, {
       first_name: data.first_name,
@@ -275,23 +280,63 @@ export const user_signup = (data, _onSuccess) => async dispatch => {
           },
         },
       });
-      _onSuccess();
-    } else {
-      // console.log("ERROR RESPONSE STATUS-------------",response?.data?.msg);
-      dispatch({
-        type: types.ERROR_MODAL,
-        payload: {
-          msg: response?.data?.msg,
-          status: true,
-        },
-      });
     }
-  } catch (error) {
-    console.log('CATCH ERROR RESPONSE STATUS: ', error.response);
+  } catch (err) {
+    console.log('Network Error ', err);
     dispatch({
       type: types.ERROR_MODAL,
       payload: {
-        msg: error?.response?.msg,
+        msg: 'Network Error',
+        status: true,
+      },
+    });
+  }
+};
+
+export const user_signup = (data, _onSuccess) => async dispatch => {
+  try {
+    const response = await axios.post(`${apiUrl}/users/register`, {
+      first_name: data.first_name,
+      last_name: data.last_name,
+      email: data.email,
+      phone: data.phone,
+      password: data.password,
+      confirmPassword: data.confirmPassword,
+      language: data.language,
+      service_type: data.service_type,
+    });
+
+    if (response?.data?.success) {
+      dispatch({
+        type: types.USER_SIGNUP,
+        payload: {
+          userData: {
+            first_name: data.first_name,
+            last_name: data.last_name,
+            email: data.email,
+            phone: data.phone,
+            language: data.language,
+            service_type: data.service_type,
+          },
+        },
+      });
+
+      _onSuccess();
+    } else {
+      // dispatch({
+      //   type: types.ERROR_MODAL,
+      //   payload: {
+      //     msg: response?.data?.msg,
+      //     status: true,
+      //   },
+      // });
+    }
+  } catch (error) {
+    console.log('CATCH ERROR RESPONSE STATUS: ', error.response.data.msg);
+    dispatch({
+      type: types.ERROR_MODAL,
+      payload: {
+        msg: error.response.data.msg,
         status: true,
       },
     });
@@ -527,7 +572,7 @@ export const bookTranslator =
         });
       }
     } catch (err) {
-      console.log(err.response)
+      console.log(err.response);
       dispatch({
         type: types.ERROR_MODAL,
         payload: {
@@ -607,7 +652,7 @@ export const requestOtpForResetPassword =
       dispatch({
         type: types.ERROR_MODAL,
         payload: {
-          msg: error?.msg,
+          msg: 'Please check your network connection.',
           status: true,
         },
       });
@@ -641,32 +686,77 @@ export const verifyResetPasswordOtpCode =
       }
     } catch (err) {
       console.log('Failed to verify Reset Password Otp Code.');
-      _onFailure();
+
       // dispatch({
       //   type: types.HAS_NETOWRK_ERROR,
       // });
-      // dispatch({
-      //   type: types.ERROR_MODAL,
-      //   payload: {
-      //     msg: error?.msg,
-      //     status: true,
-      //   },
-      // });
+      dispatch({
+        type: types.ERROR_MODAL,
+        payload: {
+          msg: 'Please check your network connection.',
+          status: true,
+        },
+      });
     }
   };
 
-export const resetPassword = params => async dispatch => {
-  try {
-    await axios.post(`${apiUrl}/users/resetPassword`, {
-      userId: params.userId,
-      password: params.password,
-      confirmPassword: params.confirmPassword,
-    });
-  } catch (err) {
-    console.log('Error: ', err);
-  }
-};
+export const resetPassword =
+  (params, _onSuccessPasswordChange) => async dispatch => {
+    try {
+      const response = await axios.post(`${apiUrl}/users/resetPassword`, {
+        userId: params.userId,
+        password: params.password,
+        confirmPassword: params.confirmPassword,
+      });
 
+      if (response.data.success) {
+        _onSuccessPasswordChange();
+      } else {
+        dispatch({
+          type: types.ERROR_MODAL,
+          payload: {
+            msg: response.data.msg,
+            status: true,
+          },
+        });
+      }
+    } catch (err) {
+      dispatch({
+        type: types.ERROR_MODAL,
+        payload: {
+          msg: 'Please check your network connection.',
+          status: true,
+        },
+      });
+      console.log('Error: ', err);
+    }
+  };
+
+// export const getCurrentLocation = () => async dispatch => {
+//   try {
+//     const config = {
+//       enableHighAccuracy: true,
+//       timeout: 200000,
+//       maximumAge: 3600000,
+//     };
+
+//     Geolocation.getCurrentPosition(
+//       info => {
+//         dispatch({
+//           type: types.GET_CURRENT_LOC,
+//           payload: {
+//             lat: info.coords.latitude,
+//             lng: info.coords.longitude,
+//           },
+//         });
+//       },
+//       err => console.log(err),
+//       config,
+//     );
+//   } catch (err) {
+//     console.log(err);
+//   }
+// };
 export const getCurrentLocation = () => async dispatch => {
   try {
     // dispatch({

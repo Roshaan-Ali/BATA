@@ -81,7 +81,7 @@ import com.android.build.OutputFile
  */
 
 project.ext.react = [
-    enableHermes: false,  // clean and rebuild if changing
+        enableHermes: false,  // clean and rebuild if changing
 ]
 project.ext.vectoricons = [
         iconFontNames: [
@@ -192,7 +192,7 @@ android {
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
 
-              signingConfig signingConfigs.release
+            signingConfig signingConfigs.release
         }
     }
 

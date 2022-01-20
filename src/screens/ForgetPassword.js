@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
   Dimensions,
   ImageBackground,
@@ -19,6 +19,8 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import OTPInputView from '@twotalltotems/react-native-otp-input';
 import {connect} from 'react-redux';
 import AlertModal from '../components/AlertModal';
+import {useIsFocused} from '@react-navigation/native';
+import PhoneInput from 'react-native-phone-number-input';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -31,13 +33,15 @@ const ForgetPassword = ({
   requestOtpForResetPassword,
   verifyResetPasswordOtpCode,
 }) => {
+  const phoneInput = useRef(null);
   const [step, setStep] = useState(1);
   const [phone, setPhone] = useState('');
   const [otpCode, setOtpCode] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isShowPassword, setIsShowPassword] = useState(false);
-  const [showAlertModal, setShowAlertModal] = useState(false);
+  const [showVerificationFailedModal, setShowVerificationFailedModal] =
+    useState(false);
   const [isVerifyingCode, setIsVerifyingCode] = useState(false);
   const [isRequestingCode, setIsRequestingCode] = useState(false);
   const [isResetingPassword, setIsResetingPassword] = useState(false);
@@ -46,11 +50,17 @@ const ForgetPassword = ({
   const [showPasswordMismatchModal, setShowPasswordMismatchModal] =
     useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
+  const isFocused = useIsFocused();
+  const [showPasswordShouldBeLongAlert, setShowPasswordShouldBeLongAlert] =
+    useState(false);
 
   const _onPressShowPassword = () => {
     setIsShowPassword(!isShowPassword);
   };
 
+  const [value, setValue] = useState('');
+  const [formattedValue, setFormattedValue] = useState('');
+  
   //STEP 1 FUNCTION CALL
   const _onPressSubmitNumber = async () => {
     if (!phone.length > 0) {
@@ -82,48 +92,39 @@ const ForgetPassword = ({
   };
 
   const _onFailureVerifyOtp = () => {
-    setShowAlertModal(true);
+    setShowVerificationFailedModal(true);
   };
 
   // STEP 3 FUNCTION CALL
   const _resetPassword = async () => {
-    if (newPassword === confirmPassword) {
-      setIsResetingPassword(true);
-      await resetPassword({
-        userId: UserReducer?.userData?.id,
-        password: newPassword,
-        confirmPassword: confirmPassword,
-      });
-      setIsResetingPassword(false);
-      setShowConfirmChangeModal(true);
+    if (newPassword?.length < 8 || confirmPassword?.length < 8) {
+      setShowPasswordShouldBeLongAlert(true);
     } else {
-      setShowPasswordMismatchModal(true);
+      if (newPassword === confirmPassword) {
+        setIsResetingPassword(true);
+        await resetPassword({
+          userId: UserReducer?.userData?.id,
+          password: newPassword,
+          confirmPassword: confirmPassword,
+        },_onSuccessPasswordChange);
+        setIsResetingPassword(false);
+      } else {
+        setShowPasswordMismatchModal(true);
+      }
     }
   };
 
+  const _onSuccessPasswordChange = () => {
+    setShowConfirmChangeModal(true);
+
+  }
   const _onPressRequestNewOtpCode = async () => {
     setIsRequestingCode(true);
     await requestOtpForResetPassword(phone, () => {});
     setIsRequestingCode(false);
-    setShowAlertModal(false);
+    setShowVerificationFailedModal(false);
     setOtpCode('');
   };
-
-  // useEffect(() => {
-  //   if (step === 2) {
-  //     // Verification Success
-  //     if (!UserReducer?.isValidResetPassOtp) {
-  //       setShowAlertModal(true);
-  //     }
-
-  //     // Verification Failed
-  //     if (UserReducer?.isValidResetPassOtp) {
-  //       setStep(step + 1);
-  //     }
-
-  //     setIsVerifyingCode(false);
-  //   }
-  // }, [UserReducer]);
 
   useEffect(() => {
     if (UserReducer?.errorModal?.status === true) {
@@ -133,6 +134,7 @@ const ForgetPassword = ({
       setShowErrorModal(false);
     }
   }, [UserReducer?.errorModal]);
+
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#EF2692'}}>
       {/* <AppStatusBar
@@ -149,14 +151,61 @@ const ForgetPassword = ({
           {step === 1 && (
             <>
               <Heading title="Forget Password" passedStyle={styles.heading} />
-              <Inputbox
+              <PhoneInput
+              ref={phoneInput}
+              defaultValue={value}
+              defaultCode="US"
+              layout="first"
+              placeholder="Phone"
+              containerStyle={{
+                backgroundColor: 'transparent',
+                borderWidth: 1,
+                borderColor: 'white',
+                borderRadius: width * 0.045,
+                color: 'white',
+                height: height * 0.0753,
+                marginVertical: height * 0.02,
+              }}
+              // flagButtonStyle={{
+              //   // backgroundColor: 'red',
+              //   width: width * 0.2,
+              // }}
+              // countryPickerButtonStyle={{
+              //   // backgroundColor: 'red',
+              //   // paddingRight: 10,
+              // }}
+              textInputStyle={{
+                color: 'white',
+                fontSize: width * 0.045,
+                paddingVertical: 0,
+              }}
+              codeTextStyle={{
+                color: 'white',
+                fontSize: width * 0.045,
+              }}
+              textContainerStyle={{
+                backgroundColor: 'transparent',
+                // backgroundColor:'red',
+                //  height: height * 0.09,
+                color: 'white',
+                // paddingVertical: 5,
+              }}
+              onChangeText={text => {
+                setValue(text);
+              }}
+              onChangeFormattedText={text => {
+                setPhone(text);
+              }}
+              withDarkTheme
+            />
+              {/* <Inputbox
                 value={phone}
                 setTextValue={setPhone}
                 placeholderTilte="Phone Number"
                 isShowIcon={true}
                 keyboardType={'numeric'}
                 names={'smartphone'}
-              />
+              /> */}
               {isRequestingCode ? (
                 <View style={styles.loadingComponent}>
                   <LottieView
@@ -299,15 +348,15 @@ const ForgetPassword = ({
           )}
         </View>
 
-        {showAlertModal && (
+        {showVerificationFailedModal && (
           <AlertModal
             buttonText={'Request New Code'}
             title="Verification Failed :("
             onPress={_onPressRequestNewOtpCode}
             showLoader={isRequestingCode}
-            isModalVisible={showAlertModal}
-            setIsModalVisible={setShowAlertModal}
-            message="Your 4 digit verification code is invalid."
+            isModalVisible={showVerificationFailedModal}
+            setIsModalVisible={setShowVerificationFailedModal}
+            message="Something went wrong in verification process."
           />
         )}
 
@@ -332,13 +381,19 @@ const ForgetPassword = ({
           />
         )}
 
-        {showErrorModal && (
+        {isFocused && showErrorModal && (
           <AlertModal
             title="Oh Snaps!"
             isModalVisible={showErrorModal}
             setIsModalVisible={setShowErrorModal}
             message={UserReducer?.errorModal?.msg}
-            onPress={() => setErrorModal()}
+            onPress={() => {
+              if (step === 2 && showVerificationFailedModal) {
+                setShowVerificationFailedModal(true);
+              }
+              setOtpCode('');
+              setErrorModal();
+            }}
           />
         )}
 
@@ -348,6 +403,15 @@ const ForgetPassword = ({
             isModalVisible={showPasswordMismatchModal}
             setIsModalVisible={setShowPasswordMismatchModal}
             message={'Password Mismatch!'}
+          />
+        )}
+
+        {showPasswordShouldBeLongAlert && (
+          <AlertModal
+            title="Oh Snaps!"
+            message={'Password should be of atleast 8 characters.'}
+            isModalVisible={showPasswordShouldBeLongAlert}
+            setIsModalVisible={setShowPasswordShouldBeLongAlert}
           />
         )}
       </ImageBackground>

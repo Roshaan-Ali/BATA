@@ -10,19 +10,19 @@ import React from 'react';
 import Heading from './Heading';
 import colors from '../assets/colors';
 import IconComp from './IconComp';
-import LottieViews from 'lottie-react-native';
+import LottieView from 'lottie-react-native';
 import moment from 'moment';
 import {useRoute} from '@react-navigation/native';
 import {color} from 'react-native-reanimated';
+import {connect} from 'react-redux';
 
 const {width, height} = Dimensions.get('window');
 
-const CurrentInterpreter = ({item, onPress, isLoading, key}) => {
+const CurrentInterpreter = ({item, onPress, isLoading, key, UserReducer}) => {
   const route = useRoute();
-  const m = Math.random() * 100000000000
-  console.log(Math.round(m))
+  const m = Math.random() * 100000000000;
+  console.log(item);
   return (
-
     <View key={Math.round(m)} style={styles.container}>
       {/* initiator  */}
 
@@ -45,25 +45,24 @@ const CurrentInterpreter = ({item, onPress, isLoading, key}) => {
           <Heading title={item?.status} passedStyle={styles.value} />
         </View>
 
-        {/* Interpreter Name  */}
-        {/* <View style={styles.locationView}>
+        {/* Native Language  */}
+        <View style={styles.locationView}>
           <IconComp
             type="Fontisto"
             name="person"
             iconStyle={styles.locationIcon}
           />
-          <Heading title={`Interpreter(s):`} passedStyle={styles.label} />
-          {item?.interpreter_id?.map((ele, id) => (
-            <Heading
-              title={ele?.first_name?.concat(`${ele?.last_name}`) || 'Dummy Name,'}
-              passedStyle={styles.value}
-            />
-          ))}
-        </View> */}
+          <Heading title={`Native Language:`} passedStyle={styles.label} />
+
+          <Heading
+            title={`${UserReducer?.userData?.language?.language_name}`}
+            passedStyle={styles.value}
+          />
+        </View>
 
         {/* Language View  */}
         {item?.translating_language?.map((ele, index) => (
-          <View key={index} style={styles.locationView} >
+          <View key={index} style={styles.locationView}>
             <IconComp
               type="FontAwesome"
               name="language"
@@ -85,8 +84,10 @@ const CurrentInterpreter = ({item, onPress, isLoading, key}) => {
             name="event-note"
             iconStyle={styles.locationIcon}
           />
+
+          
           <Heading
-            title={`From: ${moment(item?.start_date,'MMM/DD/YYYY - hh:mm:A')}`}
+            title={`From: ${ moment(moment(item?.start_date).toISOString()).format('DDD/MMM/yyyy (HH:mm A)')}`}
             passedStyle={styles.value}
           />
         </View>
@@ -99,7 +100,7 @@ const CurrentInterpreter = ({item, onPress, isLoading, key}) => {
             iconStyle={styles.locationIcon}
           />
           <Heading
-            title={`Till: ${moment(item?.end_date,'MMM/DD/YYYY - hh:mm:A',)}`}
+            title={`Till: ${ moment(moment(item?.end_date).toISOString()).format('DDD/MMM/yyyy (HH:mm A)')}`}
             passedStyle={styles.value}
           />
         </View>
@@ -199,7 +200,10 @@ const CurrentInterpreter = ({item, onPress, isLoading, key}) => {
   );
 };
 
-export default CurrentInterpreter;
+const mapStateToProps = ({UserReducer}) => {
+  return {UserReducer};
+};
+export default connect(mapStateToProps, null)(CurrentInterpreter);
 
 const styles = StyleSheet.create({
   container: {
@@ -227,7 +231,7 @@ const styles = StyleSheet.create({
   locationView: {
     flexDirection: 'row',
     paddingVertical: height * 0.01,
-    flexWrap:'wrap'
+    flexWrap: 'wrap',
   },
   occasionText: {
     color: 'white',

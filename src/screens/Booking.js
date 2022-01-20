@@ -41,7 +41,6 @@ const Booking = ({navigation}) => {
   };
 
   const _onCancelPress = () => {
-    console.log('cancelled');
   };
 
   const _onBookNowPress = () => {
