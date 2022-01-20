@@ -8,7 +8,7 @@ import {
   PermissionsAndroid,
   Platform,
 } from 'react-native';
-import {MotiView} from 'moti';
+// import {MotiView} from 'moti';
 import {connect} from 'react-redux';
 import colors from '../assets/colors';
 import Header from '../components/Header';
@@ -40,11 +40,8 @@ const Home = ({
   completeEvent,
   submitReviewsAndRatings,
 }) => {
-  console.log('HOME');
-  // console.log(UserReducer?.userData?.current_package);
   var watchID = useRef(null);
   const [mapRef, setMapRef] = useState(null);
-  // const mapRef = useRef(null);r
   const accessToken = UserReducer?.accessToken;
   const [isLoading, setIsLoading] = useState(false);
   const [bookingId, setBookingId] = useState(false);
@@ -76,7 +73,6 @@ const Home = ({
   const [currentLongitude, setCurrentLongitude] = useState('...');
   const [currentLatitude, setCurrentLatitude] = useState('...');
   const [locationStatus, setLocationStatus] = useState('');
-console.log(UserReducer?.coords)
   useEffect(() => {
     const requestLocationPermission = async () => {
       if (Platform.OS === 'ios') {
@@ -287,7 +283,7 @@ console.log(UserReducer?.coords)
           {/* Greeting Container  */}
           <View style={styles.greetingContainer}>
             <View style={styles.animationView}>
-              <MotiView
+              {/* <MotiView
                 from={{
                   opacity: 0.5,
                   scale: 0.9,
@@ -300,7 +296,7 @@ console.log(UserReducer?.coords)
                   type: 'timing',
                   loop: true,
                   duration: 1000,
-                }}>
+                }}> */}
                 <Heading
                   title="Welcome,"
                   passedStyle={styles.heading}
@@ -314,7 +310,7 @@ console.log(UserReducer?.coords)
                   ]}
                   fontType="bold"
                 />
-              </MotiView>
+              {/* </MotiView> */}
             </View>
             {/* Wave Image  */}
             {/* <MotiView

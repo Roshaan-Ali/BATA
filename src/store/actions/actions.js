@@ -1,6 +1,7 @@
 import * as types from './actionType';
 import axios from 'axios';
-import Geolocation from 'react-native-geolocation-service';
+// import Geolocation from 'react-native-geolocation-service';
+import Geolocation from '@react-native-community/geolocation';
 import messaging from '@react-native-firebase/messaging';
 import {apiUrl} from '../../config/config';
 

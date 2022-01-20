@@ -2,7 +2,7 @@ import React, {useEffect, useState, useRef} from 'react';
 import {StyleSheet, View, Dimensions, ImageBackground} from 'react-native';
 import Heading from '../components/Heading';
 import * as actions from '../store/actions/actions';
-import {useIsFocused} from '@react-navigation/native';
+// import {useIsFocused} from '@react-navigation/native';
 import background_img from '../assets/background_img.png';
 import OTPInputView from '@twotalltotems/react-native-otp-input';
 import {connect} from 'react-redux';
@@ -24,28 +24,24 @@ const Otp = ({
   navigation,
 }) => {
   const [otpCode, setOtpCode] = useState('');
-  const isFocused = useIsFocused();
+  // const isFocused = useIsFocused();
   const [showVerificationFailedModal, setShowVerificationFailedModal] =
     useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
   const [isRequesting, setIsRequesting] = useState(false);
   const [showErrorAlert, setShowErrorAlert] = useState(false);
-  const inputRef = useRef();
- 
+
   // Confirm Code
   const _onConfirmOtp = async code => {
     setIsVerifying(true);
-
-    // setTimeout(async () => {
-      await verifySignUpOtpCode(
-        {
-          phone: UserReducer?.userData?.phone,
-          code,
-        },
-        _onSuccess,
-        _onFailure,
-      );
-    // }, 2000);
+    await verifySignUpOtpCode(
+      {
+        phone: UserReducer?.userData?.phone,
+        code,
+      },
+      _onSuccess,
+      _onFailure,
+    );
   };
 
   // Request New Code
@@ -55,22 +51,20 @@ const Otp = ({
       ...route.params,
       service_type: route.params?.service_type?.name,
     };
-
-    // setTimeout(async () => {
-      await requestNewOtp(data);
-      setShowVerificationFailedModal(false);
-      setOtpCode('');
-      setIsRequesting(false);
-    // }, 3000);
-    // console.log(data)
+    await requestNewOtp(data);
+    setShowVerificationFailedModal(false);
+    setOtpCode('');
+    setIsRequesting(false);
   };
 
+  // On Verification Success
   const _onSuccess = () => {
     navigation.navigate('SignupPackage', {
       ...route.params,
     });
   };
 
+  // On Verification Failure
   const _onFailure = () => {
     setIsVerifying(false);
     setOtpCode('');
@@ -85,6 +79,7 @@ const Otp = ({
       setShowErrorAlert(false);
     }
   }, [UserReducer?.errorModal]);
+
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#EF2692'}}>
       {/* <AppStatusBar
@@ -105,13 +100,13 @@ const Otp = ({
                 passedStyle={styles.verifyingOtpCode}
                 fontType="light"
               />
-              <LottieView
+              {/* <LottieView
                 speed={1}
                 style={styles.lottieStyles}
                 autoPlay
                 loop
                 source={require('../assets/Lottie/purple-loading-2.json')}
-              />
+              /> */}
             </View>
           ) : (
             <View style={styles.inputBoxes}>
@@ -145,7 +140,9 @@ const Otp = ({
               message="Something went wrong in verification."
             />
           )}
-          {isFocused && showErrorAlert && (
+          {
+          // isFocused && 
+          showErrorAlert && (
             <AlertModal
               title="Oh Snaps:("
               isModalVisible={showErrorAlert}
@@ -153,7 +150,7 @@ const Otp = ({
               onPress={() => {
                 setShowErrorAlert(false);
                 setErrorModal();
-                setShowVerificationFailedModal(true)
+                setShowVerificationFailedModal(true);
               }}
               message={UserReducer?.errorModal?.msg}
             />
