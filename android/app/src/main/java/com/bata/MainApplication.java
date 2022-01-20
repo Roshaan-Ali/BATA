@@ -18,6 +18,7 @@ import com.facebook.react.bridge.JSIModulePackage; // <- add
 import com.swmansion.reanimated.ReanimatedJSIModulePackage; // <- add
 //import io.invertase.firebase.app.ReactNativeFirebaseAppPackage;
 import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
+import com.reactnativecommunity.geolocation.GeolocationPackage;
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -36,6 +37,7 @@ public class MainApplication extends Application implements ReactApplication {
      // new ReactNativeFirebaseAppPackage();
       new SplashScreenReactPackage();
       new VectorIconsPackage();
+      new GeolocationPackage();
       new MapsPackage();
       return packages;
     }
