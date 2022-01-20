@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   View,
@@ -15,20 +15,21 @@ import Button from '../components/Button';
 import Inputbox from '../components/Inputbox';
 import logo from '../assets/Logo.png';
 import background_img from '../assets/background_img.png';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import * as actions from '../store/actions/actions';
 import Heading from '../components/Heading';
 import colors from '../assets/colors';
 import LottieView from 'lottie-react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import AppStatusBar from '../components/AppStatusBar';
-import {useIsFocused} from '@react-navigation/native';
+import { useIsFocused } from '@react-navigation/native';
 import AlertModal from '../components/AlertModal';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
-const LogIn = ({navigation, user_login, UserReducer, setErrorModal}) => {
+const LogIn = ({ navigation, user_login, UserReducer, setErrorModal }) => {
   const isFocused = useIsFocused();
+  // console.log(isFocused)
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isShowPassword, setIsShowPassword] = useState(false);
@@ -51,7 +52,7 @@ const LogIn = ({navigation, user_login, UserReducer, setErrorModal}) => {
       setIsLoading(true);
 
       // setTimeout(() => {
-      await user_login({email, password});
+      await user_login({ email, password });
       setIsLoading(false);
       // }, 2000);
     } else {
@@ -66,14 +67,12 @@ const LogIn = ({navigation, user_login, UserReducer, setErrorModal}) => {
     if (UserReducer?.errorModal?.status == false) {
       setShowLoginFailedModal(false);
     }
-  }, [UserReducer]);
+  }, [UserReducer?.errorModal]);
 
-  useEffect(() => {
-    setErrorModal();
-  }, []);
+  
   return (
     <View style={styles.container}>
-      <SafeAreaView style={{flex: 1, backgroundColor: '#EF2692'}}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#EF2692' }}>
         {/* {Platform.OS == 'ios' && ( */}
         {/* <AppStatusBar
           platform={Platform.OS}
@@ -304,7 +303,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = ({UserReducer}) => {
-  return {UserReducer};
+const mapStateToProps = ({ UserReducer }) => {
+  return { UserReducer };
 };
 export default connect(mapStateToProps, actions)(LogIn);

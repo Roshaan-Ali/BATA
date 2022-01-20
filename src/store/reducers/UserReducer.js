@@ -33,7 +33,10 @@ const initialData = {
   },
   userData: null,
   accessToken: '',
-  coords: null,
+  coords: {
+    lat: 48.8584,
+    lng: 2.2945
+  },
   isValidOtp: false,
   isValidResetPassOtp: false,
   statusCode: null,

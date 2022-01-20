@@ -237,9 +237,13 @@ export const user_login = data => async dispatch => {
         },
       });
     } else {
+      console.log("not working")
       dispatch({
         type: types.ERROR_MODAL,
-        payload: response.data.msg,
+        payload: {
+          msg: response.data.msg,
+          status: true,
+        },
       });
     }
   } catch (error) {

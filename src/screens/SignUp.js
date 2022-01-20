@@ -284,10 +284,7 @@ const SignUp = ({
               keyboardType="numeric"
               names={'smartphone'}
             /> */}
-            <Heading
-              title="Mention your country code e.g: 1, 92 etc"
-              passedStyle={{fontSize: width * 0.038, color: 'white'}}
-            />
+            
             {/* Primary Language  */}
             <TouchableOpacity
               style={styles.dropdown}
