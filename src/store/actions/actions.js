@@ -204,11 +204,22 @@ export const buyPackage =
           Accept: 'application/json',
         },
       });
-      dispatch({
-        type: types.PACKAGE_MODIFIED,
-        payload: response.data.data,
-      });
-      _closeStripeModal();
+      if (response?.data.success) {
+        console.log(response?.data);
+        dispatch({
+          type: types.PACKAGE_MODIFIED,
+          payload: response.data.data,
+        });
+        _closeStripeModal();
+      } else {
+        dispatch({
+          type: types.ERROR_MODAL,
+          payload: {
+            msg: 'Something went wrong.',
+            status: true,
+          },
+        });
+      }
     } catch (err) {
       dispatch({
         type: types.ERROR_MODAL,
@@ -237,7 +248,7 @@ export const user_login = data => async dispatch => {
         },
       });
     } else {
-      console.log("not working")
+      console.log('not working');
       dispatch({
         type: types.ERROR_MODAL,
         payload: {
@@ -496,38 +507,43 @@ export const updateUserData = (userData, token) => async dispatch => {
   }
 };
 
-export const change_Password = (data, token, _onSuccessChanged) => async dispatch => {
-  try {
-    const response = await axios.post(`${apiUrl}/users/changePassword`, data, {
-      headers: {
-        Authorization: 'Bearer ' + token,
-        Accept: 'application/json',
-      },
-    });
-    if (!response.data.success) {
-      console.log('response : ', response.data);
+export const change_Password =
+  (data, token, _onSuccessChanged) => async dispatch => {
+    try {
+      const response = await axios.post(
+        `${apiUrl}/users/changePassword`,
+        data,
+        {
+          headers: {
+            Authorization: 'Bearer ' + token,
+            Accept: 'application/json',
+          },
+        },
+      );
+      if (!response.data.success) {
+        console.log('response : ', response.data);
+        dispatch({
+          type: types.ERROR_MODAL,
+          payload: {
+            msg: response?.data?.msg,
+            status: true,
+          },
+        });
+      } else {
+        _onSuccessChanged();
+      }
+    } catch (err) {
+      console.log(err.response);
       dispatch({
         type: types.ERROR_MODAL,
         payload: {
-          msg: response?.data?.msg,
+          msg: err?.msg,
           status: true,
         },
       });
-    } else {
-      _onSuccessChanged()
+      // console.log(err);
     }
-  } catch (err) {
-    console.log(err.response);
-    dispatch({
-      type: types.ERROR_MODAL,
-      payload: {
-        msg: err?.msg,
-        status: true,
-      },
-    });
-    // console.log(err);
-  }
-};
+  };
 
 export const setErrorModal = () => dispatch => {
   try {
@@ -773,37 +789,35 @@ export const getCurrentLocation = () => async dispatch => {
 
     Geolocation.getCurrentPosition(
       //Will give you the current location
-      (position) => {
-        console.log(position, "ACTION")
+      position => {
+        console.log(position, 'ACTION');
         //getting the Longitude from the location json
-        const currentLongitude = 
-          JSON.stringify(position.coords.longitude);
+        const currentLongitude = JSON.stringify(position.coords.longitude);
 
         //getting the Latitude from the location json
-        const currentLatitude = 
-          JSON.stringify(position.coords.latitude);
+        const currentLatitude = JSON.stringify(position.coords.latitude);
 
-          dispatch({
-            type: types.GET_CURRENT_LOC,
-            payload: {
-              lat: position.coords.latitude,
-              lng: position.coords.longitude
-            },
-          });
+        dispatch({
+          type: types.GET_CURRENT_LOC,
+          payload: {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          },
+        });
 
         //Setting Longitude state
         // setCurrentLongitude(currentLongitude);
-        
+
         // //Setting Longitude state
         // setCurrentLatitude(currentLatitude);
       },
-      (error) => {
-        console.log(error.message)
+      error => {
+        console.log(error.message);
       },
       {
         enableHighAccuracy: false,
         timeout: 30000,
-        maximumAge: 1000
+        maximumAge: 1000,
       },
     );
     // const config = {
@@ -832,5 +846,3 @@ export const getCurrentLocation = () => async dispatch => {
     console.log(err);
   }
 };
-
-

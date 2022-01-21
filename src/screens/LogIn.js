@@ -39,6 +39,8 @@ const LogIn = ({ navigation, user_login, UserReducer, setErrorModal }) => {
     UserReducer?.loginFailed?.status,
   );
 
+  console.log(UserReducer?.coords);
+
   const _onPressSignUp = () => {
     navigation.navigate('SignUp');
   };

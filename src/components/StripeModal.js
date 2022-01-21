@@ -1,5 +1,5 @@
 import Modal from 'react-native-modal';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {Dimensions, StyleSheet, View} from 'react-native';
 import colors from '../assets/colors';
 import Heading from '../components/Heading';
@@ -16,7 +16,11 @@ const StripeModal = ({
   setId,
   isLoading,
 }) => {
+  const [isCardComplete, setIsCardComplete] = useState(false);
   const {createToken} = useStripe();
+  useEffect(() => {
+console.log(isCardComplete);
+  },[isCardComplete])
   return (
     <Modal isVisible={isModalVisible}>
       <View style={styles.container}>
@@ -36,17 +40,19 @@ const StripeModal = ({
             borderWidth: 1,
             borderColor: colors.themePurple1,
             borderRadius: 5,
+            fontSize: 16,
           }}
           style={{
-            width: '95%',
+            width: '100%',
             height: 50,
             marginVertical: 30,
           }}
           onCardChange={cardDetails => {
-            console.log(cardDetails);
+            console.log('Card complete: ', cardDetails.complete);
             if (cardDetails.complete) {
               createToken(cardDetails).then(res => {
-                console.log(res);
+                console.log('Stripe Card Response: ', res);
+                setIsCardComplete(cardDetails.complete);
                 setId(res.token.id);
               });
             }
@@ -55,6 +61,7 @@ const StripeModal = ({
             console.log('focusField', focusedField);
           }}
         />
+
         {/* Buttons Container  */}
         {isLoading ? (
           <View style={styles.loadingComponent} activeOpacity={1}>
@@ -76,7 +83,11 @@ const StripeModal = ({
             <Button
               title="BUY"
               onBtnPress={() => {
-                onPress();
+                if (!isCardComplete) {
+                  return;
+                } else {
+                  onPress();
+                }
               }}
               isBgColor={false}
               btnStyle={styles.btnStyle}

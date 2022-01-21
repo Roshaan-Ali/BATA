@@ -53,6 +53,7 @@ const Home = ({
   const [showMustBuyPackageModal, setShowMustBuyPackageModal] = useState(false);
   const [showFailedCompletingModal, setShowFailedCompletingModal] =
     useState(false);
+    console.log(UserReducer?.coords);
 
   //
   const username = UserReducer?.userData?.first_name;
