@@ -1,5 +1,5 @@
 import {connect} from 'react-redux';
-import React from 'react';
+import React, {useEffect} from 'react';
 import Home from './screens/Home';
 import Booking from './screens/Booking';
 import Profile from './screens/Profile';
@@ -14,10 +14,28 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Reviews from './screens/Reviews';
 import ChangePassword from './screens/ChangePassword';
 import OTP from './screens/OTP';
+import * as actions from './store/actions/actions';
 
 const HomeStack = createNativeStackNavigator();
 
-const HomeScreensStack = ({navigation, UserReducer}) => {
+const HomeScreensStack = ({
+  fcmNotificationsListener,
+  navigation,
+  UserReducer,
+  getCurrentLocation,
+  getCurrentBooking,
+  getAllLanguages,
+}) => {
+  const accessToken = UserReducer?.accessToken;
+
+  useEffect(() => {
+    getCurrentLocation();
+    getAllLanguages();
+    getCurrentBooking(accessToken);
+    console.log(
+      '==========ALL FUNCTIONS RAN SUCCESSFULLY==========',
+    );
+  }, []);
   return (
     <HomeStack.Navigator
       screenOptions={{headerShown: false}}
@@ -73,4 +91,4 @@ const HomeScreensStack = ({navigation, UserReducer}) => {
 const mapStateToProps = ({UserReducer}) => {
   return {UserReducer};
 };
-export default connect(mapStateToProps, null)(HomeScreensStack);
+export default connect(mapStateToProps, actions)(HomeScreensStack);

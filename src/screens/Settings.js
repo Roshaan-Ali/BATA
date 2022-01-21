@@ -54,7 +54,7 @@ const Settings = ({navigation, UserReducer, cancelSubscription}) => {
           barStyle="light-content"
         /> */}
 
-        <Header title="back" showBackBtn={true} navigation={navigation} />
+        <Header title="Settings" navigation={navigation} />
         <Heading
           title="Settings"
           passedStyle={styles.heading}

@@ -48,7 +48,7 @@ const PushNotifications = ({
           backgroundColor={colors.themePurple1}
           barStyle="light-content"
         /> */}
-        <Header title="back" showBackBtn={true} navigation={navigation} />
+        <Header title="Notifications" navigation={navigation} />
         <ScrollView showsVerticalScrollIndicator={false}>
           {/* Page Heading */}
           <Heading

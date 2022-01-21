@@ -25,7 +25,7 @@ const ChangePassword = ({
   navigation,
   UserReducer,
   setErrorModal,
-  changePassword,
+  change_Password,
 }) => {
   const accessToken = UserReducer?.accessToken;
   const [isLoading, setIsLoading] = useState(false);
@@ -33,29 +33,34 @@ const ChangePassword = ({
   const [newPass, setNewPass] = useState('');
   const [confirmPass, setConfirmPass] = useState('');
   const [isShowPassword, setIsShowPassword] = useState(false);
-  const [showErrorModal, setShowErrorModal] = useState(false);
-
+  const [showPasswordShouldBeLongAlert, setShowPasswordShouldBeLongAlert] =
+    useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showFieldsLeftEmptyAlert, setShowFieldsLeftEmptyAlert] =
     useState(false);
   const [showMismatchPasswordAlert, setShowMismatchPasswordAlert] =
     useState(false);
 
   // Save Button
-  const _onPressSave = async () => {
+  const _onPressSave = () => {
     setIsLoading(true);
-    if (oldPass.length > 0 || newPass.length > 0 || confirmPass.length > 0) {
+    const data = {
+      oldPassword: oldPass,
+      newPassword: newPass,
+      confirmPassword: confirmPass,
+    };
+    if (oldPass.length > 0 && newPass.length > 0 && confirmPass.length > 0) {
       if (newPass !== confirmPass) {
         setShowMismatchPasswordAlert(true);
       } else {
-        await changePassword(
-          {
-            oldPassword: oldPass,
-            newPassword: newPass,
-            confirmPassword: confirmPass,
-          },
-          accessToken,
-          navigation,
-        );
+        if (newPass.length < 8 || confirmPass.length < 8) {
+          setShowPasswordShouldBeLongAlert(true);
+          // console.log('idher', data);
+        } else {
+          change_Password(data, accessToken, _onSuccessChanged);
+          // console.log("tet", changePassword);
+          console.log('else-----------');
+        }
       }
     } else {
       setShowFieldsLeftEmptyAlert(true);
@@ -67,6 +72,12 @@ const ChangePassword = ({
     setIsShowPassword(!isShowPassword);
   };
 
+  const _onSuccessChanged = () => {
+    setNewPass('');
+    setOldPass('');
+    setConfirmPass('');
+    setShowSuccessModal(true);
+  };
   // useEffect(() => {
   //   if (UserReducer?.errorModal?.status === true) {
   //     setShowErrorModal(true);
@@ -83,7 +94,7 @@ const ChangePassword = ({
           backgroundColor={colors.themePurple1}
           barStyle="light-content"
         /> */}
-        <Header title="back" showBackBtn={true} navigation={navigation} />
+        <Header title="Change Password"  navigation={navigation} />
         <ScrollView showsVerticalScrollIndicator={false}>
           {/* Page Heading */}
           <Heading
@@ -173,9 +184,10 @@ const ChangePassword = ({
               </View>
             ) : (
               <Button
-                title="SAVE"
+                title="Save Changes"
                 btnStyle={styles.btnStyle}
                 onBtnPress={() => _onPressSave()}
+                // onBtnPress={() => console.log("pressed")}
                 btnTextStyle={styles.btnTextColor}
                 isBgColor={false}
               />
@@ -197,7 +209,22 @@ const ChangePassword = ({
               setIsModalVisible={setShowFieldsLeftEmptyAlert}
             />
           )}
-
+          {showPasswordShouldBeLongAlert && (
+            <AlertModal
+              title="Oh Snaps!"
+              message={'Password should be of atleast 8 characters.'}
+              isModalVisible={showPasswordShouldBeLongAlert}
+              setIsModalVisible={setShowPasswordShouldBeLongAlert}
+            />
+          )}
+          {showSuccessModal && (
+            <AlertModal
+              title="Success!"
+              message={'Password changed successfully.'}
+              isModalVisible={showSuccessModal}
+              setIsModalVisible={setShowSuccessModal}
+            />
+          )}
           {/* {showErrorModal && (
             <AlertModal
               title="Oh Snaps!"

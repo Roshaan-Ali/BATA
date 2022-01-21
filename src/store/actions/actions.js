@@ -140,13 +140,13 @@ export const getCurrentBooking = token => async dispatch => {
       });
     }
   } catch (err) {
-    dispatch({
-      type: types.ERROR_MODAL,
-      payload: {
-        msg: 'Failed Fetching Current Booking.',
-        status: true,
-      },
-    });
+    // dispatch({
+    //   type: types.ERROR_MODAL,
+    //   payload: {
+    //     msg: 'Failed Fetching Current Booking.',
+    //     status: true,
+    //   },
+    // });
     console.log('Failed to fetch current booking!', err);
   }
 };
@@ -327,13 +327,13 @@ export const user_signup = (data, _onSuccess) => async dispatch => {
 
       _onSuccess();
     } else {
-      // dispatch({
-      //   type: types.ERROR_MODAL,
-      //   payload: {
-      //     msg: response?.data?.msg,
-      //     status: true,
-      //   },
-      // });
+      dispatch({
+        type: types.ERROR_MODAL,
+        payload: {
+          msg: response?.data?.msg,
+          status: true,
+        },
+      });
     }
   } catch (error) {
     console.log('CATCH ERROR RESPONSE STATUS: ', error.response.data.msg);
@@ -496,7 +496,7 @@ export const updateUserData = (userData, token) => async dispatch => {
   }
 };
 
-export const changePassword = (data, token, navigation) => async dispatch => {
+export const change_Password = (data, token, _onSuccessChanged) => async dispatch => {
   try {
     const response = await axios.post(`${apiUrl}/users/changePassword`, data, {
       headers: {
@@ -514,7 +514,7 @@ export const changePassword = (data, token, navigation) => async dispatch => {
         },
       });
     } else {
-      navigation.goBack();
+      _onSuccessChanged()
     }
   } catch (err) {
     console.log(err.response);

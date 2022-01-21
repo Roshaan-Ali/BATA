@@ -24,7 +24,8 @@ import Geolocation from '@react-native-community/geolocation';
 // import Geolocation from 'react-native-geolocation-service';
 import CurrentInterpreter from '../components/CurrentInterpreter';
 import AlertModal from '../components/AlertModal';
-import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps'
+import MapView, {PROVIDER_GOOGLE, Marker} from 'react-native-maps';
+import {useIsFocused} from '@react-navigation/native';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
@@ -32,15 +33,16 @@ const height = Dimensions.get('window').height;
 const ASPECT_RATIO = width / height;
 const LATITUDE_DELTA = 0.0925;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
-const API_MAP_KEY = "AIzaSyBTsC4XcbDQgH_tBwHdKAUUXyVtdOTL4l0"
+const API_MAP_KEY = 'AIzaSyBTsC4XcbDQgH_tBwHdKAUUXyVtdOTL4l0';
 const Home = ({
   navigation,
   UserReducer,
   setErrorModal,
-  completeEvent,
+  completeEvent,getCurrentBooking,
   submitReviewsAndRatings,
 }) => {
   var watchID = useRef(null);
+  const isFocused = useIsFocused();
   const [mapRef, setMapRef] = useState(null);
   const accessToken = UserReducer?.accessToken;
   const [isLoading, setIsLoading] = useState(false);
@@ -73,6 +75,7 @@ const Home = ({
   const [currentLongitude, setCurrentLongitude] = useState('...');
   const [currentLatitude, setCurrentLatitude] = useState('...');
   const [locationStatus, setLocationStatus] = useState('');
+
   useEffect(() => {
     const requestLocationPermission = async () => {
       if (Platform.OS === 'ios') {
@@ -267,6 +270,9 @@ const Home = ({
     }
   }, [UserReducer.errorModal]);
 
+  useEffect(() => {
+    getCurrentBooking();
+  }, []);
   return (
     <View style={styles.container}>
       <SafeAreaView style={{flex: 1}}>
@@ -297,19 +303,19 @@ const Home = ({
                   loop: true,
                   duration: 1000,
                 }}> */}
-                <Heading
-                  title="Welcome,"
-                  passedStyle={styles.heading}
-                  fontType="light"
-                />
-                <Heading
-                  title={username}
-                  passedStyle={[
-                    styles.heading_username,
-                    username?.length > 7 && {fontSize: width * 0.08},
-                  ]}
-                  fontType="bold"
-                />
+              <Heading
+                title="Welcome,"
+                passedStyle={styles.heading}
+                fontType="light"
+              />
+              <Heading
+                title={username}
+                passedStyle={[
+                  styles.heading_username,
+                  username?.length > 7 && {fontSize: width * 0.08},
+                ]}
+                fontType="bold"
+              />
               {/* </MotiView> */}
             </View>
             {/* Wave Image  */}
@@ -391,7 +397,6 @@ const Home = ({
 
           {/* Map  */}
           <View style={styles.map}>
-              
             <MapView
               style={{width: width * 0.8, height: height * 0.36}}
               ref={ref => setMapRef(ref)}
@@ -504,13 +509,17 @@ const Home = ({
               setIsModalVisible={setShowMustBuyPackageModal}
             />
           )}
-          {showFailedCompletingModal && (
+          {isFocused && showFailedCompletingModal && (
             <AlertModal
               title="Oh Snaps :("
+              // message={"idher se araha ha"}
               message={UserReducer?.errorModal?.msg}
               isModalVisible={showFailedCompletingModal}
               setIsModalVisible={setShowFailedCompletingModal}
-              onPress={() => setErrorModal()}
+              onPress={() => {
+                setErrorModal();
+                setShowFailedCompletingModal(false);
+              }}
             />
           )}
         </ScrollView>

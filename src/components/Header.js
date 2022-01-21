@@ -13,6 +13,7 @@ const {width, height} = Dimensions.get('window');
 
 const Header = ({navigation, showBackBtn = false, title, UserReducer}) => {
   const userImage = UserReducer?.userData?.profile_image;
+const nav = navigation
   return (
     <View style={styles.container}>
       {showBackBtn ? (

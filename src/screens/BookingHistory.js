@@ -28,7 +28,7 @@ const BookingHistory = ({navigation, UserReducer, getBookingHistory}) => {
           backgroundColor={colors.themePurple1}
           barStyle="light-content"
         /> */}
-        <Header title="back" showBackBtn={true} navigation={navigation} />
+        <Header title="History" navigation={navigation} />
 
         <FlatList
           data={bookingHistory}

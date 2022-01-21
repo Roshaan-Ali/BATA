@@ -26,6 +26,7 @@ import {connect} from 'react-redux';
 import {useEffect} from 'react';
 import Inputbox from '../components/Inputbox';
 import AlertModal from '../components/AlertModal';
+import Header from '../components/Header';
 
 const {width, height} = Dimensions.get('window');
 
@@ -80,6 +81,7 @@ const Translator = ({
   return (
     <View style={styles.container}>
       <SafeAreaView style={{flex: 1}}>
+      <Header title="Menu" navigation={navigation} />
         {/* <AppStatusBar
           backgroundColor={colors.themePurple1}
           barStyle="dark-content"

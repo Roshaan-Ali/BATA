@@ -27,7 +27,7 @@ const MainAppScreens = ({
       id: 1,
       iconName: 'home',
       iconType: 'Entypo',
-      routeName: 'home',
+      routeName: 'Home',
     },
     // {
     //   id: 2,
@@ -45,18 +45,21 @@ const MainAppScreens = ({
       id: 3,
       iconName: 'history',
       iconType: 'FontAwesome',
+      // routeName: 'history',
       routeName: 'history',
     },
     {
       id: 4,
       iconName: 'bell',
       iconType: 'MaterialCommunityIcons',
+      // routeName: 'push notifications',
       routeName: 'push notifications',
     },
     {
       id: 5,
       iconName: 'settings-sharp',
       iconType: 'Ionicons',
+      // routeName: 'settings',
       routeName: 'settings',
     },
   ];
@@ -77,7 +80,7 @@ const MainAppScreens = ({
       messaging()
         .getToken()
         .then(token => {
-          console.log("TOKEN: : : : :  :",token);
+          console.log('TOKEN: : : : :  :', token);
           // setFCMToken(token);
         });
       messaging().onNotificationOpenedApp(remoteMessage => {
