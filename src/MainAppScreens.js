@@ -105,7 +105,7 @@ const MainAppScreens = ({
 
         // Call api to get current booking data
         if (remoteMessage?.data?.type == 'accepted') {
-          getCurrentBooking(accessToken);
+          getCurrentBooking(accessToken, () => {});
         }
 
         if (remoteMessage.notification) {
@@ -131,7 +131,9 @@ const MainAppScreens = ({
     requestUserPermission();
     fcmNotificationsListener();
     getAllLanguages();
-    getCurrentBooking(accessToken);
+    // if (accessToken !== undefined && accessToken !== null) {
+    //   getCurrentBooking(accessToken);
+    // }
     console.log(
       'ALL FUNCTIONS RAN SUCCESSFULLY!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!',
     );

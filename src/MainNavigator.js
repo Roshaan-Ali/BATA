@@ -51,6 +51,7 @@ function Main({UserReducer, getCurrentLocation,subscribeToTopic}) {
       }
     }
     requestLocationPermission();
+   
   }, []);
 
   useEffect(() => {

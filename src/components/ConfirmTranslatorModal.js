@@ -18,16 +18,25 @@ import {connect} from 'react-redux';
 
 const {width, height} = Dimensions.get('window');
 
-const ConfirmTranslatorModal = ({UserReducer,navigation, route, getCurrentBooking}) => {
+const ConfirmTranslatorModal = ({
+  UserReducer,
+  navigation,
+  route,
+  getCurrentBooking,
+}) => {
   const data = route.params;
   const [isLoading, setIsLoading] = useState(false);
   const accessToken = UserReducer?.accessToken;
 
   const _onPressGoBackHome = async () => {
     setIsLoading(true);
-    await getCurrentBooking(accessToken);
+    await getCurrentBooking(accessToken, _onFailedFetching).then(() => {
+      navigation.navigate('Home');
+    });
+  };
+
+  const _onFailedFetching = () => {
     setIsLoading(false);
-    navigation.navigate('Home');
   };
   return (
     <View style={styles.mainContainerScreen}>

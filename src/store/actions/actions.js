@@ -122,34 +122,36 @@ export const getBookingHistory = token => async dispatch => {
   }
 };
 
-export const getCurrentBooking = token => async dispatch => {
-  try {
-    const response = await axios.get(
-      `${apiUrl}/bookingInterpreter/currentBooking`,
-      {
-        headers: {
-          Authorization: 'Bearer ' + token,
-          Accept: 'application/json',
+export const getCurrentBooking =
+  (token, _onFailedFetching) => async dispatch => {
+    try {
+      const response = await axios.get(
+        `${apiUrl}/bookingInterpreter/currentBooking`,
+        {
+          headers: {
+            Authorization: 'Bearer ' + token,
+            Accept: 'application/json',
+          },
         },
-      },
-    );
-    if (response.data.success) {
-      dispatch({
-        type: types.GET_CURRENT_BOOKING,
-        payload: response.data.data,
-      });
+      );
+      if (response.data.success) {
+        dispatch({
+          type: types.GET_CURRENT_BOOKING,
+          payload: response.data.data,
+        });
+      } 
+    } catch (err) {
+      _onFailedFetching();
+      // dispatch({
+      //   type: types.ERROR_MODAL,
+      //   payload: {
+      //     msg: 'Failed Fetching Current Booking.',
+      //     status: true,
+      //   },
+      // });
+      console.log('Failed to fetch current booking!', err);
     }
-  } catch (err) {
-    // dispatch({
-    //   type: types.ERROR_MODAL,
-    //   payload: {
-    //     msg: 'Failed Fetching Current Booking.',
-    //     status: true,
-    //   },
-    // });
-    console.log('Failed to fetch current booking!', err);
-  }
-};
+  };
 
 export const cancelSubscription =
   (id, token, _openSuccessCancellationAlert) => async dispatch => {
@@ -185,12 +187,29 @@ export const updatePackage =
           Accept: 'application/json',
         },
       });
-      dispatch({
-        type: types.PACKAGE_MODIFIED,
-        payload: response.data.data,
-      });
+      if (response?.data?.success) {
+        dispatch({
+          type: types.PACKAGE_MODIFIED,
+          payload: response.data.data,
+        });
+      } else {
+        dispatch({
+          type: types.ERROR_MODAL,
+          payload: {
+            msg: 'Package updating failed, Try again later.',
+            status: true,
+          },
+        });
+      }
       _closeStripeModal();
     } catch (err) {
+      dispatch({
+        type: types.ERROR_MODAL,
+        payload: {
+          msg: 'Somethings wrong in network connection.',
+          status: true,
+        },
+      });
       console.log('PACKAGE Updating FAILED:', err);
     }
   };
@@ -215,7 +234,7 @@ export const buyPackage =
         dispatch({
           type: types.ERROR_MODAL,
           payload: {
-            msg: 'Something went wrong.',
+            msg: 'Package buying failed, Try again later.',
             status: true,
           },
         });
@@ -224,20 +243,21 @@ export const buyPackage =
       dispatch({
         type: types.ERROR_MODAL,
         payload: {
-          msg: 'Something went wrong.',
+          msg: 'Somethings wrong in network connection.',
           status: true,
         },
       });
-      console.log('PACKAGE BUYING FAILED:', err);
+      console.log('PACKAGE BUYING FAILED:', err.response);
     }
   };
 
-export const user_login = data => async dispatch => {
+export const user_login = (data, _onLoginFailed) => async dispatch => {
   try {
     const response = await axios.post(`${apiUrl}/users/signin`, {
       email: data?.email,
       password: data?.password,
     });
+    // console.log('response ', response?.data);
     if (response.data.success) {
       dispatch({
         type: types.USER_LOGIN,
@@ -248,7 +268,9 @@ export const user_login = data => async dispatch => {
         },
       });
     } else {
-      console.log('not working');
+      // console.log('not working');
+      // console.log('else', response?.data);
+      _onLoginFailed();
       dispatch({
         type: types.ERROR_MODAL,
         payload: {
@@ -258,6 +280,7 @@ export const user_login = data => async dispatch => {
       });
     }
   } catch (error) {
+    _onLoginFailed();
     dispatch({
       type: types.ERROR_MODAL,
       payload: {
@@ -790,7 +813,7 @@ export const getCurrentLocation = () => async dispatch => {
     Geolocation.getCurrentPosition(
       //Will give you the current location
       position => {
-        console.log(position, 'ACTION');
+        // console.log(position, 'ACTION');
         //getting the Longitude from the location json
         const currentLongitude = JSON.stringify(position.coords.longitude);
 

@@ -31,10 +31,10 @@ const HomeScreensStack = ({
   useEffect(() => {
     getCurrentLocation();
     getAllLanguages();
-    getCurrentBooking(accessToken);
-    console.log(
-      '==========ALL FUNCTIONS RAN SUCCESSFULLY==========',
-    );
+    // if (accessToken !== undefined && accessToken !== null) {
+    //   getCurrentBooking(accessToken);
+    // }
+    console.log('==========ALL FUNCTIONS RAN SUCCESSFULLY==========');
   }, []);
   return (
     <HomeStack.Navigator

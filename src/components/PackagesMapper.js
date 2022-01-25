@@ -28,7 +28,7 @@ const PackagesMapper = ({
         ListHeaderComponentStyle={styles.flatListHeaderStyle}
         ListFooterComponentStyle={styles.flatListFooterStyle}
         renderItem={({item, index}) => (
-          <PackageFeaturesMapper item={item} index={index} />
+          <PackageFeaturesMapper key={item?.id} item={item} index={index} />
         )}
         ListHeaderComponent={() => (
           <Heading

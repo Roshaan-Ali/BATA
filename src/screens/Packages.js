@@ -21,6 +21,7 @@ import {PUB_KEY_STRIPE} from '../config/config';
 import StripeModal from '../components/StripeModal';
 import AlertModal from '../components/AlertModal';
 import IconComp from '../components/IconComp';
+import {useIsFocused} from '@react-navigation/native';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -30,15 +31,17 @@ const Packages = ({
   UserReducer,
   getAllPackages,
   buyPackage,
+  setErrorModal,
   updatePackage,
 }) => {
   const currentBooking = UserReducer?.currentBooking;
-
+  const isFocused = useIsFocused();
   const accessToken = UserReducer?.accessToken;
   const [stripeGeneratedKey, setStripeGeneratedKey] = useState('');
   const [packages, setPackages] = useState(UserReducer?.packages);
   const [isStripeModalVisible, setIsStripeModalVisible] = useState(false);
-  const [showNotAllowed, setShowNotAllowed] = useState(false);
+  const [showPackageBuyFailedModal, setShowPackageBuyFailedModal] =
+    useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState(null);
   const [isConfirmBuyModalVisible, setIsConfirmBuyModalVisible] =
@@ -79,6 +82,14 @@ const Packages = ({
     getAllPackages(accessToken);
   }, []);
 
+  useEffect(() => {
+    if (UserReducer?.errorModal?.status === true) {
+      setShowPackageBuyFailedModal(true);
+    }
+    if (UserReducer?.errorModal?.status === false) {
+      setShowPackageBuyFailedModal(false);
+    }
+  }, [UserReducer?.errorModal]);
   return (
     <StripeProvider publishableKey={PUB_KEY_STRIPE}>
       <View style={styles.container}>
@@ -139,7 +150,9 @@ const Packages = ({
                     iconStyle={styles.iconStyle}
                   />
                   <Heading
-                    title={"Video And Audio Interpretation Depending On The Business And People Required."}
+                    title={
+                      'Video And Audio Interpretation Depending On The Business And People Required.'
+                    }
                     passedStyle={styles.featureStyle}
                     fontType="regular"
                   />
@@ -203,6 +216,18 @@ const Packages = ({
           message={`${selectedPackage.name} package has been activated now.`}
           isModalVisible={isConfirmBuyModalVisible}
           setIsModalVisible={setIsConfirmBuyModalVisible}
+        />
+      )}
+      {(isFocused && showPackageBuyFailedModal) && (
+        <AlertModal
+          title="Oh Snaps!"
+          message={UserReducer?.errorModal?.msg}
+          isModalVisible={showPackageBuyFailedModal}
+          onPress={() => {
+            setShowPackageBuyFailedModal(false);
+            setErrorModal();
+          }}
+          setIsModalVisible={setShowPackageBuyFailedModal}
         />
       )}
     </StripeProvider>

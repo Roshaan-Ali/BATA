@@ -39,7 +39,6 @@ const LogIn = ({ navigation, user_login, UserReducer, setErrorModal }) => {
     UserReducer?.loginFailed?.status,
   );
 
-  console.log(UserReducer?.coords);
 
   const _onPressSignUp = () => {
     navigation.navigate('SignUp');
@@ -54,13 +53,17 @@ const LogIn = ({ navigation, user_login, UserReducer, setErrorModal }) => {
       setIsLoading(true);
 
       // setTimeout(() => {
-      await user_login({ email, password });
-      setIsLoading(false);
+      await user_login({ email, password },_onLoginFailed);
+      // setIsLoading(false);
       // }, 2000);
     } else {
       setShowAlertModal(true);
     }
   };
+
+  const _onLoginFailed = () => {
+    setIsLoading(false);
+  }
   const currentBooking = UserReducer?.currentBooking;
   useEffect(() => {
     if (UserReducer?.errorModal?.status) {

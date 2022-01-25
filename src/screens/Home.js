@@ -38,22 +38,24 @@ const Home = ({
   navigation,
   UserReducer,
   setErrorModal,
-  completeEvent,getCurrentBooking,
+  completeEvent,
+  getCurrentBooking,
   submitReviewsAndRatings,
 }) => {
   var watchID = useRef(null);
   const isFocused = useIsFocused();
   const [mapRef, setMapRef] = useState(null);
-  const accessToken = UserReducer?.accessToken;
   const [isLoading, setIsLoading] = useState(false);
   const [bookingId, setBookingId] = useState(false);
+  const accessToken = UserReducer?.accessToken;
+
   const currentBooking = UserReducer?.currentBooking;
   const [hasAlreadyBooked, setHasAlreadyBooked] = useState(false);
   const [showRatingsReviewsModal, setShowRatingsReviewsModal] = useState(false);
   const [showMustBuyPackageModal, setShowMustBuyPackageModal] = useState(false);
   const [showFailedCompletingModal, setShowFailedCompletingModal] =
     useState(false);
-    console.log(UserReducer?.coords);
+  // console.log(UserReducer?.coords);
 
   //
   const username = UserReducer?.userData?.first_name;
@@ -115,7 +117,7 @@ const Home = ({
       //Will give you the current location
       position => {
         setLocationStatus('You are Here');
-        console.log(position, 'getOneTimeLocation');
+        // console.log(position, 'getOneTimeLocation');
 
         const region = {
           latitude: position.coords.latitude,
@@ -168,7 +170,7 @@ const Home = ({
         //   mapRef.animateToRegion(region,1000)
         // }
         setLocationStatus('You are Here');
-        console.log(position, 'subscribeLocationLocation');
+        // console.log(position, 'subscribeLocationLocation');
         setCoordinatesLat(position.coords.latitude);
         setCoordinatesLong(position.coords.longitude);
         //getting the Longitude from the location json
@@ -272,8 +274,11 @@ const Home = ({
   }, [UserReducer.errorModal]);
 
   useEffect(() => {
-    getCurrentBooking();
-  }, []);
+    if (accessToken !== undefined && accessToken !== null && isFocused) {
+      getCurrentBooking(accessToken,() => {});
+    }
+  }, [isFocused]);
+
   return (
     <View style={styles.container}>
       <SafeAreaView style={{flex: 1}}>
