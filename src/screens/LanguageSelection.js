@@ -310,7 +310,7 @@ const LanguageSelection = ({
           {isLoading ? (
             <View style={styles.loadingComponent} activeOpacity={1}>
               <Heading
-                title="Booking..."
+                title="Hiring..."
                 passedStyle={styles.savingText}
                 fontType="semi-bold"
               />

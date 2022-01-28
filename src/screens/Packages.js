@@ -70,7 +70,7 @@ const Packages = ({
         stripeToken: stripeGeneratedKey,
       };
       if (UserReducer?.userData?.current_package === null) {
-        await buyPackage(data, accessToken, _closeStripeModal);
+        await buyPackage(data, accessToken, _closeStripeModal,() => {});
       } else {
         await updatePackage(data, accessToken, _closeStripeModal);
       }

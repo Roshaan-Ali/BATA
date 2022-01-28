@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   Dimensions,
@@ -24,11 +24,14 @@ import AppStatusBar from '../components/AppStatusBar';
 import CustomDropdownModal from '../components/CustomDropdownModal';
 import {color} from 'react-native/Libraries/Components/View/ReactNativeStyleAttributes';
 import {imageUrl} from '../config/config';
+import {useIsFocused} from '@react-navigation/native';
 
 const {width, height} = Dimensions.get('window');
 
-const Profile = ({navigation, UserReducer, updateUserData, updatePhoto}) => {
+const Profile = ({navigation, UserReducer, updateUserData, updatePhoto,setErrorModal}) => {
   let p_language = UserReducer?.languages;
+  const isFocused = useIsFocused();
+
   const accessToken = UserReducer.accessToken;
   // image state
   const [userImage, setUserImage] = useState(null);
@@ -40,6 +43,7 @@ const Profile = ({navigation, UserReducer, updateUserData, updatePhoto}) => {
   const fullName = UserReducer?.userData?.first_name.concat(
     ` ${UserReducer?.userData?.last_name}`,
   );
+  const [showUpdateFailedAlert, setShowUpdateFailedAlert] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showLanguageModal, setShowLanguageModal] = useState(false);
 
@@ -104,19 +108,23 @@ const Profile = ({navigation, UserReducer, updateUserData, updatePhoto}) => {
         last_name: lastName,
         language: [language?.id],
       };
-      await updateUserData(userData, accessToken);
-      setUserImage(null)
+      await updateUserData(userData, accessToken,onSuccess);
+      setUserImage(null);
     } else {
       const userData = {
         first_name: firstName,
         last_name: lastName,
         language: [language?.id],
       };
-      await updateUserData(userData, accessToken);
+      await updateUserData(userData, accessToken,onSuccess);
     }
-    setShowAlert(true);
+    
     setIsLoading(false);
   };
+
+  const onSuccess = () => {
+    setShowAlert(true);
+  }
 
   // language selection
   const _onDropdownSelectionPress = item => {
@@ -124,6 +132,14 @@ const Profile = ({navigation, UserReducer, updateUserData, updatePhoto}) => {
     setShowLanguageModal(false);
   };
 
+  useEffect(() => {
+    if (UserReducer?.errorModal?.status === true) {
+      setShowUpdateFailedAlert(true);
+    }
+    if (UserReducer?.errorModal?.status === false) {
+      setShowUpdateFailedAlert(false);
+    }
+  }, [UserReducer?.errorModal]);
   return (
     <View style={styles.container}>
       <SafeAreaView style={{flex: 1}}>
@@ -304,6 +320,19 @@ const Profile = ({navigation, UserReducer, updateUserData, updatePhoto}) => {
           />
         )}
 
+        {(isFocused || showUpdateFailedAlert) && (
+          <AlertModal
+            title="Oh Snaps!"
+            message={UserReducer?.errorModal?.msg}
+            isModalVisible={showUpdateFailedAlert}
+            onPress={() => {
+              setShowUpdateFailedAlert(false);
+              setErrorModal();
+            }}
+            setIsModalVisible={setShowUpdateFailedAlert}
+          />
+        )}
+
         {showLanguageModal && (
           <CustomDropdownModal
             array={p_language}
@@ -430,7 +459,7 @@ const styles = StyleSheet.create({
     top: height * 0.19,
     right: width * 0.025,
     borderRadius: 50,
-     overflow:'hidden'
+    overflow: 'hidden',
   },
   border_line: {
     borderBottomWidth: 1,

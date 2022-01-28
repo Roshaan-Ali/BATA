@@ -139,7 +139,7 @@ export const getCurrentBooking =
           type: types.GET_CURRENT_BOOKING,
           payload: response.data.data,
         });
-      } 
+      }
     } catch (err) {
       _onFailedFetching();
       // dispatch({
@@ -215,7 +215,7 @@ export const updatePackage =
   };
 
 export const buyPackage =
-  (data, token, _closeStripeModal) => async dispatch => {
+  (data, token, _closeStripeModal, _onRequestFailed) => async dispatch => {
     try {
       const response = await axios.post(`${apiUrl}/subscription/create`, data, {
         headers: {
@@ -238,8 +238,10 @@ export const buyPackage =
             status: true,
           },
         });
+        _onRequestFailed();
       }
     } catch (err) {
+      _onRequestFailed();
       dispatch({
         type: types.ERROR_MODAL,
         payload: {
@@ -510,25 +512,45 @@ export const updatePhoto = (photo, token) => async dispatch => {
   }
 };
 
-export const updateUserData = (userData, token) => async dispatch => {
-  try {
-    const response = await axios({
-      method: 'put',
-      url: `${apiUrl}/users/update`,
-      data: userData,
-      headers: {
-        Authorization: 'Bearer ' + token,
-        Accept: 'application/json',
-      },
-    });
-    dispatch({
-      type: types.UPDATE_USER_DATA,
-      payload: response.data.data,
-    });
-  } catch (error) {
-    console.log(error, 'Failed to update data.');
-  }
-};
+export const updateUserData =
+  (userData, token, onSuccess) => async dispatch => {
+    try {
+      const response = await axios({
+        method: 'put',
+        url: `${apiUrl}/users/update`,
+        data: userData,
+        headers: {
+          Authorization: 'Bearer ' + token,
+          Accept: 'application/json',
+        },
+      });
+      console.log('RESPONSE::::::--- ', response?.data);
+      if (response?.data?.success) {
+        dispatch({
+          type: types.UPDATE_USER_DATA,
+          payload: response.data.data,
+        });
+        onSuccess();
+      } else {
+        dispatch({
+          type: types.ERROR_MODAL,
+          payload: {
+            msg: response?.data?.msg,
+            status: true,
+          },
+        });
+      }
+    } catch (error) {
+      dispatch({
+        type: types.ERROR_MODAL,
+        payload: {
+          msg: error?.response?.data?.msg || "Something went wrong.",
+          status: true,
+        },
+      });
+      console.log(error?.response?.data?.msg, 'Failed to update data.');
+    }
+  };
 
 export const change_Password =
   (data, token, _onSuccessChanged) => async dispatch => {
@@ -609,7 +631,7 @@ export const bookTranslator =
         dispatch({
           type: types.ERROR_MODAL,
           payload: {
-            msg: 'SUBMISSION ERROR',
+            msg: 'Something went wrong.',
             status: true,
           },
         });

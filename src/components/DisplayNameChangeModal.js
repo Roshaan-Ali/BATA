@@ -25,8 +25,7 @@ const DisplayNameChangeModal = ({
     <Modal
       isVisible={isModalVisible}
       swipeDirection={'up'}
-      onSwipeMove={p => setIsModalVisible(false)}
-     >
+      onSwipeMove={p => setIsModalVisible(false)}>
       <View style={styles.container}>
         <Heading
           fontType="semi-bold"
@@ -37,9 +36,14 @@ const DisplayNameChangeModal = ({
           value={text}
           setTextValue={setText}
           passedStyle={styles.inputStyle}
-          placeholderTilte="User Name"
+          // placeholderTilte="User Name"
         />
-
+        {text?.length === 0 && (
+          <Heading
+            passedStyle={[styles.label, {color: 'red', fontSize: width * 0.035}]}
+            title="Name can't be empty."
+          />
+        )}
         {/* Buttons Container  */}
         <View style={styles.flexRow}>
           <Button

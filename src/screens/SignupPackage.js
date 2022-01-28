@@ -52,9 +52,12 @@ const SignupPackage = ({
         stripeToken: stripeGeneratedKey,
       };
       setIsLoading(true);
-      await buyPackage(data, accessToken, () => {});
-      setIsLoading(false);
+      await buyPackage(data, accessToken, () => {}, _onRequestFailed);
     }
+  };
+
+  const _onRequestFailed = () => {
+    setIsLoading(false);
   };
 
   const _onPressSkip = async () => {

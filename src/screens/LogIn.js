@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   StyleSheet,
   View,
@@ -15,19 +15,19 @@ import Button from '../components/Button';
 import Inputbox from '../components/Inputbox';
 import logo from '../assets/Logo.png';
 import background_img from '../assets/background_img.png';
-import { connect } from 'react-redux';
+import {connect} from 'react-redux';
 import * as actions from '../store/actions/actions';
 import Heading from '../components/Heading';
 import colors from '../assets/colors';
 import LottieView from 'lottie-react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import AppStatusBar from '../components/AppStatusBar';
-import { useIsFocused } from '@react-navigation/native';
+import {useIsFocused} from '@react-navigation/native';
 import AlertModal from '../components/AlertModal';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
-const LogIn = ({ navigation, user_login, UserReducer, setErrorModal }) => {
+const LogIn = ({navigation, user_login, UserReducer, setErrorModal}) => {
   const isFocused = useIsFocused();
   // console.log(isFocused)
   const [email, setEmail] = useState('');
@@ -38,7 +38,6 @@ const LogIn = ({ navigation, user_login, UserReducer, setErrorModal }) => {
   const [showLoginFailedModal, setShowLoginFailedModal] = useState(
     UserReducer?.loginFailed?.status,
   );
-
 
   const _onPressSignUp = () => {
     navigation.navigate('SignUp');
@@ -53,7 +52,7 @@ const LogIn = ({ navigation, user_login, UserReducer, setErrorModal }) => {
       setIsLoading(true);
 
       // setTimeout(() => {
-      await user_login({ email, password },_onLoginFailed);
+      await user_login({email, password}, _onLoginFailed);
       // setIsLoading(false);
       // }, 2000);
     } else {
@@ -63,7 +62,7 @@ const LogIn = ({ navigation, user_login, UserReducer, setErrorModal }) => {
 
   const _onLoginFailed = () => {
     setIsLoading(false);
-  }
+  };
   const currentBooking = UserReducer?.currentBooking;
   useEffect(() => {
     if (UserReducer?.errorModal?.status) {
@@ -74,143 +73,140 @@ const LogIn = ({ navigation, user_login, UserReducer, setErrorModal }) => {
     }
   }, [UserReducer?.errorModal]);
 
-  
   return (
-    <View style={styles.container}>
-      <SafeAreaView style={{ flex: 1, backgroundColor: '#EF2692' }}>
-        {/* {Platform.OS == 'ios' && ( */}
-        {/* <AppStatusBar
+    <SafeAreaView style={{flex: 1, backgroundColor: '#EF2692'}}>
+      {/* {Platform.OS == 'ios' && ( */}
+      {/* <AppStatusBar
           platform={Platform.OS}
           backgroundColors={colors.themePurple1}
           barStyle="light-content"
         /> */}
-        {/* )} */}
-        <ImageBackground source={background_img} style={styles.image}>
-          <ScrollView showsVerticalScrollIndicator={false}>
-            <View style={styles.centerView}>
-              <Image resizeMode="contain" source={logo} style={styles.logo} />
+      {/* )} */}
+      <ImageBackground source={background_img} style={styles.image}>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <View style={styles.centerView}>
+            <Image resizeMode="contain" source={logo} style={styles.logo} />
 
-              <Inputbox
-                value={email}
-                setTextValue={setEmail}
-                placeholderTilte="Email"
-                isShowIcon={true}
-                names={'person'}
-              />
+            <Inputbox
+              value={email}
+              setTextValue={setEmail}
+              placeholderTilte="Email"
+              isShowIcon={true}
+              names={'person'}
+            />
 
-              <Inputbox
-                value={password}
-                setTextValue={setPassword}
-                placeholderTilte="Password"
-                isSecure={!isShowPassword}
-                isPassword={true}
-                isShowIcon={true}
-                iconStyle={{
-                  color: 'white',
-                  paddingLeft: width * 0.006,
-                }}
-                iconWrapperStyle={{
-                  position: 'absolute',
-                  right: width * 0.04,
-                  left: width * 0.7,
-                }}
-                names={'lock'}
-                onPressIcon={_onPressShowPassword}
-              />
+            <Inputbox
+              value={password}
+              setTextValue={setPassword}
+              placeholderTilte="Password"
+              isSecure={!isShowPassword}
+              isPassword={true}
+              isShowIcon={true}
+              iconStyle={{
+                color: 'white',
+                paddingLeft: width * 0.006,
+              }}
+              iconWrapperStyle={{
+                position: 'absolute',
+                right: width * 0.04,
+                left: width * 0.7,
+              }}
+              names={'lock'}
+              onPressIcon={_onPressShowPassword}
+            />
 
-              {isLoading ? (
-                <TouchableOpacity
-                  style={styles.loadingComponent}
-                  activeOpacity={1}>
-                  <LottieView
-                    speed={1}
-                    style={styles.lottieStyles}
-                    autoPlay
-                    colorFilters={'blue'}
-                    loop
-                    source={require('../assets/Lottie/purple-loading-2.json')}
-                  />
-                </TouchableOpacity>
-              ) : (
-                <Button
-                  title="Login"
-                  btnStyle={styles.loginBtnStyle}
-                  btnTextStyle={styles.loginBtnTextStyle}
-                  isBgColor={false}
-                  onBtnPress={_onPressLogin}
+            {isLoading ? (
+              <TouchableOpacity
+                style={styles.loadingComponent}
+                activeOpacity={1}>
+                <LottieView
+                  speed={1}
+                  style={styles.lottieStyles}
+                  autoPlay
+                  colorFilters={'blue'}
+                  loop
+                  source={require('../assets/Lottie/purple-loading-2.json')}
                 />
-              )}
-              <View style={styles.forgotPassView}>
-                <Heading
-                  passedStyle={styles.forgotPassTExt}
-                  fontType="semi-bold"
-                  title="Forgot Password?"
-                />
-                <TouchableOpacity
-                  onPress={() => navigation.navigate('ForgetPassword')}>
-                  <Heading
-                    passedStyle={styles.clickHere}
-                    fontType="semi-bold"
-                    title="Click Here"
-                  />
-                </TouchableOpacity>
-              </View>
-
-              <View style={styles.horizontalLinePosition}>
-                <View style={styles.horizontalLine} />
-                <View>
-                  <Heading
-                    fontType="semi-bold"
-                    passedStyle={styles.orView}
-                    title="OR"
-                  />
-                </View>
-                <View style={styles.horizontalLine} />
-              </View>
+              </TouchableOpacity>
+            ) : (
               <Button
-                title="Sign Up Now"
-                onBtnPress={() => _onPressSignUp()}
-                btnStyle={{
-                  borderRadius: width * 0.08,
-                  borderWidth: 1,
-                  borderColor: 'white',
-                  backgroundColor: 'transparent',
-                  paddingVertical: height * 0.013,
-                }}
-                btnTextStyle={{
-                  color: 'white',
-                  fontFamily: 'Poppins-SemiBold',
-                }}
+                title="Login"
+                btnStyle={styles.loginBtnStyle}
+                btnTextStyle={styles.loginBtnTextStyle}
                 isBgColor={false}
-                isBgColor={false}
+                onBtnPress={_onPressLogin}
               />
+            )}
+            <View style={styles.forgotPassView}>
+              <Heading
+                passedStyle={styles.forgotPassTExt}
+                fontType="semi-bold"
+                title="Forgot Password?"
+              />
+              <TouchableOpacity
+                onPress={() => navigation.navigate('ForgetPassword')}>
+                <Heading
+                  passedStyle={styles.clickHere}
+                  fontType="semi-bold"
+                  title="Click Here"
+                />
+              </TouchableOpacity>
             </View>
-          </ScrollView>
-        </ImageBackground>
 
-        {showAlertModal && (
-          <AlertModal
-            title="Oh Snaps!"
-            message="Look out, one or more requried fields are left empty."
-            isModalVisible={showAlertModal}
-            setIsModalVisible={setShowAlertModal}
-          />
-        )}
-        {isFocused && showLoginFailedModal && (
-          <AlertModal
-            title="Login Failed!"
-            // message={'login se araha'}
-            message={UserReducer?.errorModal?.msg}
-            isModalVisible={showLoginFailedModal}
-            setIsModalVisible={setShowLoginFailedModal}
-            onPress={() => {
-              setShowLoginFailedModal(false);
-              setErrorModal();
-            }}
-          />
-        )}
-      </SafeAreaView>
-    </View>
+            <View style={styles.horizontalLinePosition}>
+              <View style={styles.horizontalLine} />
+              <View>
+                <Heading
+                  fontType="semi-bold"
+                  passedStyle={styles.orView}
+                  title="OR"
+                />
+              </View>
+              <View style={styles.horizontalLine} />
+            </View>
+            <Button
+              title="Sign Up Now"
+              onBtnPress={() => _onPressSignUp()}
+              btnStyle={{
+                borderRadius: width * 0.08,
+                borderWidth: 1,
+                borderColor: 'white',
+                backgroundColor: 'transparent',
+                paddingVertical: height * 0.013,
+              }}
+              btnTextStyle={{
+                color: 'white',
+                fontFamily: 'Poppins-SemiBold',
+              }}
+              isBgColor={false}
+              isBgColor={false}
+            />
+          </View>
+        </ScrollView>
+      </ImageBackground>
+
+      {showAlertModal && (
+        <AlertModal
+          title="Oh Snaps!"
+          message="Look out, one or more requried fields are left empty."
+          isModalVisible={showAlertModal}
+          setIsModalVisible={setShowAlertModal}
+        />
+      )}
+      {isFocused && showLoginFailedModal && (
+        <AlertModal
+          title="Login Failed!"
+          // message={'login se araha'}
+          message={UserReducer?.errorModal?.msg}
+          isModalVisible={showLoginFailedModal}
+          setIsModalVisible={setShowLoginFailedModal}
+          onPress={() => {
+            setShowLoginFailedModal(false);
+            setErrorModal();
+          }}
+        />
+      )}
+    </SafeAreaView>
   );
 };
 
@@ -240,6 +236,7 @@ const styles = StyleSheet.create({
   },
   centerView: {
     alignItems: 'center',
+    paddingBottom:100,
   },
   forgotPassView: {
     flexDirection: 'row',
@@ -292,8 +289,9 @@ const styles = StyleSheet.create({
   //   height: height * 0.08,
   // },
   logo: {
-    width: width * 0.4,
-    marginTop: height * 0.1,
+    width: width * 0.6,
+    height: height * 0.4,
+    // marginTop: height * 0.1,
   },
 
   image: {
@@ -308,7 +306,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = ({ UserReducer }) => {
-  return { UserReducer };
+const mapStateToProps = ({UserReducer}) => {
+  return {UserReducer};
 };
 export default connect(mapStateToProps, actions)(LogIn);
