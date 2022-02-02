@@ -55,12 +55,13 @@ function Main({UserReducer, getCurrentLocation,subscribeToTopic}) {
   }, []);
 
   useEffect(() => {
-    if (UserReducer?.isUserLogin === true) {
-      if (UserReducer?.hasSubscribedToFCMNotification) {
-        subscribeToTopic(UserReducer?.userData?.id?.toString());
-      }
-    }
-  }, [UserReducer?.hasSubscribedToFCMNotification]);
+    // if (UserReducer?.isUserLogin === true) {
+    //   if (UserReducer?.hasSubscribedToFCMNotification) {
+    //     subscribeToTopic(UserReducer?.userData?.id?.toString());
+    //   }
+    // }
+    subscribeToTopic(UserReducer?.userData?.id?.toString())
+  }, []);
 
   if (loading) {
     return (

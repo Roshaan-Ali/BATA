@@ -39,7 +39,7 @@ const SignupPackage = ({
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [stripeGeneratedKey, setStripeGeneratedKey] = useState('');
   const isFocused = useIsFocused();
-
+ 
   const [showPackageBuyingFailedModal, setShowPackageBuyingFailedModal] =
     useState(false);
 

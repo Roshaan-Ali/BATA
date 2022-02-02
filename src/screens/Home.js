@@ -275,10 +275,13 @@ const Home = ({
 
   useEffect(() => {
     if (accessToken !== undefined && accessToken !== null && isFocused) {
-      getCurrentBooking(accessToken,() => {});
+      getCurrentBooking(accessToken, () => {});
     }
   }, [isFocused]);
 
+  useEffect(() => {
+    setErrorModal();
+  }, []);
   return (
     <View style={styles.container}>
       <SafeAreaView style={{flex: 1}}>
@@ -520,6 +523,7 @@ const Home = ({
               title="Oh Snaps :("
               // message={"idher se araha ha"}
               message={UserReducer?.errorModal?.msg}
+              buttonText={"Try in a while"}
               isModalVisible={showFailedCompletingModal}
               setIsModalVisible={setShowFailedCompletingModal}
               onPress={() => {

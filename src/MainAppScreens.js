@@ -75,7 +75,7 @@ const MainAppScreens = ({
     }
   };
 
-  const fcmNotificationsListener = () => {
+  useEffect(() => {
     try {
       messaging()
         .getToken()
@@ -101,7 +101,7 @@ const MainAppScreens = ({
         });
 
       const unsubscribe = messaging().onMessage(async remoteMessage => {
-        console.log(remoteMessage, 'Ahsan');
+        console.log(remoteMessage, 'sadasdasd');
 
         // Call api to get current booking data
         if (remoteMessage?.data?.type == 'accepted') {
@@ -124,19 +124,12 @@ const MainAppScreens = ({
     } catch (e) {
       console.log(e);
     }
-  };
+  }, []);
 
   useEffect(() => {
     getCurrentLocation();
     requestUserPermission();
-    fcmNotificationsListener();
     getAllLanguages();
-    // if (accessToken !== undefined && accessToken !== null) {
-    //   getCurrentBooking(accessToken);
-    // }
-    console.log(
-      'ALL FUNCTIONS RAN SUCCESSFULLY!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!',
-    );
   }, []);
 
   if (loading) {

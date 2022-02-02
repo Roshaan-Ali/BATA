@@ -241,7 +241,7 @@ const SignUp = ({
                 borderColor: 'white',
                 borderRadius: width * 0.045,
                 color: 'white',
-                height: height * 0.0753,
+                height: height * 0.0755,
                 marginVertical: height * 0.02,
               }}
               // flagButtonStyle={{
@@ -254,6 +254,8 @@ const SignUp = ({
               // }}
               textInputStyle={{
                 color: 'white',
+                marginTop:height * 0.005,
+                height: height * 0.07,
                 fontSize: width * 0.045,
                 paddingVertical: 0,
               }}

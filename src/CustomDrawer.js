@@ -51,7 +51,7 @@ const CustomButton = ({onPress, label, style, currentScreenName}) => {
   );
 };
 
-const CustomDrawer = ({navigation, routes, user_logout}) => {
+const CustomDrawer = ({navigation, routes, user_logout, UserReducer}) => {
   const isDrawerOpen = useDrawerStatus() === 'open';
   const history = navigation.getState().history;
   const currentScreenName = isDrawerOpen
@@ -70,7 +70,7 @@ const CustomDrawer = ({navigation, routes, user_logout}) => {
     <View style={{flex: 1}}>
       <Image
         source={require('./assets/Images/Logo.png')}
-        resizeMode='contain'
+        resizeMode="contain"
         style={styles.appLogo}
       />
       <View style={styles.menuContainer}>
@@ -96,7 +96,7 @@ const CustomDrawer = ({navigation, routes, user_logout}) => {
                     //   // navigation.dispatch(resetAction);
                     // } else {
                     //   navigation.navigate(route.routeName);
-                    
+
                     // }
                     navigation.navigate(route.routeName);
                   }}
@@ -114,7 +114,7 @@ const CustomDrawer = ({navigation, routes, user_logout}) => {
                   label={link}
                   key={index}
                   onPress={() => {
-                    user_logout();
+                    user_logout(UserReducer?.userData?.id);
                   }}
                   currentScreenName={currentScreenName}
                   style={[styles.buttonSmall]}
@@ -128,7 +128,11 @@ const CustomDrawer = ({navigation, routes, user_logout}) => {
   );
 };
 
-export default connect(null, actions)(CustomDrawer);
+const mapStateToProps = ({UserReducer}) => {
+  return {UserReducer};
+};
+
+export default connect(mapStateToProps, actions)(CustomDrawer);
 
 const styles = StyleSheet.create({
   menuContainer: {

@@ -31,7 +31,7 @@ export const completeEvent =
           status: true,
         },
       });
-      console.log(err);
+      console.log(err?.response?.data.msg);
     }
   };
 
@@ -187,11 +187,13 @@ export const updatePackage =
           Accept: 'application/json',
         },
       });
+      console.log("RESPONSE FOR UPDATING: ",response?.data);
       if (response?.data?.success) {
         dispatch({
           type: types.PACKAGE_MODIFIED,
           payload: response.data.data,
         });
+        _closeStripeModal();
       } else {
         dispatch({
           type: types.ERROR_MODAL,
@@ -201,7 +203,7 @@ export const updatePackage =
           },
         });
       }
-      _closeStripeModal();
+      
     } catch (err) {
       dispatch({
         type: types.ERROR_MODAL,
@@ -210,7 +212,7 @@ export const updatePackage =
           status: true,
         },
       });
-      console.log('PACKAGE Updating FAILED:', err);
+      console.log('PACKAGE UPDATING FAILED:', err?.response?.data?.msg);
     }
   };
 
@@ -223,6 +225,7 @@ export const buyPackage =
           Accept: 'application/json',
         },
       });
+      console.log(response?.data);
       if (response?.data.success) {
         console.log(response?.data);
         dispatch({
@@ -249,7 +252,7 @@ export const buyPackage =
           status: true,
         },
       });
-      console.log('PACKAGE BUYING FAILED:', err.response);
+      console.log('PACKAGE BUYING FAILED:', err.response?.data);
     }
   };
 
@@ -384,9 +387,15 @@ export const user_signup = (data, _onSuccess) => async dispatch => {
   }
 };
 
-export const user_logout = () => async dispatch => {
-  console.log('logout');
+export const user_logout = (id) => async dispatch => {
+  console.log(id,"//////////////////////////////");
   try {
+    messaging()
+    .unsubscribeFromTopic('bata_client' + id)
+    .then(() => {
+      console.log('NOTIFICATIONS UNSUBSCRIBED and logging out');
+    });
+
     dispatch({
       type: types.USER_LOGOUT,
       payload: {isUserLogin: false},
@@ -435,7 +444,7 @@ export const subscribeToTopic = id => async dispatch => {
     messaging()
       .subscribeToTopic('bata_client' + id.toString())
       .then(() => {
-        // console.log('TOPIC SUBSCRIBED');
+        console.log('NOTIFICATIONS SUBSCRIBED');
       });
 
     dispatch({
@@ -524,7 +533,7 @@ export const updateUserData =
           Accept: 'application/json',
         },
       });
-      console.log('RESPONSE::::::--- ', response?.data);
+      // console.log('RESPONSE::::::--- ', response?.data);
       if (response?.data?.success) {
         dispatch({
           type: types.UPDATE_USER_DATA,
@@ -535,7 +544,7 @@ export const updateUserData =
         dispatch({
           type: types.ERROR_MODAL,
           payload: {
-            msg: response?.data?.msg,
+            msg: 'Something went wrong.',
             status: true,
           },
         });

@@ -99,7 +99,7 @@ const Packages = ({
             barStyle="light-content"
           /> */}
           {/* Header  */}
-          <Header title="Menu" navigation={navigation} />
+          <Header title="Packages" navigation={navigation} />
 
           {/* Packages Rendering  */}
           <FlatList
@@ -108,7 +108,7 @@ const Packages = ({
             keyExtractor={item => item.id.toString()}
             contentContainerStyle={styles.flatListStyle}
             renderItem={({item, index}) =>
-              (index === 0 || index === 1) && (
+              (index === 0 || index === 1 || index === 2) && (
                 <PackagesMapper
                   key={item?.id}
                   item={item}

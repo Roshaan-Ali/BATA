@@ -21,7 +21,7 @@ const {width, height} = Dimensions.get('window');
 const CurrentInterpreter = ({item, onPress, isLoading, key, UserReducer}) => {
   const route = useRoute();
   const m = Math.random() * 100000000000;
-console.log(item);
+// console.log(item);
   return (
     <View key={Math.round(m)} style={styles.container}>
       {/* initiator  */}

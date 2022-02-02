@@ -11,6 +11,7 @@ import LottieView from 'lottie-react-native';
 import AlertModal from '../components/AlertModal';
 import AppStatusBar from '../components/AppStatusBar';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {useIsFocused} from '@react-navigation/native';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -30,6 +31,7 @@ const Otp = ({
   const [isVerifying, setIsVerifying] = useState(false);
   const [isRequesting, setIsRequesting] = useState(false);
   const [showErrorAlert, setShowErrorAlert] = useState(false);
+  const isFocused = useIsFocused();
 
   // Confirm Code
   const _onConfirmOtp = async code => {
@@ -141,20 +143,21 @@ const Otp = ({
             />
           )}
           {
-          // isFocused && 
-          showErrorAlert && (
-            <AlertModal
-              title="Oh Snaps:("
-              isModalVisible={showErrorAlert}
-              setIsModalVisible={setShowErrorAlert}
-              onPress={() => {
-                setShowErrorAlert(false);
-                setErrorModal();
-                setShowVerificationFailedModal(true);
-              }}
-              message={UserReducer?.errorModal?.msg}
-            />
-          )}
+            // isFocused &&
+            showErrorAlert && isFocused && (
+              <AlertModal
+                title="Oh Snaps:("
+                isModalVisible={showErrorAlert}
+                setIsModalVisible={setShowErrorAlert}
+                onPress={() => {
+                  setShowErrorAlert(false);
+                  setErrorModal();
+                  setShowVerificationFailedModal(true);
+                }}
+                message={UserReducer?.errorModal?.msg}
+              />
+            )
+          }
         </View>
       </ImageBackground>
     </SafeAreaView>
