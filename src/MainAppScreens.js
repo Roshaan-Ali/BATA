@@ -15,7 +15,7 @@ const Drawer = createDrawerNavigator();
 const MainAppScreens = ({
   getCurrentLocation,
   getCurrentBooking,
-  UserReducer,
+  UserReducer,clearCurrentBooking,
   getAllLanguages,
 }) => {
   const initialRoute = 'Home';
@@ -106,6 +106,9 @@ const MainAppScreens = ({
         // Call api to get current booking data
         if (remoteMessage?.data?.type == 'accepted') {
           getCurrentBooking(accessToken, () => {});
+        }
+        if (remoteMessage?.data?.type == 'reject') {
+          clearCurrentBooking();
         }
 
         if (remoteMessage.notification) {

@@ -34,8 +34,8 @@ const initialData = {
   userData: null,
   accessToken: '',
   coords: {
-    lat: 48.8584,
-    lng: 2.2945
+    lat: null,
+    lng: null
   },
   isValidOtp: false,
   isValidResetPassOtp: false,

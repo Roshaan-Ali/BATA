@@ -15,6 +15,7 @@ import moment from 'moment';
 import {useRoute} from '@react-navigation/native';
 import {color} from 'react-native-reanimated';
 import {connect} from 'react-redux';
+moment.suppressDeprecationWarnings = true;
 
 const {width, height} = Dimensions.get('window');
 

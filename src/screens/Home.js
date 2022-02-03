@@ -20,7 +20,8 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import MapViewDirections from 'react-native-maps-directions';
 import RatingsAndReviewsModal from '../components/RatingsAndReviewsModal';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import Geolocation from '@react-native-community/geolocation';
+import LottieView from 'lottie-react-native';
+// import Geolocation from '@react-native-community/geolocation';
 // import Geolocation from 'react-native-geolocation-service';
 import CurrentInterpreter from '../components/CurrentInterpreter';
 import AlertModal from '../components/AlertModal';
@@ -28,7 +29,7 @@ import MapView, {PROVIDER_GOOGLE, Marker} from 'react-native-maps';
 import {useIsFocused} from '@react-navigation/native';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
-
+import Geolocation from '@react-native-community/geolocation';
 // const { width, height } = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
 const LATITUDE_DELTA = 0.0925;
@@ -45,7 +46,7 @@ const Home = ({
   var watchID = useRef(null);
   const isFocused = useIsFocused();
   const [mapRef, setMapRef] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [bookingId, setBookingId] = useState(false);
   const accessToken = UserReducer?.accessToken;
 
@@ -64,20 +65,44 @@ const Home = ({
   //   longitude: UserReducer?.coords?.lng,
   // });\
 
-  const [coordinates2, setCoordinates2] = useState({
-    latitude: 24.9298,
-    longitude: 67.1148,
+
+  const [coordinates, setCoordinates] = useState({
+      latitude: null,
+      longitude: null,
+      longitudeDelta: LONGITUDE_DELTA,
+      latitudeDelta: LATITUDE_DELTA
   });
 
-  const [coordinatesLat, setCoordinatesLat] = useState(
-    UserReducer?.coords?.lat,
-  );
-  const [coordinatesLong, setCoordinatesLong] = useState(
-    UserReducer?.coords?.lng,
-  );
   const [currentLongitude, setCurrentLongitude] = useState('...');
   const [currentLatitude, setCurrentLatitude] = useState('...');
   const [locationStatus, setLocationStatus] = useState('');
+
+  useEffect(()=>{
+    
+    Geolocation.getCurrentPosition(
+      //Will give you the current location
+      position => {
+        setCoordinates({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          longitudeDelta: LONGITUDE_DELTA,
+          latitudeDelta: LATITUDE_DELTA
+        })
+        // setCoordinatesLat(position.coords.latitude)
+        // setCoordinatesLong(position.coords.longitude)
+        setIsLoading(false)
+      },
+      error => {
+        console.log(error.message);
+        setIsLoading(false)
+      },
+      {
+        // enableHighAccuracy: false,
+        // timeout: 10000,
+        maximumAge: 1000,
+      },
+    );
+  },[])
 
   useEffect(() => {
     const requestLocationPermission = async () => {
@@ -208,6 +233,12 @@ const Home = ({
     // }
 
     if (mapRef) {
+      // mapRef.animateToCoordinate({
+      //   latitude: coordinates.latitude,
+      //   longitude: coordinates.longitude,
+      //   longitudeDelta: LONGITUDE_DELTA,
+      //   latitudeDelta: LATITUDE_DELTA
+      // }, 1000)
       // console.log(mapRef)
       // mapRef.animateToRegion(region,1000)
     }
@@ -282,36 +313,30 @@ const Home = ({
   useEffect(() => {
     setErrorModal();
   }, []);
+  if(isLoading){
+    return <View style={{flex: 1, alignItems:'center', justifyContent:'center'}} >
+          <LottieView
+                  speed={1}
+                  style={{
+                    width: '50%', height: '80%', justifyContent:'center', alignItems:'center'
+                  }}
+                  autoPlay
+                  loop
+                  source={require('../assets/Lottie/purple-loading-2.json')}
+                />
+         </View>
+  }{
   return (
     <View style={styles.container}>
       <SafeAreaView style={{flex: 1}}>
-        {/* <AppStatusBar
-          backgroundColor={colors.themePurple1}
-          barStyle="light-content"
-        /> */}
-        {/* Header  */}
         <Header title="Menu" navigation={navigation} />
 
         <ScrollView
           showsVerticalScrollIndicator={false}
           nestedScrollEnabled={true}>
-          {/* Greeting Container  */}
           <View style={styles.greetingContainer}>
             <View style={styles.animationView}>
-              {/* <MotiView
-                from={{
-                  opacity: 0.5,
-                  scale: 0.9,
-                }}
-                animate={{
-                  opacity: 1,
-                  scale: 1,
-                }}
-                transition={{
-                  type: 'timing',
-                  loop: true,
-                  duration: 1000,
-                }}> */}
+
               <Heading
                 title="Welcome,"
                 passedStyle={styles.heading}
@@ -325,33 +350,12 @@ const Home = ({
                 ]}
                 fontType="bold"
               />
-              {/* </MotiView> */}
             </View>
-            {/* Wave Image  */}
-            {/* <MotiView
-            from={{
-              opacity: 1,
-              scale: 1,
-              rotate: '0 deg',
-            }}
-            animate={{
-              opacity: 1,
-              scale: 1,
-              rotate: '1 deg',
-            }}
-            transition={{
-              type: 'timing',
-              loop: true,
-              duration: 1000,
-            }}> */}
             <Image
               source={require('../assets/Images/handeshake.png')}
               style={styles.imageStyle}
             />
-            {/* </MotiView> */}
           </View>
-
-          {/* Home Options  */}
           <View style={styles.optionsWrapper}>
             {/* Translators  */}
             <TouchableOpacity
@@ -403,13 +407,13 @@ const Home = ({
               />
             </TouchableOpacity>
           </View>
-
-          {/* Map  */}
           <View style={styles.map}>
+           
+            {
+              coordinates.latitude && coordinates.longitude || UserReducer?.coords?.lat ?
             <MapView
               style={{width: width * 0.8, height: height * 0.36}}
               ref={ref => setMapRef(ref)}
-              // showsMyLocationButton={true}
               showsCompass={true}
               zoomEnabled={true}
               maxZoomLevel={18}
@@ -418,60 +422,24 @@ const Home = ({
               scrollEnabled={true}
               mapType={Platform.OS == 'android' ? 'terrain' : 'standard'}
               initialRegion={{
-                latitude: coordinatesLat || UserReducer?.coords?.lat,
-                longitude: coordinatesLong || UserReducer?.coords?.lng,
+                latitude: coordinates.latitude || UserReducer?.coords?.lat,
+                longitude: coordinates.longitude || UserReducer?.coords?.lng, 
                 latitudeDelta: LATITUDE_DELTA,
                 longitudeDelta: LONGITUDE_DELTA,
               }}
               provider={PROVIDER_GOOGLE}
-              // lat: "24.9180588",
-              // lng: "67.0947953"
               onMapReady={() => {
                 fitMapToBounds();
               }}
-              // onRegionChangeComplete={e => {
-              //   mapRef.animateCamera({
-              //     center: {
-              //       latitude: coordinatesLat,
-              //       longitude: coordinatesLong,
-              //       latitudeDelta: LATITUDE_DELTA,
-              //       longitudeDelta: LONGITUDE_DELTA
-              //     },
-              //     heading: 10,
-              //     pitch: 80,
-              //     altitude: 400,
-              //     zoom: 10,
-              //   });
-              // }}
             >
-              {/* <MapViewDirections
-                origin={coordinates}
-                destination={coordinates2}
-                apikey={
-                  'AIzaSyBTsC4XcbDQgH_tBwHdKAUUXyVtdOTL4l0'
-                  // 'AIzaSyCyY4IPLEvPRxEtaWFcRWHkWG6n0nFYzEE'
-                }
-                strokeWidth={4}
-                strokeColor="#81246C"
-              /> */}
               <Marker
                 coordinate={{
-                  latitude: coordinatesLat,
-                  longitude: coordinatesLong,
+                  latitude: coordinates.latitude || UserReducer?.coords?.lat,
+                  longitude: coordinates.longitude || UserReducer?.coords?.lng,
                 }}
               />
-              {/* <Marker coordinate={coordinates2} /> */}
-              {/* <Marker ref={markerRef} coordinate={coordinates2}>
-                <Image
-                  source={require('../assets/Images/translator.png')}
-                  resizeMode="contain"
-                  style={{
-                    width: width * 0.1,
-                    height: height * 0.03,
-                  }}
-                />
-              </Marker> */}
-            </MapView>
+            </MapView>: null
+          }
           </View>
           {currentBooking !== null &&
             currentBooking !== undefined &&
@@ -536,6 +504,7 @@ const Home = ({
       </SafeAreaView>
     </View>
   );
+  }
 };
 
 const styles = StyleSheet.create({

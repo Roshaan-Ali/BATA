@@ -51,6 +51,10 @@ const Translator = ({
   useEffect(() => {
     setEndDate(new Date(startDate?.getTime() + 24 * 60 * 60 * 1000));
   }, [startDate]);
+  
+  useEffect(() => {
+    setCoordinates(UserReducer?.coords)
+  },[UserReducer?.coords])
   //   Submit Button Handler
   const _onNextPress = () => {
     // if (location && startDate && endDate && coordinates) {

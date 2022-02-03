@@ -153,6 +153,17 @@ export const getCurrentBooking =
     }
   };
 
+export const clearCurrentBooking = () => async dispatch => {
+  try {
+    dispatch({
+      type: types.GET_CURRENT_BOOKING,
+      payload: null,
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 export const cancelSubscription =
   (id, token, _openSuccessCancellationAlert) => async dispatch => {
     try {
@@ -187,7 +198,7 @@ export const updatePackage =
           Accept: 'application/json',
         },
       });
-      console.log("RESPONSE FOR UPDATING: ",response?.data);
+      console.log('RESPONSE FOR UPDATING: ', response?.data);
       if (response?.data?.success) {
         dispatch({
           type: types.PACKAGE_MODIFIED,
@@ -203,7 +214,6 @@ export const updatePackage =
           },
         });
       }
-      
     } catch (err) {
       dispatch({
         type: types.ERROR_MODAL,
@@ -387,14 +397,14 @@ export const user_signup = (data, _onSuccess) => async dispatch => {
   }
 };
 
-export const user_logout = (id) => async dispatch => {
-  console.log(id,"//////////////////////////////");
+export const user_logout = id => async dispatch => {
+  console.log(id, '//////////////////////////////');
   try {
     messaging()
-    .unsubscribeFromTopic('bata_client' + id)
-    .then(() => {
-      console.log('NOTIFICATIONS UNSUBSCRIBED and logging out');
-    });
+      .unsubscribeFromTopic('bata_client' + id)
+      .then(() => {
+        console.log('NOTIFICATIONS UNSUBSCRIBED and logging out');
+      });
 
     dispatch({
       type: types.USER_LOGOUT,
@@ -523,6 +533,7 @@ export const updatePhoto = (photo, token) => async dispatch => {
 
 export const updateUserData =
   (userData, token, onSuccess) => async dispatch => {
+    console.log(userData);
     try {
       const response = await axios({
         method: 'put',
@@ -533,7 +544,7 @@ export const updateUserData =
           Accept: 'application/json',
         },
       });
-      // console.log('RESPONSE::::::--- ', response?.data);
+      console.log('RESPONSE::::::--- ', response?.data);
       if (response?.data?.success) {
         dispatch({
           type: types.UPDATE_USER_DATA,
@@ -553,7 +564,7 @@ export const updateUserData =
       dispatch({
         type: types.ERROR_MODAL,
         payload: {
-          msg: error?.response?.data?.msg || "Something went wrong.",
+          msg: error?.response?.data?.msg || 'Something went wrong.',
           status: true,
         },
       });
