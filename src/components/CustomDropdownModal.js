@@ -33,7 +33,7 @@ const CustomDropdownModal = ({
       <View style={styles.container}>
         <FlatList
           data={array}
-          keyExtractor={item => item.id.toString()}
+          keyExtractor={item => item?.id?.toString()}
           contentContainerStyle={styles.flatListContentStyle}
           showsVerticalScrollIndicator={false}
           style={{marginTop: 15}}

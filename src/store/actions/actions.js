@@ -124,6 +124,7 @@ export const getBookingHistory = token => async dispatch => {
 
 export const getCurrentBooking =
   (token, _onFailedFetching) => async dispatch => {
+    console.log('getting current booking.....');
     try {
       const response = await axios.get(
         `${apiUrl}/bookingInterpreter/currentBooking`,
@@ -134,10 +135,17 @@ export const getCurrentBooking =
           },
         },
       );
+      console.log(response?.data);
       if (response.data.success) {
         dispatch({
           type: types.GET_CURRENT_BOOKING,
           payload: response.data.data,
+        });
+      }
+      if (!response.data.success) {
+        dispatch({
+          type: types.GET_CURRENT_BOOKING,
+          payload: null,
         });
       }
     } catch (err) {
@@ -452,7 +460,7 @@ export const subscribeToTopic = id => async dispatch => {
   console.log('subs ');
   try {
     messaging()
-      .subscribeToTopic('bata_client' + id.toString())
+      .subscribeToTopic('bata_client' + id?.toString())
       .then(() => {
         console.log('NOTIFICATIONS SUBSCRIBED');
       });
@@ -471,7 +479,7 @@ export const unSubscribeFromTopic = id => async dispatch => {
 
   try {
     messaging()
-      .unsubscribeFromTopic('bata_client' + id.toString())
+      .unsubscribeFromTopic('bata_client' + id?.toString())
       .then(() => {
         console.log('TOPIC UNSUBSCRIBED');
       });
@@ -637,6 +645,7 @@ export const bookTranslator =
           },
         },
       );
+      // console.log(response?.data.data);
       if (response.data.success) {
         openConfirmBookModal();
       }
@@ -657,7 +666,7 @@ export const bookTranslator =
         });
       }
     } catch (err) {
-      console.log(err.response);
+      console.log(err.response?.data);
       dispatch({
         type: types.ERROR_MODAL,
         payload: {
@@ -665,7 +674,6 @@ export const bookTranslator =
           status: true,
         },
       });
-      console.log(err);
     }
   };
 

@@ -105,7 +105,7 @@ const Packages = ({
           <FlatList
             data={packages}
             nestedScrollEnabled={true}
-            keyExtractor={item => item.id.toString()}
+            keyExtractor={item => item?.id?.toString()}
             contentContainerStyle={styles.flatListStyle}
             renderItem={({item, index}) =>
               (index === 0 || index === 1 || index === 2) && (

@@ -22,7 +22,7 @@ const {width, height} = Dimensions.get('window');
 const CurrentInterpreter = ({item, onPress, isLoading, key, UserReducer}) => {
   const route = useRoute();
   const m = Math.random() * 100000000000;
-// console.log(item);
+  // console.log(item);
   return (
     <View key={Math.round(m)} style={styles.container}>
       {/* initiator  */}
@@ -89,7 +89,7 @@ const CurrentInterpreter = ({item, onPress, isLoading, key, UserReducer}) => {
           <Heading
             title={`From: ${moment(
               moment(item?.start_date).toISOString(),
-            ).format('DDD/MMM/yyyy (HH:mm A)')}`}
+            ).format('DD/MMM/yyyy (HH:mm A)')}`}
             passedStyle={styles.value}
           />
         </View>
@@ -103,7 +103,7 @@ const CurrentInterpreter = ({item, onPress, isLoading, key, UserReducer}) => {
           />
           <Heading
             title={`Till: ${moment(moment(item?.end_date).toISOString()).format(
-              'DDD/MMM/yyyy (HH:mm A)',
+              'DD/MMM/yyyy (HH:mm A)',
             )}`}
             passedStyle={styles.value}
           />
@@ -129,7 +129,9 @@ const CurrentInterpreter = ({item, onPress, isLoading, key, UserReducer}) => {
               <TouchableOpacity
                 activeOpacity={0.9}
                 onPress={() =>
-                  Linking.openURL(`sms:${'03032149852'}?body=${'Hi'}`)
+                  Linking.openURL(
+                    `sms:${item?.interpreter_id?.phone}?body=${'Hi'}`,
+                  )
                 }
                 style={styles.messageCallStyle}>
                 <Heading
@@ -139,7 +141,9 @@ const CurrentInterpreter = ({item, onPress, isLoading, key, UserReducer}) => {
               </TouchableOpacity>
               <TouchableOpacity
                 activeOpacity={0.9}
-                onPress={() => Linking.openURL(`tel:${'03032149852'}`)}
+                onPress={() =>
+                  Linking.openURL(`tel:${item?.interpreter_id?.phone}`)
+                }
                 style={styles.messageCallStyle}>
                 <Heading
                   title="Call"
