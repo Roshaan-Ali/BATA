@@ -51,7 +51,7 @@ const Packages = ({
     setIsStripeModalVisible(true);
     setSelectedPackage(item);
   };
-
+  // console.log(UserReducer?.userData)
   // Close Stripe Modal
   const _closeStripeModal = () => {
     setIsStripeModalVisible(false);
@@ -69,8 +69,11 @@ const Packages = ({
         package_id: selectedPackage.id,
         stripeToken: stripeGeneratedKey,
       };
-      if (UserReducer?.userData?.current_package === null) {
-        await buyPackage(data, accessToken, _closeStripeModal,() => {});
+      if (
+        UserReducer?.userData?.current_package === null ||
+        UserReducer?.userData?.current_package === undefined
+      ) {
+        await buyPackage(data, accessToken, _closeStripeModal, () => {});
       } else {
         await updatePackage(data, accessToken, _closeStripeModal);
       }
@@ -79,6 +82,7 @@ const Packages = ({
   };
 
   useEffect(() => {
+
     getAllPackages(accessToken);
   }, []);
 
@@ -218,7 +222,7 @@ const Packages = ({
           setIsModalVisible={setIsConfirmBuyModalVisible}
         />
       )}
-      {(isFocused && showPackageBuyFailedModal) && (
+      {isFocused && showPackageBuyFailedModal && (
         <AlertModal
           title="Oh Snaps!"
           message={UserReducer?.errorModal?.msg}

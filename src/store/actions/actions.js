@@ -236,6 +236,7 @@ export const updatePackage =
 
 export const buyPackage =
   (data, token, _closeStripeModal, _onRequestFailed) => async dispatch => {
+    console.log('API DATA:::::: ', data);
     try {
       const response = await axios.post(`${apiUrl}/subscription/create`, data, {
         headers: {
@@ -634,6 +635,7 @@ export const setErrorModal = () => dispatch => {
 
 export const bookTranslator =
   (data, token, openConfirmBookModal) => async dispatch => {
+    console.log('data::::::', JSON.stringify(data, null, 2));
     try {
       const response = await axios.post(
         `${apiUrl}/bookingInterpreter/create`,

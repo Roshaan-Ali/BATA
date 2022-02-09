@@ -27,11 +27,7 @@ const DisplayNameChangeModal = ({
   const [ratings, setRatings] = useState(false);
 
   return (
-    <Modal
-      isVisible={isModalVisible}
-      swipeDirection={'up'}
-      onSwipeMove={p => setIsModalVisible(false)}
-      >
+    <Modal isVisible={isModalVisible}>
       <View style={styles.container}>
         <Heading
           fontType="semi-bold"
