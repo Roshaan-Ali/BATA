@@ -28,7 +28,13 @@ import {useIsFocused} from '@react-navigation/native';
 
 const {width, height} = Dimensions.get('window');
 
-const Profile = ({navigation, UserReducer, updateUserData, updatePhoto,setErrorModal}) => {
+const Profile = ({
+  navigation,
+  UserReducer,
+  updateUserData,
+  updatePhoto,
+  setErrorModal,
+}) => {
   let p_language = UserReducer?.languages;
   const isFocused = useIsFocused();
 
@@ -108,7 +114,7 @@ const Profile = ({navigation, UserReducer, updateUserData, updatePhoto,setErrorM
         last_name: lastName,
         language: [language?.id],
       };
-      await updateUserData(userData, accessToken,onSuccess);
+      await updateUserData(userData, accessToken, onSuccess);
       setUserImage(null);
     } else {
       const userData = {
@@ -116,15 +122,15 @@ const Profile = ({navigation, UserReducer, updateUserData, updatePhoto,setErrorM
         last_name: lastName,
         language: [language?.id],
       };
-      await updateUserData(userData, accessToken,onSuccess);
+      await updateUserData(userData, accessToken, onSuccess);
     }
-    
+
     setIsLoading(false);
   };
 
   const onSuccess = () => {
     setShowAlert(true);
-  }
+  };
 
   // language selection
   const _onDropdownSelectionPress = item => {
@@ -287,7 +293,10 @@ const Profile = ({navigation, UserReducer, updateUserData, updatePhoto,setErrorM
               <Button
                 title="SAVE"
                 btnStyle={styles.btnStyle}
-                onBtnPress={() => _onPressSave()}
+                onBtnPress={
+                  () => navigation.goBack()
+                  //  _onPressSave()
+                }
                 btnTextStyle={styles.btnTextColor}
                 isBgColor={false}
               />

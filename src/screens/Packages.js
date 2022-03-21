@@ -82,7 +82,6 @@ const Packages = ({
   };
 
   useEffect(() => {
-
     getAllPackages(accessToken);
   }, []);
 
@@ -112,7 +111,7 @@ const Packages = ({
             keyExtractor={item => item?.id?.toString()}
             contentContainerStyle={styles.flatListStyle}
             renderItem={({item, index}) =>
-              (index === 0 || index === 1 || index === 2) && (
+              (index === 0 || index === 1) && (
                 <PackagesMapper
                   key={item?.id}
                   item={item}

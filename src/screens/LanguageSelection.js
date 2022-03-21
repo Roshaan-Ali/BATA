@@ -34,6 +34,7 @@ const LanguageSelection = ({
   getAllLanguages,
 }) => {
   const occasions = UserReducer?.occasions;
+  console.log(JSON.stringify(occasions, null, 2));
   const languages = UserReducer?.languages;
   const LIMIT = UserReducer?.userData?.current_package?.package_limit;
   const accessToken = UserReducer?.accessToken;
@@ -116,7 +117,6 @@ const LanguageSelection = ({
       setShowIncompleteFormAlert(true);
     }
     setIsLoading(false);
-   
   };
 
   const _onPressAddInterpreter = () => {
@@ -146,13 +146,11 @@ const LanguageSelection = ({
     }
   };
 
-
   useEffect(() => {
     getAllLanguages();
   }, []);
 
-
-   useEffect(() => {
+  useEffect(() => {
     if (UserReducer?.errorModal?.status === true) {
       setShowErrorModal(true);
     }
@@ -206,7 +204,6 @@ const LanguageSelection = ({
           {/* Selected Languages Translation  */}
           {selectedLanguages?.map((ele, index) => (
             <View style={styles.transaltionView} key={index}>
-             
               <Heading
                 title={ele?.primaryLang?.language_name}
                 passedStyle={styles.translationLanguage}
@@ -380,18 +377,18 @@ const LanguageSelection = ({
           />
         )} */}
 
-         {showErrorModal && (
-            <AlertModal
-              title="Oh Snaps!"
-              isModalVisible={showErrorModal}
-              setIsModalVisible={setShowErrorModal}
-              message={UserReducer?.errorModal?.msg}
-              onPress={() => {
-                setErrorModal();
-                setShowErrorModal(false);
-              }}
-            />
-          )}
+        {showErrorModal && (
+          <AlertModal
+            title="Oh Snaps!"
+            isModalVisible={showErrorModal}
+            setIsModalVisible={setShowErrorModal}
+            message={UserReducer?.errorModal?.msg}
+            onPress={() => {
+              setErrorModal();
+              setShowErrorModal(false);
+            }}
+          />
+        )}
       </SafeAreaView>
     </View>
   );

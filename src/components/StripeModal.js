@@ -19,8 +19,8 @@ const StripeModal = ({
   const [isCardComplete, setIsCardComplete] = useState(false);
   const {createToken} = useStripe();
   useEffect(() => {
-console.log(isCardComplete);
-  },[isCardComplete])
+    console.log(isCardComplete);
+  }, [isCardComplete]);
   return (
     <Modal isVisible={isModalVisible}>
       <View style={styles.container}>
@@ -30,7 +30,7 @@ console.log(isCardComplete);
           title="Enter Card Details"
         />
         <CardField
-          postalCodeEnabled={true}
+          postalCodeEnabled={false}
           placeholder={{
             number: '4242 4242 4242 4242',
           }}

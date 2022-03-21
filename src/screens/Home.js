@@ -15,7 +15,6 @@ import Header from '../components/Header';
 import Heading from '../components/Heading';
 // import MapView, {Marker} from 'react-native-maps';
 import * as actions from '../store/actions/actions';
-import AppStatusBar from '../components/AppStatusBar';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import MapViewDirections from 'react-native-maps-directions';
 import RatingsAndReviewsModal from '../components/RatingsAndReviewsModal';
@@ -49,7 +48,7 @@ const Home = ({
   const [isLoading, setIsLoading] = useState(true);
   const [bookingId, setBookingId] = useState(false);
   const accessToken = UserReducer?.accessToken;
-
+console.log(UserReducer?.userData?.id)
   const currentBooking = UserReducer?.currentBooking;
   const [hasAlreadyBooked, setHasAlreadyBooked] = useState(false);
   const [showRatingsReviewsModal, setShowRatingsReviewsModal] = useState(false);
@@ -65,36 +64,33 @@ const Home = ({
   //   longitude: UserReducer?.coords?.lng,
   // });\
 
-
   const [coordinates, setCoordinates] = useState({
-      latitude: null,
-      longitude: null,
-      longitudeDelta: LONGITUDE_DELTA,
-      latitudeDelta: LATITUDE_DELTA
+    latitude: null,
+    longitude: null,
+    longitudeDelta: LONGITUDE_DELTA,
+    latitudeDelta: LATITUDE_DELTA,
   });
 
   const [currentLongitude, setCurrentLongitude] = useState('...');
   const [currentLatitude, setCurrentLatitude] = useState('...');
   const [locationStatus, setLocationStatus] = useState('');
 
-  useEffect(()=>{
-    
+  
+
+  useEffect(() => {
     Geolocation.getCurrentPosition(
-      //Will give you the current location
       position => {
         setCoordinates({
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
           longitudeDelta: LONGITUDE_DELTA,
-          latitudeDelta: LATITUDE_DELTA
-        })
-        // setCoordinatesLat(position.coords.latitude)
-        // setCoordinatesLong(position.coords.longitude)
-        setIsLoading(false)
+          latitudeDelta: LATITUDE_DELTA,
+        });
+        setIsLoading(false);
       },
       error => {
         console.log(error.message);
-        setIsLoading(false)
+        setIsLoading(false);
       },
       {
         // enableHighAccuracy: false,
@@ -102,7 +98,7 @@ const Home = ({
         maximumAge: 1000,
       },
     );
-  },[])
+  }, []);
 
   useEffect(() => {
     const requestLocationPermission = async () => {
@@ -191,13 +187,16 @@ const Home = ({
           longitudeDelta: LONGITUDE_DELTA,
         };
 
-        // if(mapRef){
-        //   mapRef.animateToRegion(region,1000)
-        // }
         setLocationStatus('You are Here');
         // console.log(position, 'subscribeLocationLocation');
-        setCoordinatesLat(position.coords.latitude);
-        setCoordinatesLong(position.coords.longitude);
+        // setCoordinatesLat(position.coords.latitude);
+        // setCoordinatesLong(position.coords.longitude);
+        setCoordinates({
+          latitude: position?.coords?.latitude,
+          longitude: position?.coords?.longitude,
+          longitudeDelta: LONGITUDE_DELTA,
+          latitudeDelta: LATITUDE_DELTA,
+        });
         //getting the Longitude from the location json
         // const currentLongitude =
         //   JSON.stringify(position.coords.longitude);
@@ -313,197 +312,203 @@ const Home = ({
   useEffect(() => {
     setErrorModal();
   }, []);
-  if(isLoading){
-    return <View style={{flex: 1, alignItems:'center', justifyContent:'center'}} >
-          <LottieView
-                  speed={1}
-                  style={{
-                    width: '50%', height: '80%', justifyContent:'center', alignItems:'center'
-                  }}
-                  autoPlay
-                  loop
-                  source={require('../assets/Lottie/purple-loading-2.json')}
+  if (isLoading) {
+    return (
+      <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+        <LottieView
+          speed={1}
+          style={{
+            width: '50%',
+            height: '80%',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+          autoPlay
+          loop
+          source={require('../assets/Lottie/purple-loading-2.json')}
+        />
+      </View>
+    );
+  }
+  {
+    return (
+      <View style={styles.container}>
+        <SafeAreaView style={{flex: 1}}>
+          <Header title="Menu" navigation={navigation} />
+
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            nestedScrollEnabled={true}>
+            <View style={styles.greetingContainer}>
+              <View style={styles.animationView}>
+                <Heading
+                  title="Welcome,"
+                  passedStyle={styles.heading}
+                  fontType="light"
                 />
-         </View>
-  }{
-  return (
-    <View style={styles.container}>
-      <SafeAreaView style={{flex: 1}}>
-        <Header title="Menu" navigation={navigation} />
-
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          nestedScrollEnabled={true}>
-          <View style={styles.greetingContainer}>
-            <View style={styles.animationView}>
-
-              <Heading
-                title="Welcome,"
-                passedStyle={styles.heading}
-                fontType="light"
-              />
-              <Heading
-                title={username}
-                passedStyle={[
-                  styles.heading_username,
-                  username?.length > 7 && {fontSize: width * 0.08},
-                ]}
-                fontType="bold"
+                <Heading
+                  title={username}
+                  passedStyle={[
+                    styles.heading_username,
+                    username?.length > 7 && {fontSize: width * 0.08},
+                  ]}
+                  fontType="bold"
+                />
+              </View>
+              <Image
+                source={require('../assets/Images/handeshake.png')}
+                style={styles.imageStyle}
               />
             </View>
-            <Image
-              source={require('../assets/Images/handeshake.png')}
-              style={styles.imageStyle}
-            />
-          </View>
-          <View style={styles.optionsWrapper}>
-            {/* Translators  */}
-            <TouchableOpacity
-              style={styles.optionContainer}
-              activeOpacity={0.7}
-              onPress={() => {
-                if (
-                  UserReducer?.userData?.current_package === null ||
-                  UserReducer?.userData?.current_package === undefined
-                ) {
-                  setShowMustBuyPackageModal(true);
-                } else if (
-                  UserReducer?.currentBooking !== null &&
-                  UserReducer?.currentBooking !== undefined
-                ) {
-                  setHasAlreadyBooked(true);
-                } else {
-                  navigation.navigate('Translator');
-                }
-              }}>
-              <View style={styles.optionImageContainer}>
-                <Image
-                  source={require('../assets/Images/translate.png')}
-                  style={styles.optionImageStyle}
+            <View style={styles.optionsWrapper}>
+              {/* Translators  */}
+              <TouchableOpacity
+                style={styles.optionContainer}
+                activeOpacity={0.7}
+                onPress={() => {
+                  if (
+                    UserReducer?.userData?.current_package === null ||
+                    UserReducer?.userData?.current_package === undefined
+                  ) {
+                    setShowMustBuyPackageModal(true);
+                  } else if (
+                    UserReducer?.currentBooking !== null &&
+                    UserReducer?.currentBooking !== undefined
+                  ) {
+                    setHasAlreadyBooked(true);
+                  } else {
+                    navigation.navigate('Translator');
+                  }
+                }}>
+                <View style={styles.optionImageContainer}>
+                  <Image
+                    source={require('../assets/Images/translate.png')}
+                    style={styles.optionImageStyle}
+                  />
+                </View>
+                <Heading
+                  passedStyle={styles.textStyle}
+                  title={'Interpreters'}
+                  fontType="regular"
                 />
-              </View>
-              <Heading
-                passedStyle={styles.textStyle}
-                title={'Interpreters'}
-                fontType="regular"
-              />
-            </TouchableOpacity>
+              </TouchableOpacity>
 
-            {/* Packages  */}
-            <TouchableOpacity
-              style={styles.optionContainer}
-              activeOpacity={0.7}
-              onPress={() => navigation.navigate('Packages')}>
-              <View style={styles.optionImageContainer}>
-                <Image
-                  source={require('../assets/Images/package.png')}
-                  style={styles.optionImageStyle}
+              {/* Packages  */}
+              <TouchableOpacity
+                style={styles.optionContainer}
+                activeOpacity={0.7}
+                onPress={() => navigation.navigate('Packages')}>
+                <View style={styles.optionImageContainer}>
+                  <Image
+                    source={require('../assets/Images/package.png')}
+                    style={styles.optionImageStyle}
+                  />
+                </View>
+                <Heading
+                  passedStyle={styles.textStyle}
+                  title={'Packages'}
+                  fontType="regular"
                 />
-              </View>
-              <Heading
-                passedStyle={styles.textStyle}
-                title={'Packages'}
-                fontType="regular"
+              </TouchableOpacity>
+            </View>
+            <View style={styles.map}>
+              {(coordinates.latitude && coordinates.longitude) ||
+              UserReducer?.coords?.lat ? (
+                <MapView
+                  style={{width: width * 0.8, height: height * 0.36}}
+                  ref={ref => setMapRef(ref)}
+                  showsCompass={true}
+                  zoomEnabled={true}
+                  maxZoomLevel={18}
+                  minZoomLevel={9}
+                  followsUserLocation={true}
+                  scrollEnabled={true}
+                  mapType={Platform.OS == 'android' ? 'terrain' : 'standard'}
+                  initialRegion={{
+                    latitude: coordinates.latitude || UserReducer?.coords?.lat,
+                    longitude:
+                      coordinates.longitude || UserReducer?.coords?.lng,
+                    latitudeDelta: LATITUDE_DELTA,
+                    longitudeDelta: LONGITUDE_DELTA,
+                  }}
+                  provider={PROVIDER_GOOGLE}
+                  onMapReady={() => {
+                    fitMapToBounds();
+                  }}>
+                  <Marker
+                    coordinate={{
+                      latitude:
+                        coordinates.latitude || UserReducer?.coords?.lat,
+                      longitude:
+                        coordinates.longitude || UserReducer?.coords?.lng,
+                    }}
+                  />
+                </MapView>
+              ) : null}
+            </View>
+            {currentBooking !== null &&
+              currentBooking !== undefined &&
+              currentBooking?.status !== 'completed' && (
+                <>
+                  <Heading
+                    title="Booking Detail"
+                    fontType={'bold'}
+                    passedStyle={{
+                      color: 'black',
+                      fontSize: width * 0.06,
+                      marginLeft: width * 0.05,
+                    }}
+                  />
+                  <CurrentInterpreter
+                    item={currentBooking}
+                    isLoading={isLoading}
+                    onPress={_onPressComplete}
+                    // key={currentBooking.id}
+                  />
+                </>
+              )}
+            {showRatingsReviewsModal && (
+              <RatingsAndReviewsModal
+                isModalVisible={showRatingsReviewsModal}
+                onPress={_onPressSubmitReview}
+                isLoading={isLoading}
+                setIsModalVisible={setShowRatingsReviewsModal}
               />
-            </TouchableOpacity>
-          </View>
-          <View style={styles.map}>
-           
-            {
-              coordinates.latitude && coordinates.longitude || UserReducer?.coords?.lat ?
-            <MapView
-              style={{width: width * 0.8, height: height * 0.36}}
-              ref={ref => setMapRef(ref)}
-              showsCompass={true}
-              zoomEnabled={true}
-              maxZoomLevel={18}
-              minZoomLevel={9}
-              followsUserLocation={true}
-              scrollEnabled={true}
-              mapType={Platform.OS == 'android' ? 'terrain' : 'standard'}
-              initialRegion={{
-                latitude: coordinates.latitude || UserReducer?.coords?.lat,
-                longitude: coordinates.longitude || UserReducer?.coords?.lng, 
-                latitudeDelta: LATITUDE_DELTA,
-                longitudeDelta: LONGITUDE_DELTA,
-              }}
-              provider={PROVIDER_GOOGLE}
-              onMapReady={() => {
-                fitMapToBounds();
-              }}
-            >
-              <Marker
-                coordinate={{
-                  latitude: coordinates.latitude || UserReducer?.coords?.lat,
-                  longitude: coordinates.longitude || UserReducer?.coords?.lng,
+            )}
+            {hasAlreadyBooked && (
+              <AlertModal
+                title="Not allowed!"
+                message={'You have already booked an interpreter.'}
+                isModalVisible={hasAlreadyBooked}
+                setIsModalVisible={setHasAlreadyBooked}
+              />
+            )}
+            {showMustBuyPackageModal && (
+              <AlertModal
+                title="Not allowed!"
+                message={'You need to buy a package first.'}
+                isModalVisible={showMustBuyPackageModal}
+                setIsModalVisible={setShowMustBuyPackageModal}
+              />
+            )}
+            {isFocused && showFailedCompletingModal && (
+              <AlertModal
+                title="Oh Snaps :("
+                // message={"idher se araha ha"}
+                message={UserReducer?.errorModal?.msg}
+                buttonText={'Try in a while'}
+                isModalVisible={showFailedCompletingModal}
+                setIsModalVisible={setShowFailedCompletingModal}
+                onPress={() => {
+                  setErrorModal();
+                  setShowFailedCompletingModal(false);
                 }}
               />
-            </MapView>: null
-          }
-          </View>
-          {currentBooking !== null &&
-            currentBooking !== undefined &&
-            currentBooking?.status !== 'completed' && (
-              <>
-                <Heading
-                  title="Booking Detail"
-                  fontType={'bold'}
-                  passedStyle={{
-                    color: 'black',
-                    fontSize: width * 0.06,
-                    marginLeft: width * 0.05,
-                  }}
-                />
-                <CurrentInterpreter
-                  item={currentBooking}
-                  isLoading={isLoading}
-                  onPress={_onPressComplete}
-                  // key={currentBooking.id}
-                />
-              </>
             )}
-          {showRatingsReviewsModal && (
-            <RatingsAndReviewsModal
-              isModalVisible={showRatingsReviewsModal}
-              onPress={_onPressSubmitReview}
-              isLoading={isLoading}
-              setIsModalVisible={setShowRatingsReviewsModal}
-            />
-          )}
-          {hasAlreadyBooked && (
-            <AlertModal
-              title="Not allowed!"
-              message={'You have already booked an interpreter.'}
-              isModalVisible={hasAlreadyBooked}
-              setIsModalVisible={setHasAlreadyBooked}
-            />
-          )}
-          {showMustBuyPackageModal && (
-            <AlertModal
-              title="Not allowed!"
-              message={'You need to buy a package first.'}
-              isModalVisible={showMustBuyPackageModal}
-              setIsModalVisible={setShowMustBuyPackageModal}
-            />
-          )}
-          {isFocused && showFailedCompletingModal && (
-            <AlertModal
-              title="Oh Snaps :("
-              // message={"idher se araha ha"}
-              message={UserReducer?.errorModal?.msg}
-              buttonText={"Try in a while"}
-              isModalVisible={showFailedCompletingModal}
-              setIsModalVisible={setShowFailedCompletingModal}
-              onPress={() => {
-                setErrorModal();
-                setShowFailedCompletingModal(false);
-              }}
-            />
-          )}
-        </ScrollView>
-      </SafeAreaView>
-    </View>
-  );
+          </ScrollView>
+        </SafeAreaView>
+      </View>
+    );
   }
 };
 

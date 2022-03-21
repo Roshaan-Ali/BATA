@@ -22,7 +22,7 @@ const {width, height} = Dimensions.get('window');
 const CurrentInterpreter = ({item, onPress, isLoading, key, UserReducer}) => {
   const route = useRoute();
   const m = Math.random() * 100000000000;
-  // console.log(item);
+  console.log(item);
   return (
     <View key={Math.round(m)} style={styles.container}>
       {/* initiator  */}
@@ -124,33 +124,35 @@ const CurrentInterpreter = ({item, onPress, isLoading, key, UserReducer}) => {
 
         {route.name !== 'history' && (
           <>
-            <View
-              style={[styles.locationView, {justifyContent: 'space-around'}]}>
-              <TouchableOpacity
-                activeOpacity={0.9}
-                onPress={() =>
-                  Linking.openURL(
-                    `sms:${item?.interpreter_id?.phone}?body=${'Hi'}`,
-                  )
-                }
-                style={styles.messageCallStyle}>
-                <Heading
-                  title="Message"
-                  passedStyle={styles.messageCallTextStyle}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity
-                activeOpacity={0.9}
-                onPress={() =>
-                  Linking.openURL(`tel:${item?.interpreter_id?.phone}`)
-                }
-                style={styles.messageCallStyle}>
-                <Heading
-                  title="Call"
-                  passedStyle={styles.messageCallTextStyle}
-                />
-              </TouchableOpacity>
-            </View>
+            {item?.status === 'accept' && (
+              <View
+                style={[styles.locationView, {justifyContent: 'space-around'}]}>
+                <TouchableOpacity
+                  activeOpacity={0.9}
+                  onPress={() =>
+                    Linking.openURL(
+                      `sms:${item?.interpreter_id?.phone}?body=${'Hi'}`,
+                    )
+                  }
+                  style={styles.messageCallStyle}>
+                  <Heading
+                    title="Message"
+                    passedStyle={styles.messageCallTextStyle}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  activeOpacity={0.9}
+                  onPress={() =>
+                    Linking.openURL(`tel:${item?.interpreter_id?.phone}`)
+                  }
+                  style={styles.messageCallStyle}>
+                  <Heading
+                    title="Call"
+                    passedStyle={styles.messageCallTextStyle}
+                  />
+                </TouchableOpacity>
+              </View>
+            )}
             {isLoading ? (
               <View style={styles.loadingComponent}>
                 <Heading

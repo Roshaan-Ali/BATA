@@ -22,7 +22,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {connect} from 'react-redux';
 import * as actions from './store/actions/actions';
 
-function Main({UserReducer, getCurrentLocation,subscribeToTopic}) {
+function Main({UserReducer, getCurrentLocation, subscribeToTopic, setErrorModal}) {
   const [loading, setLoading] = useState(false);
   const [granted, setGranted] = useState(false);
 
@@ -35,32 +35,27 @@ function Main({UserReducer, getCurrentLocation,subscribeToTopic}) {
   useEffect(() => {
     async function requestLocationPermission() {
       try {
-        const platformCheck = Platform.OS
-        if(platformCheck != "ios"){
+        const platformCheck = Platform.OS;
+        if (platformCheck != 'ios') {
           const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        );
-        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-          setGranted(granted);
-        } else {
-          BackHandler.exitApp();
-        }
+            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+          );
+          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+            setGranted(granted);
+          } else {
+            BackHandler.exitApp();
+          }
         }
       } catch (err) {
         console.warn(err);
       }
     }
     requestLocationPermission();
-   
   }, []);
 
   useEffect(() => {
-    // if (UserReducer?.isUserLogin === true) {
-    //   if (UserReducer?.hasSubscribedToFCMNotification) {
-    //     subscribeToTopic(UserReducer?.userData?.id?.toString());
-    //   }
-    // }
-    subscribeToTopic(UserReducer?.userData?.id?.toString())
+    subscribeToTopic(UserReducer?.userData?.id?.toString());
+    setErrorModal(false)
   }, []);
 
   if (loading) {

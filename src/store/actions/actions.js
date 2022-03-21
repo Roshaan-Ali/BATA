@@ -113,10 +113,12 @@ export const getBookingHistory = token => async dispatch => {
         },
       },
     );
-    dispatch({
-      type: types.GET_BOOKING_HISTORY,
-      payload: response.data.data,
-    });
+    if (response.data.success) {
+      dispatch({
+        type: types.GET_BOOKING_HISTORY,
+        payload: response.data.data,
+      });
+    }
   } catch (err) {
     console.log('Failed to fetch current booking!', err);
   }
@@ -283,14 +285,25 @@ export const user_login = (data, _onLoginFailed) => async dispatch => {
     });
     // console.log('response ', response?.data);
     if (response.data.success) {
-      dispatch({
-        type: types.USER_LOGIN,
-        payload: {
-          isUserLogin: true,
-          userData: response?.data?.data,
-          accessToken: response.data?.data.token,
-        },
-      });
+      if (response.data.data.role_id === 2) {
+        dispatch({
+          type: types.USER_LOGIN,
+          payload: {
+            isUserLogin: true,
+            userData: response?.data?.data,
+            accessToken: response.data?.data.token,
+          },
+        });
+      } else {
+        dispatch({
+          type: types.ERROR_MODAL,
+          payload: {
+            msg: "Email doesn't match to any client.",
+            status: true,
+          },
+        });
+        _onLoginFailed();
+      }
     } else {
       // console.log('not working');
       // console.log('else', response?.data);
@@ -449,7 +462,7 @@ export const getAllLanguages = () => async dispatch => {
     dispatch({
       type: types.GET_LANGUAGES,
       payload: {
-        languages: res.data.data,
+        languages: res.data.data?.filter(ele => ele?.status === 1),
       },
     });
   } catch (error) {
@@ -461,6 +474,7 @@ export const subscribeToTopic = id => async dispatch => {
   console.log('subs ');
   try {
     messaging()
+      // .subscribeToTopic('bata_client12')
       .subscribeToTopic('bata_client' + id?.toString())
       .then(() => {
         console.log('NOTIFICATIONS SUBSCRIBED');
@@ -495,7 +509,6 @@ export const unSubscribeFromTopic = id => async dispatch => {
 };
 
 export const getOccasions = token => async dispatch => {
-  console.log('occasions', token);
   try {
     const response = await axios.get(`${apiUrl}/occation/gets`, {
       headers: {
@@ -505,7 +518,7 @@ export const getOccasions = token => async dispatch => {
     });
     dispatch({
       type: types.GET_OCCASIONS,
-      payload: response?.data?.data,
+      payload: response?.data?.data?.filter(ele => ele?.status === 1),
     });
   } catch (err) {
     console.log(err);
